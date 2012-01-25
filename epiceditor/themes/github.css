@@ -1,0 +1,68 @@
+.epiceditor-preview {
+  font:13.34px helvetica,arial,freesans,clean,sans-serif;
+  color:black;
+  line-height:1.4em;
+  background: #F8F8F8;
+  padding: 0.7em;
+  margin:0 auto;
+}
+.epiceditor-preview p {
+  margin:1em 0;
+  line-height:1.5em;
+}
+.epiceditor-preview table {
+  font-size:inherit;
+  font:100%;
+  margin:1em;
+}
+.epiceditor-preview table th{border-bottom:1px solid #bbb;padding:.2em 1em;}
+.epiceditor-preview table td{border-bottom:1px solid #ddd;padding:.2em 1em;}
+.epiceditor-preview input[type=text],input[type=password],input[type=image],.epiceditor-preview textarea{font:99% helvetica,arial,freesans,sans-serif;}
+.epiceditor-preview select,.epiceditor-preview option{padding:0 .25em;}
+.epiceditor-preview optgroup{margin-top:.5em;}
+.epiceditor-preview pre,.epiceditor-preview code{font:12px Monaco,"Courier New","DejaVu Sans Mono","Bitstream Vera Sans Mono",monospace;}
+.epiceditor-preview pre {
+  margin:1em 0;
+  font-size:12px;
+  background-color:#eee;
+  border:1px solid #ddd;
+  padding:5px;
+  line-height:1.5em;
+  color:#444;
+  overflow:auto;
+  -webkit-box-shadow:rgba(0,0,0,0.07) 0 1px 2px inset;
+  -webkit-border-radius:3px;
+  -moz-border-radius:3px;border-radius:3px;
+}
+.epiceditor-preview pre code {
+  padding:0;
+  font-size:12px;
+  background-color:#eee;
+  border:none;
+}
+.epiceditor-preview code {
+  font-size:12px;
+  background-color:#f8f8ff;
+  color:#444;
+  padding:0 .2em;
+  border:1px solid #dedede;
+}
+.epiceditor-preview img{border:0;max-width:100%;}
+.epiceditor-preview abbr{border-bottom:none;}
+.epiceditor-preview a{color:#4183c4;text-decoration:none;}
+.epiceditor-preview a:hover{text-decoration:underline;}
+.epiceditor-preview a code,.epiceditor-preview a:link code,.epiceditor-preview a:visited code{color:#4183c4;}
+.epiceditor-preview h2,.epiceditor-preview h3{margin:1em 0;}
+.epiceditor-preview h1,.epiceditor-preview h2,.epiceditor-preview h3,.epiceditor-preview h4,.epiceditor-preview h5,.epiceditor-preview h6{border:0;}
+.epiceditor-preview h1{font-size:170%;border-top:4px solid #aaa;padding-top:.5em;margin-top:1.5em;}
+.epiceditor-preview h1:first-child{margin-top:0;padding-top:.25em;border-top:none;}
+.epiceditor-preview h2{font-size:150%;margin-top:1.5em;border-top:4px solid #e0e0e0;padding-top:.5em;}
+.epiceditor-preview h3{margin-top:1em;}
+.epiceditor-preview hr{border:1px solid #ddd;}
+.epiceditor-preview ul{margin:1em 0 1em 2em;}
+.epiceditor-preview ol{margin:1em 0 1em 2em;}
+.epiceditor-preview ul li,.epiceditor-preview ol li{margin-top:.5em;margin-bottom:.5em;}
+.epiceditor-preview ul ul,.epiceditor-preview ul ol,.epiceditor-preview ol ol,.epiceditor-preview ol ul{margin-top:0;margin-bottom:0;}
+.epiceditor-preview blockquote{margin:1em 0;border-left:5px solid #ddd;padding-left:.6em;color:#555;}
+.epiceditor-preview dt{font-weight:bold;margin-left:1em;}
+.epiceditor-preview dd{margin-left:2em;margin-bottom:1em;}

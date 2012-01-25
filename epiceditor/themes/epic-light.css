@@ -1,0 +1,48 @@
+.epiceditor-wrapper {
+  background:rgb(241,241,241);  
+}
+.epiceditor-utilbar {
+  position:fixed;
+  bottom:10px;
+  right:10px;
+  padding:5px;
+  border-radius:3px;
+  box-shadow:0 0 5px rgba(0,0,0,0.25);
+  background: -moz-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(255,255,255,0))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* IE10+ */
+  background: linear-gradient(top, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#00ffffff',GradientType=0 ); /* IE6-9 */
+}
+
+.epiceditor-utilbar img {
+  display:block;
+  float:left;
+}
+
+.epiceditor-utilbar img:first-child {
+  margin:0 3px 0 0;
+}
+
+.epiceditor-utilbar img:hover {
+  cursor:pointer;
+}
+
+.epiceditor-utilbar:hover {
+  display:block !important; /* No, really, important so when hovering the element it wont go away after N secs */
+}
+
+.epiceditor-wrapper textarea {
+  border:0;
+  resize: none;
+  width:100%;
+  background:rgb(241,241,241);
+  font-family:monospace;
+  font-size:14px;
+  padding:10px;
+  color:#141414;
+}
+
+.epiceditor-wrapper textarea:focus { outline:none; }
