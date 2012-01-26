@@ -18,6 +18,7 @@ EpicEditor allows for all kinds of customization. For simple drop-in-and-go supp
 EpicEditor is easy to implement. It only needs an element to add the editor to and then you call `load()` when you're ready.
 
 Example:  
+
 ```javascript
 var element = document.getElementById('editor-wrapper');
 var editor = new EpicEditor(element).load();
@@ -49,6 +50,7 @@ The contractor is first (`EpicEditor()`), but everything after are methods of th
 Creates a new EpicEditor instance. Give it an element you want to insert the editor into.
 
 Example:  
+
 ```javascript
 var editor = new EpicEditor(element);
 ```
@@ -59,6 +61,7 @@ _Note: all the examples below will continue to use this same constructor._
 Loads the editor by inserting it into the DOM by creating an `<iframe>`. Will trigger the load event, or you can use the callback instead.
 
 Example:  
+
 ```javascript
 editor.load();
 ```
@@ -67,6 +70,7 @@ editor.load();
 Unloads the editor by removing the `<iframe>`, but will keep any options you set and file contents so you can easily call `.load()` again. Will trigger the unload event, or you can use the callback instead.
 
 Example:  
+
 ```javascript
 editor.unload();
 ```
@@ -81,6 +85,7 @@ Lets you set options for the editor. The example below has all the options avail
 - `focusOnLoad`: Will focus on the editor on load. It's false by default.
 
 Example:  
+
 ```javascript
 editor.options({
   file:{
@@ -104,6 +109,7 @@ Will grab an element of the editor for easy DOM manipulation inside of the edito
 - `'previewer'`: Returns the previewer element which is a `<div>`.
 
 Example:  
+
 ```javascript
 someBtn.onclick = function(){
   console.log(ee.get('editor').value); //Would return the editor's content
@@ -114,6 +120,7 @@ someBtn.onclick = function(){
 Opens a file into the editor.
 
 Example:  
+
 ```javascript
 openFileBtn.onclick = function(){
   ee.open('some-file'); //Open a file when the user clicks this button
@@ -125,6 +132,7 @@ Manually save a file. EpicEditor will save on keyup by default but if you
 are inserting content via ajax for example, this is useful.
 
 Example:  
+
 ```javascript
 saveFileBtn.onclick = function(){
   ee.save();
@@ -135,6 +143,7 @@ saveFileBtn.onclick = function(){
 Sets up an event handler (callback) for a specified event. For all event types, see the Events section below.
 
 Example:  
+
 ```javascript
 ee.on('unload',function(){
   console.log('Editor was removed');
@@ -145,6 +154,7 @@ ee.on('unload',function(){
 Sets off an event manually. Like jQuery's `.trigger()`
 
 Example:  
+
 ```javascript
 ee.emit('unload'); //Would trigger the above handler
 ```
@@ -153,6 +163,7 @@ ee.emit('unload'); //Would trigger the above handler
 Allows you to remove all listeners for an event (if you leave the `handler` param blank), or just the specified one.
 
 Example:  
+
 ```javascript
 ee.removeListener('unload'); //The handler above would no longer fire
 ```
@@ -161,6 +172,7 @@ ee.removeListener('unload'); //The handler above would no longer fire
 Will put the editor into preview mode.
 
 Example:  
+
 ```javascript
 previewBtn.onclick = function(){
   ee.preview();
@@ -172,6 +184,7 @@ previewBtn.onclick = function(){
 Will put the editor into edit mode.
 
 Example:  
+
 ```javascript
 editBtn.onclick = function(){
   ee.edit();
@@ -182,6 +195,7 @@ editBtn.onclick = function(){
 Will return the generated HTML from the Markdown that you see in the preview mode. Useful to saving content to a database.
 
 Example:  
+
 ```javascript
 syncWithServerBtn.onclick = function(){
   var theHTML = ee.exportHTML();
