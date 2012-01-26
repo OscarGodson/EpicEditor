@@ -46,7 +46,7 @@ The contractor is first (`EpicEditor()`), but everything after are methods of th
 - edit()
 - exportHTML()
 
-####EpicEditor(_element_)
+###EpicEditor(_element_)
 Creates a new EpicEditor instance. Give it an element you want to insert the editor into.
 
 Example:  
@@ -57,7 +57,7 @@ var editor = new EpicEditor(element);
 
 _Note: all the examples below will continue to use this same constructor._
 
-####load(_[callback]_)
+###load(_[callback]_)
 Loads the editor by inserting it into the DOM by creating an `<iframe>`. Will trigger the load event, or you can use the callback instead.
 
 Example:  
@@ -66,7 +66,7 @@ Example:
 editor.load();
 ```
 
-####unload([_callback_])
+###unload([_callback_])
 Unloads the editor by removing the `<iframe>`, but will keep any options you set and file contents so you can easily call `.load()` again. Will trigger the unload event, or you can use the callback instead.
 
 Example:  
@@ -75,7 +75,7 @@ Example:
 editor.unload();
 ```
 
-####options(_options_)
+###options(_options_)
 Lets you set options for the editor. The example below has all the options available currently.
 
 - `file.name`: If no file exists with this name a new one will be made, otherwise the existing will be opened.
@@ -100,7 +100,7 @@ editor.options({
 }).load();
 ```
 
-####get(_element_)
+###get(_element_)
 Will grab an element of the editor for easy DOM manipulation inside of the editor.
 
 - `'document'`: Returns the iframe element.
@@ -116,7 +116,7 @@ someBtn.onclick = function(){
 }
 ```
 
-####open(_filename_)
+###open(_filename_)
 Opens a file into the editor.
 
 Example:  
@@ -127,7 +127,7 @@ openFileBtn.onclick = function(){
 }
 ```
 
-####save()
+###save()
 Manually save a file. EpicEditor will save on keyup by default but if you 
 are inserting content via ajax for example, this is useful.
 
@@ -139,7 +139,7 @@ saveFileBtn.onclick = function(){
 }
 ```
 
-####on(_event_,_handler_)
+###on(_event_,_handler_)
 Sets up an event handler (callback) for a specified event. For all event types, see the Events section below.
 
 Example:  
@@ -150,7 +150,7 @@ ee.on('unload',function(){
 });
 ```
 
-####emit(_event_)
+###emit(_event_)
 Sets off an event manually. Like jQuery's `.trigger()`
 
 Example:  
@@ -159,7 +159,7 @@ Example:
 ee.emit('unload'); //Would trigger the above handler
 ```
 
-####removeListener(_event_,[_handler_])
+###removeListener(_event_,[_handler_])
 Allows you to remove all listeners for an event (if you leave the `handler` param blank), or just the specified one.
 
 Example:  
@@ -168,7 +168,7 @@ Example:
 ee.removeListener('unload'); //The handler above would no longer fire
 ```
 
-####preview()
+###preview()
 Will put the editor into preview mode.
 
 Example:  
@@ -180,7 +180,7 @@ previewBtn.onclick = function(){
 ```
 
 
-####edit()
+###edit()
 Will put the editor into edit mode.
 
 Example:  
@@ -191,7 +191,7 @@ editBtn.onclick = function(){
 }
 ```
 
-####exportHTML()
+###exportHTML()
 Will return the generated HTML from the Markdown that you see in the preview mode. Useful to saving content to a database.
 
 Example:  
@@ -207,22 +207,22 @@ syncWithServerBtn.onclick = function(){
 
 ###Events
 
-####load
+###load
 Fires when the editor is loaded via `.load()`.
 
-####unload
+###unload
 Fires when the editor is unloaded via `.unload()`.
 
-####preview
+###preview
 Fires when the user clicks the preview button, or when `.preview()` is called.
 
-####edit
+###edit
 Fires when the user clicks the edit button, or when `.edit()` is called.
 
-####save
+###save
 Fires when the file is saved automatically by EpicEditor, or when `.save()` is called.
 
-####open
+###open
 Fires when the file is opened on load automatically by EpicEditor, or when `.open()` is called.
 
 ##Using Markdown
