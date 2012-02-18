@@ -214,8 +214,8 @@
     //Default settings (will be overwritten if .options() is called with parameters)
     this.settings = {
       themes: {
-        preview:'epiceditor/themes/github.css'
-      , editor:'epiceditor/themes/epic-light.css'
+        preview:'epiceditor/themes/preview/github.css'
+      , editor:'epiceditor/themes/editor/epic-light.css'
       }
     , file: {
         name:fileName //Use the DOM element's ID for an unique persistent file name

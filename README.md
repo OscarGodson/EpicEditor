@@ -28,7 +28,7 @@ var editor = new EpicEditor(element).load();
 ###API
 
 **API Notes:**  
-The contractor is first (`EpicEditor()`), but everything after are methods of that constructor. Any parameter inside wrapped in square brackets like `load([calback])` below means the parameter optional.
+The contractor is first (`EpicEditor()`), but everything after are methods of that constructor. Any parameter inside wrapped in square brackets like `load([callback])` below means the parameter optional.
 
 **Table of Contents:**
 

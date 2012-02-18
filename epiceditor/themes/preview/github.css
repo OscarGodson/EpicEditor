@@ -1,8 +1,24 @@
+.epiceditor-utilbar {
+  position:fixed;
+  bottom:10px;
+  right:10px;
+  padding:5px;
+  border-radius:3px;
+  box-shadow:0 0 5px rgba(0,0,0,0.25);
+  background: -moz-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(255,255,255,0))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* IE10+ */
+  background: linear-gradient(top, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#00ffffff',GradientType=0 ); /* IE6-9 */
+}
+
 .epiceditor-preview {
   font:13.34px helvetica,arial,freesans,clean,sans-serif;
   color:black;
   line-height:1.4em;
-  background: #F8F8F8;
+  background: #fff;
   padding: 0.7em;
   margin:0 auto;
 }
@@ -21,11 +37,12 @@
 .epiceditor-preview select,.epiceditor-preview option{padding:0 .25em;}
 .epiceditor-preview optgroup{margin-top:.5em;}
 .epiceditor-preview pre,.epiceditor-preview code{font:12px Monaco,"Courier New","DejaVu Sans Mono","Bitstream Vera Sans Mono",monospace;}
+
 .epiceditor-preview pre {
   margin:1em 0;
   font-size:12px;
   background-color:#eee;
-  border:1px solid #ddd;
+  border:1px solid lightgray;
   padding:5px;
   line-height:1.5em;
   color:#444;
@@ -42,10 +59,10 @@
 }
 .epiceditor-preview code {
   font-size:12px;
-  background-color:#f8f8ff;
+  background-color:#eee;
   color:#444;
   padding:0 .2em;
-  border:1px solid #dedede;
+  border:1px solid lightgray;
 }
 .epiceditor-preview img{border:0;max-width:100%;}
 .epiceditor-preview abbr{border-bottom:none;}
@@ -56,12 +73,12 @@
 .epiceditor-preview h1,.epiceditor-preview h2,.epiceditor-preview h3,.epiceditor-preview h4,.epiceditor-preview h5,.epiceditor-preview h6{border:0;}
 .epiceditor-preview h1{font-size:170%;border-top:4px solid #aaa;padding-top:.5em;margin-top:1.5em;}
 .epiceditor-preview h1:first-child{margin-top:0;padding-top:.25em;border-top:none;}
-.epiceditor-preview h2{font-size:150%;margin-top:1.5em;border-top:4px solid #e0e0e0;padding-top:.5em;}
+.epiceditor-preview h2{font-size:150%;margin-top:1.5em;padding-top:.5em;}
 .epiceditor-preview h3{margin-top:1em;}
-.epiceditor-preview hr{border:1px solid #ddd;}
-.epiceditor-preview ul{margin:1em 0 1em 2em;}
-.epiceditor-preview ol{margin:1em 0 1em 2em;}
-.epiceditor-preview ul li,.epiceditor-preview ol li{margin-top:.5em;margin-bottom:.5em;}
+.epiceditor-preview hr{border:0;border-bottom:1px solid #ddd;}
+.epiceditor-preview ul{margin:1em 0;}
+.epiceditor-preview ol{margin:1em 0;}
+.epiceditor-preview ul li,.epiceditor-preview ol li{margin:1em 0;}
 .epiceditor-preview ul ul,.epiceditor-preview ul ol,.epiceditor-preview ol ol,.epiceditor-preview ol ul{margin-top:0;margin-bottom:0;}
 .epiceditor-preview blockquote{margin:1em 0;border-left:5px solid #ddd;padding-left:.6em;color:#555;}
 .epiceditor-preview dt{font-weight:bold;margin-left:1em;}
