@@ -24,13 +24,15 @@ EpicEditor is easy to implement simply clone the repo and then it only needs an 
 
 #####Step 1: Clone the repo
 
-```javascript
+```bash
 $ git clone git@github.com:OscarGodson/EpicEditor
 ```
 
 #####Step 2: Load the script
 
-    <script src="epiceditor.js"></script>
+```html
+<script src="epiceditor.js"></script>
+```
 
 #####Step 3: Init EpicEditor
 
