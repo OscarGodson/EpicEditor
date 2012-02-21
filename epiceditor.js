@@ -566,6 +566,7 @@
       else{
         self.editor.value = this.settings.file.defaultContent;
       }
+      this.emit('open');
     }
     return this;
   }
@@ -583,6 +584,7 @@
     var s = JSON.parse(localStorage['epiceditor']);
     s.files[file] = content;
     localStorage['epiceditor'] = JSON.stringify(s);
+    this.emit('save');
     return this;
   }
 
