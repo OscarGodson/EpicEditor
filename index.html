@@ -13,7 +13,7 @@
       h5 { font-size:16px; }
       h6 { font-size:14px; padding:10px 0; border-top:1px solid #000; }
       h1 span { opacity:0.25; font-weight:normal; font-size:20px; background:#000; color:#fff; padding:0 5px; border-radius:3px; position:absolute; top:0; right:0; }
-      pre { border:1px solid #000; }
+      pre { border:1px solid #000; overflow-x:auto; background:#000; }
       .offline-mode pre { padding:5px; background:#000; color:#fff; }
       p { font-size:13px; margin:5px 0; }
       a { background:#000;color:#fff;text-decoration:none; }
@@ -35,17 +35,47 @@
 
       <h3>How</h3>
       <p>EpicEditor allows for all kinds of customization. For simple drop-in-and-go support see the <a href="#quick-start">quick start</a> right below, otherwise checkout the full <a href="#api">API</a>.</p>
+      
       <h4 id="quick-start">Quick Start</h4>
-      <p>EpicEditor is easy to implement. It only needs an element to add the editor to and then you call <code>load()</code> when you're ready.</p>
-      <p class="example">Example:</p>
-      <pre><code ="javascript">var element = document.getElementById('editor-wrapper');
+      <p>EpicEditor is easy to implement simply clone the repo and then it only needs an element to add the editor to and then you call <code>load()</code> when you're ready.</p>
+      
+      <h5>Step 1: Clone the repo</h5>
+      <pre><code class="bash">$ git clone git@github.com:OscarGodson/EpicEditor</code></pre>
+
+      <h5>Step 2: Load the script</h5>
+      <pre><code ="html">&lt;script src="epiceditor.js"&gt;&lt;/script&gt;</code></pre>
+
+
+      <h5>Step 3: Init EpicEditor</h5>
+      <pre><code class="javascript">var element = document.getElementById('editor-wrapper');
 var editor = new EpicEditor(element).load();</code></pre>
 
       <h4 id="api">API</h4>
       
+      <p><strong>API Notes:</strong><br>
+      The constructor is first (<code>EpicEditor()</code>), but everything after are methods of that constructor. Any parameter inside wrapped in square brackets like <code>load([<em>callback</em>])</code> below means the parameter optional.</p>
+
+      <p><strong>Table of Contents:</strong></p>
+
+      <ol>
+        <li><a href="#api-epiceditor"><code>EpicEditor()</code></a></li>
+        <li><a href="#api-load"><code>load()</code></a></li>
+        <li><a href="#api-unload"><code>unload()</code></a></li>
+        <li><a href="#api-options"><code>options()</code></a></li>
+        <li><a href="#api-get"><code>get()</code></a></li>
+        <li><a href="#api-open"><code>open()</code></a></li>
+        <li><a href="#api-save"><code>save()</code></a></li>
+        <li><a href="#api-on"><code>on()</code></a></li>
+        <li><a href="#api-emit"><code>emit()</code></a></li>
+        <li><a href="#api-removeListener"><code>removeListener()</code></a></li>
+        <li><a href="#api-preview"><code>preview()</code></a></li>
+        <li><a href="#api-edit"><code>edit()</code></a></li>
+        <li><a href="#api-exportHTML"><code>exportHTML()</code></a></li>
+      </ol>
+
       <h5>Constructor</h5>
       
-      <h6 id="">EpicEditor(<em>element</em>)</h6>
+      <h6 id="api-epiceditor">EpicEditor(<em>element</em>)</h6>
       <p>Creates a new EpicEditor instance. Give it an element you want to insert the editor into.</p>
       <p class="example">Example:</p>
       <pre><code class="javascript">var editor = new EpicEditor(element);</code></pre>
@@ -53,19 +83,20 @@ var editor = new EpicEditor(element).load();</code></pre>
       
       <h5>Methods</h5>
       
-      <h6 id="">load([<em>callback</em>])</h6>
+      <h6 id="api-load">load([<em>callback</em>])</h6>
       <p>Loads the editor by inserting it into the DOM by creating an <code>&lt;iframe&gt;</code>. Will trigger the <code>load</code> event, or you can use the callback instead.</p>
       <p class="example">Example:</p>
       <pre><code class="javascript">editor.load();</code></pre>
       
-      <h6 id="">unload([<em>callback</em>])</h6>
+      <h6 id="api-unload">unload([<em>callback</em>])</h6>
       <p>Unloads the editor by removing the <code>&lt;iframe&gt;</code>, but will keep any options you set and file contents so you can easily call <code>.load()</code> again. Will trigger the <code>unload</code> event, or you can use the callback instead.</p>
       <p class="example">Example:</p>
       <pre><code class="javascript">editor.unload();</code></pre>
       
-      <h6 id="">options(<em>options</em>)</h6>
+      <h6 id="api-options">options(<em>options</em>)</h6>
       <p>Lets you set options for the editor. The example below has all the options available currently.</p>
       <ul>
+        <li><code>basePath</code>: The base path of the directory containing the <code>/themes</code>, <code>/images</code>, etc. It's <code>epiceditor</code> by default. <em>Don't add a trailing slash!</em></li>
         <li><code>file.name</code>: If no file exists with this name a new one will be made, otherwise the existing will be opened.</li>
         <li><code>file.defaultContent</code>: The content to show if no content exists for that file.</li>
         <li><code>themes.editor</code>: The theme for the editor which is a textarea inside of an iframe.</li>
@@ -85,7 +116,7 @@ var editor = new EpicEditor(element).load();</code></pre>
   focusOnLoad:true
 }).load();</code></pre>
       
-      <h6 id="">get(<em>element</em>)</h6>
+      <h6 id="api-get">get(<em>element</em>)</h6>
       <p>Will grab an element of the editor for easy DOM manipulation inside of the editor.</p>
       <ul>
         <li><code>'document'</code>: Returns the iframe element.</li>
@@ -98,52 +129,52 @@ var editor = new EpicEditor(element).load();</code></pre>
   console.log(ee.get('editor').value); //Would return the editor's content
 }</code></pre>
 
-      <h6 id="">open(<em>filename</em>)</h6>
+      <h6 id="api-open">open(<em>filename</em>)</h6>
       <p>Opens a file into the editor.</p>
       <p class="example">Example:</p>
       <pre><code class="javascript">openFileBtn.onclick = function(){
   ee.open('some-file'); //Open a file when the user clicks this button
 }</code></pre>
 
-      <h6 id="">save()</h6>
+      <h6 id="api-save">save()</h6>
       <p>Manually save a file. EpicEditor will save on keyup by default but if you are inserting content via ajax for example, this is useful.</p>
       <p class="example">Example:</p>
       <pre><code class="javascript">saveFileBtn.onclick = function(){
   ee.save();
 }</code></pre>
 
-      <h6 id="">on(<em>event</em>,<em>handler</em>)</h6>
+      <h6 id="api-on">on(<em>event</em>,<em>handler</em>)</h6>
       <p>Sets up an event handler (callback) for a specified event. For all event types, see the <a href="#events">Events</a> section below.</p>
       <p class="example">Example:</p>
       <pre><code class="javascript">ee.on('unload',function(){
   console.log('Editor was removed');
 });</code></pre>
 
-      <h6 id="">emit(<em>event</em>)</h6>
+      <h6 id="api-emit">emit(<em>event</em>)</h6>
       <p>Sets off an event manually. Like jQuery's <code>.trigger()</code></p>
       <p class="example">Example:</p>
       <pre><code class="javascript">ee.emit('unload'); //Would trigger the above handler</code></pre>
       
-      <h6 id="">removeListener(<em>event</em>,[<em>handler</em>])</h6>
+      <h6 id="api-removeListener">removeListener(<em>event</em>,[<em>handler</em>])</h6>
       <p>Allows you to remove all listeners for an event, or just the specified one.</p>
       <p class="example">Example:</p>
       <pre><code class="javascript">ee.removeListener('unload'); //The handler above would no longer fire</code></pre>
 
-      <h6 id="">preview()</h6>
+      <h6 id="api-preview">preview()</h6>
       <p>Will put the editor into preview mode.</p>
       <p class="example">Example:</p>
       <pre><code class="javascript">previewBtn.onclick = function(){
   ee.preview();
 }</code></pre>
       
-      <h6 id="">edit()</h6>
+      <h6 id="api-edit">edit()</h6>
       <p>Will put the editor into edit mode.</p>
       <p class="example">Example:</p>
       <pre><code class="javascript">editBtn.onclick = function(){
   ee.edit();
 }</code></pre>
       
-      <h6 id="">exportHTML()</h6>
+      <h6 id="api-exportHTML">exportHTML()</h6>
       <p>Will return the generated HTML from the Markdown that you see in the preview mode. Useful to saving content to a database.</p>
       <p class="example">Example:</p>
       <pre><code class="javascript">syncWithServerBtn.onclick = function(){
@@ -174,9 +205,19 @@ var editor = new EpicEditor(element).load();</code></pre>
       <p>Fires when the file is opened on load automatically by EpicEditor, or when <code>.open()</code> is called.
 
       <h4>Theming</h4>
-      <p>How to theme the editor...</p>
+      <p>Theming involves two parts; each are optional. There is an <code>editor</code> and <code>preview</code> theme for each instance of an editor and these themes reside in <code>/themes/editor</code> and <code>/themes/preview</code>. The editor involves just a <code>&lt;textarea&gt;</code> and the <code>#utilbar</code> (the thing with the preview/edit andn fullscreen buttons). The preview is just a <code>&lt;div&gt;</code> with the generated HTML inside. All HTML for each editor is in an &lt;iframe&gt; so there is no need to worry about breaking the page you're embedding this on with similar class names or anything.</p>
 
-      <h4>Using Markdown</h4>
+      <p>The HTML of a generated editor (excluding any content) looks like this:</p>
+      <pre><code class="html">&lt;div class=&quot;epiceditor-wrapper epiceditor-edit-mode&quot;&gt;
+  &lt;div class=&quot;epiceditor-utilbar&quot;&gt;
+    &lt;img width=&quot;16&quot; src=&quot;epiceditor/images/preview.png&quot; class=&quot;epiceditor-toggle-btn&quot;&gt; 
+    &lt;img width=&quot;16&quot; src=&quot;epiceditor/images/fullscreen.png&quot; class=&quot;epiceditor-fullscreen-btn&quot;&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;epiceditor-editor&quot;&gt;
+    &lt;textarea class=&quot;epiceditor-textarea&quot;&gt;&lt;/textarea&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;epiceditor-preview&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
 
       <h3>Who</h3>
       <p><a href="http://twitter.com/oscargodson">Oscar Godson</a> (me!), created EpicEditor with help from <a href="http://twitter.com/adam_bickford">Adam Bickford</a>. With many thanks to John Fraser (<em>site is no longer up</em>) for his <a href="https://github.com/coreyti/showdown">Showdown.js</a> script and <a href="http://daringfireball.net/">John Gruber</a> for <a href="http://daringfireball.net/projects/markdown/">Markdown</a>. Also, <a href="http://blog.izs.me">Isaac Z. Schlueter</a> for his port of <a href="https://github.com/isaacs/github-flavored-markdown">GitHub Flavored Markdown</a> which I <a href="https://github.com/oscargodson/github-flavored-markdown">forked</a>.</p>
@@ -196,10 +237,6 @@ var editor = new EpicEditor(element).load();</code></pre>
 
       var ee1 = new EpicEditor(examples[0]);
       ee1.options({
-        themes:{
-          editor:'epiceditor/themes/editor/epic-dark.css',
-          preview:'epiceditor/themes/preview/preview-dark.css'
-        },
         file:{
           defaultContent:"#EpicEditor\nThis is some default content. Go ahead, _change me_. "
         }, 

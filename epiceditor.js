@@ -38,19 +38,6 @@
   function(){switch(this.prefix){case "":return document.fullScreen;case "webkit":return document.webkitIsFullScreen;default:return document[this.prefix+"FullScreen"]}},a.requestFullScreen=function(a){return""===this.prefix?a.requestFullScreen():a[this.prefix+"RequestFullScreen"]()},a.cancelFullScreen=function(){return""===this.prefix?document.cancelFullScreen():document[this.prefix+"CancelFullScreen"]()};if("undefined"!=typeof jQuery)jQuery.fn.requestFullScreen=function(){return this.each(function(){a.supportsFullScreen&&
   a.requestFullScreen(this)})};window.fullScreenApi=a})();
 
-  //The editor HTML
-  //TODO: edit-mode class should be dynamicly added!
-  var _HtmlTemplate = '<div class="epiceditor-wrapper epiceditor-edit-mode">'+
-                        '<div class="epiceditor-utilbar">'+
-                          '<img width="16" src="epiceditor/images/preview.png" class="epiceditor-toggle-btn"> '+
-                          '<img width="16" src="epiceditor/images/fullscreen.png" class="epiceditor-fullscreen-btn">'+
-                        '</div>'+
-                        '<div class="epiceditor-editor">'+
-                          '<textarea class="epiceditor-textarea"></textarea>'+
-                        '</div>'+
-                        '<div class="epiceditor-preview"></div>'+
-                      '</div>';
-
   /**
    * Applies attributes to a DOM object
    * @param  {object} context The DOM obj you want to apply the attributes to
@@ -213,9 +200,10 @@
 
     //Default settings (will be overwritten if .options() is called with parameters)
     this.settings = {
-      themes: {
-        preview:'epiceditor/themes/preview/preview-dark.css'
-      , editor:'epiceditor/themes/editor/epic-dark.css'
+      basePath:'epiceditor'
+    , themes: {
+        preview:'/themes/preview/preview-dark.css'
+      , editor:'/themes/editor/epic-dark.css'
       }
     , file: {
         name:fileName //Use the DOM element's ID for an unique persistent file name
@@ -270,6 +258,19 @@
 
     callback = callback || function(){};
 
+  //The editor HTML
+  //TODO: edit-mode class should be dynamicly added!
+  var _HtmlTemplate = '<div class="epiceditor-wrapper epiceditor-edit-mode">'+
+                        '<div class="epiceditor-utilbar">'+
+                          '<img width="16" src="'+this.settings.basePath+'/images/preview.png" class="epiceditor-toggle-btn"> '+
+                          '<img width="16" src="'+this.settings.basePath+'/images/fullscreen.png" class="epiceditor-fullscreen-btn">'+
+                        '</div>'+
+                        '<div class="epiceditor-editor">'+
+                          '<textarea class="epiceditor-textarea"></textarea>'+
+                        '</div>'+
+                        '<div class="epiceditor-preview"></div>'+
+                      '</div>';
+
     //Write an iframe and then select it for the editor
     this.element.innerHTML = '<iframe scrolling="no" frameborder="0" id= "'+self.settings.id+'"></iframe>';
     var iframeElement = document.getElementById(self.settings.id);
@@ -291,7 +292,7 @@
     var iframeBody = self.iframe.body;
     iframeBody.style.padding = '0';
     iframeBody.style.margin = '0';
-    _insertCSSLink(self.settings.themes.editor,self.iframe);
+    _insertCSSLink(self.settings.basePath+self.settings.themes.editor,self.iframe);
     
 
     //Add a relative style to the overall wrapper to keep CSS relative to the editor
@@ -491,14 +492,14 @@
    * @returns {object} EpicEditor will be returned
    */
   EpicEditor.prototype.preview = function(theme,live){
-    var self = this;
-    
+    var self = this
+    ,   themePath = self.settings.basePath+self.settings.themes.preview;
     if(typeof theme === 'boolean'){
       live = theme;
-      theme = self.settings.themes.preview;
+      theme = themePath
     }
     else{
-      theme = theme || self.settings.themes.preview; 
+      theme = theme || themePath
     }
 
     //Check if no CSS theme link exists
