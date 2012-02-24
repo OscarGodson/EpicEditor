@@ -555,6 +555,11 @@
     }
   }
 
+  /**
+   * Opens a file
+   * @param   {string} name The name of the file you want to open
+   * @returns {object} EpicEditor will be returned
+   */
   EpicEditor.prototype.open = function(name){
     var self = this;
     name = name || self.settings.file.name;
@@ -589,6 +594,21 @@
     this.emit('save');
     return this;
   }
+
+  /**
+   * Removes a page
+   * @param   {string} name The name of the file you want to remove from localStorage
+   * @returns {object} EpicEditor will be returned
+   */
+  EpicEditor.prototype.remove = function(name) {
+    var self = this;
+    name = name || self.settings.file.name;
+    var s = JSON.parse(localStorage['epiceditor']);
+    delete s.files[name];
+    localStorage['epiceditor'] = JSON.stringify(s);
+    this.emit('remove');
+    return this;
+  };
 
   /**
    * Converts content into HTML from markdown
