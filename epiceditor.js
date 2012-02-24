@@ -566,6 +566,7 @@
       else{
         self.editor.value = this.settings.file.defaultContent;
       }
+      self.settings.file.name = name;
       this.previewer.innerHTML = this.exportHTML();
       this.emit('open');
     }
