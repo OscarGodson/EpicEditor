@@ -555,6 +555,11 @@
     }
   }
 
+  /**
+   * Opens a file
+   * @param   {string} name The name of the file you want to open
+   * @returns {object} EpicEditor will be returned
+   */
   EpicEditor.prototype.open = function(name){
     var self = this;
     name = name || self.settings.file.name;
