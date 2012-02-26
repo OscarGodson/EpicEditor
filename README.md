@@ -1,4 +1,4 @@
-**alpha 0.0.1**
+**alpha 0.0.2**
 
 _Note: this is a developer preview. We're releasing early so we can get other people's input and pull requests. While it works, there are still bugs and missing features. Use at your own risk._
 
@@ -55,6 +55,8 @@ The constructor is first (`EpicEditor()`), but everything after are methods of t
   <li><a href="#api-options"><code>options()</code></a></li>
   <li><a href="#api-get"><code>get()</code></a></li>
   <li><a href="#api-open"><code>open()</code></a></li>
+  <li><a href="#api-import"><code>import()</code></a></li>
+  <li><a href="#api-rename"><code>rename()</code></a></li>
   <li><a href="#api-save"><code>save()</code></a></li>
   <li><a href="#api-on"><code>on()</code></a></li>
   <li><a href="#api-emit"><code>emit()</code></a></li>
@@ -120,11 +122,11 @@ Lets you set options for the editor. The example below has all the options avail
 ```javascript
 editor.options({
   file:{
-    name:'example'
+    name:'example',
     defaultContent:'Write text in here!'
   },
   themes:{
-    editor:'/css/epiceditor/editor-custom.css'
+    editor:'/css/epiceditor/editor-custom.css',
     preview:'/css/epiceditor/preview-custom.css'
   },
   focusOnLoad:true
@@ -155,6 +157,29 @@ Opens a file into the editor.
 ```javascript
 openFileBtn.onclick = function(){
   ee.open('some-file'); //Open a file when the user clicks this button
+}
+```
+
+<h6 id="api-import">import(<em>filename</em>,[<em>content</em>])</h6>
+Imports a string of markdown into a file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX.
+
+**Example:**
+
+```javascript
+importFileBtn.onclick = function(){
+  ee.import('some-file',"#Imported markdown\nFancy, huh?"); //Imports a file when the user clicks this button
+}
+```
+
+<h6 id="api-rename">rename(<em>oldName</em>,<em>newName</em>)</h6>
+Renames a file.
+
+**Example:**
+
+```javascript
+renameFileBtn.onclick = function(){
+  var newName = prompt('What do you want to rename this file to?');
+  ee.rename('old-filename',newName); //Prompts a user and renames a file on button click
 }
 ```
 

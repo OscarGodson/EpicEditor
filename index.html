@@ -23,7 +23,7 @@
   </head>
   <body>
     <div id="wrapper">
-      <h1>EpicEditor <span>alpha 0.0.1</span></h1>
+      <h1>EpicEditor <span>alpha 0.0.2</span></h1>
       <h2>An Embeddable JavaScript Markdown Editor</h2>
       <p>EpicEditor is an embeddable JavaScript <a href="http://daringfireball.net/projects/markdown/">Markdown</a> editor with some minor Markdown enhancements such as automatic link creation and code fencing.</p>
 
@@ -64,6 +64,8 @@ var editor = new EpicEditor(element).load();</code></pre>
         <li><a href="#api-options"><code>options()</code></a></li>
         <li><a href="#api-get"><code>get()</code></a></li>
         <li><a href="#api-open"><code>open()</code></a></li>
+        <li><a href="#api-import"><code>import()</code></a></li>
+        <li><a href="#api-rename"><code>rename()</code></a></li>
         <li><a href="#api-save"><code>save()</code></a></li>
         <li><a href="#api-on"><code>on()</code></a></li>
         <li><a href="#api-emit"><code>emit()</code></a></li>
@@ -106,11 +108,11 @@ var editor = new EpicEditor(element).load();</code></pre>
       <p class="example">Example:</p>
       <pre><code class="javascript">editor.options({
   file:{
-    name:'example'
+    name:'example',
     defaultContent:'Write text in here!'
   },
   themes:{
-    editor:'/css/epiceditor/editor-custom.css'
+    editor:'/css/epiceditor/editor-custom.css',
     preview:'/css/epiceditor/preview-custom.css'
   },
   focusOnLoad:true
@@ -134,6 +136,21 @@ var editor = new EpicEditor(element).load();</code></pre>
       <p class="example">Example:</p>
       <pre><code class="javascript">openFileBtn.onclick = function(){
   ee.open('some-file'); //Open a file when the user clicks this button
+}</code></pre>
+
+      <h6 id="api-import">import(<em>filename</em>,[<em>content</em>])</h6>
+      <p>Imports a string of markdown into a file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX.</p>
+      <p class="example">Example:</p>
+      <pre><code class="javascript">importFileBtn.onclick = function(){
+  ee.import('some-file',"#Imported markdown\nFancy, huh?"); //Imports a file when the user clicks this button
+}</code></pre>
+
+      <h6 id="api-rename">rename(<em>oldName</em>,<em>newName</em>)</h6>
+      <p>Renames a file.</p>
+      <p class="example">Example:</p>
+      <pre><code class="javascript">renameFileBtn.onclick = function(){
+  var newName = prompt('What do you want to rename this file to?');
+  ee.rename('old-filename',newName); //Prompts a user and renames a file on button click
 }</code></pre>
 
       <h6 id="api-save">save()</h6>

@@ -600,13 +600,46 @@
    * @param   {string} name The name of the file you want to remove from localStorage
    * @returns {object} EpicEditor will be returned
    */
-  EpicEditor.prototype.remove = function(name) {
+  EpicEditor.prototype.remove = function(name){
     var self = this;
     name = name || self.settings.file.name;
     var s = JSON.parse(localStorage['epiceditor']);
     delete s.files[name];
     localStorage['epiceditor'] = JSON.stringify(s);
     this.emit('remove');
+    return this;
+  };
+
+
+  /**
+   * Imports a MD file instead of having to manual inject content via
+   * .get(editor).value = 'the content'
+   * @param   {string} name    The name of the file
+   * @param   {stirng} content The MD to import
+   * @returns {object} EpicEditor will be returned
+   */
+  EpicEditor.prototype.import = function(name,content){
+    var self = this;
+    content = content || '';
+    self.open(name).get('editor').value = content;
+    //we reopen the file after saving so that it will preview correctly if in the previewer
+    self.save().open(name);
+    return this;
+  };
+
+  /**
+   * Renames a file
+   * @param   {string} oldName The old file name
+   * @param   {string} newName The new file name
+   * @returns {object} EpicEditor will be returned
+   */
+  EpicEditor.prototype.rename = function(oldName,newName){
+    var self = this;
+    var s = JSON.parse(localStorage['epiceditor']);
+    s.files[newName] = s.files[oldName];
+    delete s.files[oldName];
+    localStorage['epiceditor'] = JSON.stringify(s);
+    self.open(newName);
     return this;
   };
 
