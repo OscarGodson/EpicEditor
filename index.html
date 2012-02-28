@@ -67,6 +67,7 @@ var editor = new EpicEditor(element).load();</code></pre>
         <li><a href="#api-import"><code>import()</code></a></li>
         <li><a href="#api-rename"><code>rename()</code></a></li>
         <li><a href="#api-save"><code>save()</code></a></li>
+        <li><a href="#api-remove"><code>remove()</code></a></li>
         <li><a href="#api-on"><code>on()</code></a></li>
         <li><a href="#api-emit"><code>emit()</code></a></li>
         <li><a href="#api-removeListener"><code>removeListener()</code></a></li>
@@ -158,6 +159,13 @@ var editor = new EpicEditor(element).load();</code></pre>
       <p class="example">Example:</p>
       <pre><code class="javascript">saveFileBtn.onclick = function(){
   ee.save();
+}</code></pre>
+
+      <h6 id="api-remove">remove(<em>name</em>)</h6>
+      <p>Deletes a file.</p>
+      <p class="example">Example:</p>
+      <pre><code class="javascript">removeFileBtn.onclick = function(){
+  ee.remove('some-file');
 }</code></pre>
 
       <h6 id="api-on">on(<em>event</em>,<em>handler</em>)</h6>

@@ -194,6 +194,17 @@ saveFileBtn.onclick = function(){
 }
 ```
 
+<h6 id="api-remove">remove(<em>name</em>)</h6>
+Deletes a file.
+
+**Example:**
+
+```javascript
+removeFileBtn.onclick = function(){
+  ee.remove('some-file');
+}
+```
+
 <h6 id="api-on">on(<em>event</em>,<em>handler</em>)</h6>
 Sets up an event handler (callback) for a specified event. For all event types, see the <a href="#events">Events</a> section below.
 
