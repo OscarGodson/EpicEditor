@@ -34,6 +34,7 @@
   "\\$1")+"])";b&&(c="\\\\"+c);return a=a.replace(RegExp(c,"g"),r)},r=function(a,c){return"~E"+c.charCodeAt(0)+"E"}};
 
   //Fullscreen API wrapper ( http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugin/ )
+  //TODO: Need a new wrapper with support for W3C spec
   (function(){var a={supportsFullScreen:!1,isFullScreen:function(){return!1},requestFullScreen:function(){},cancelFullScreen:function(){},fullScreenEventName:"",prefix:""},c="webkit moz o ms khtml".split(" ");if("undefined"!=typeof document.cancelFullScreen)a.supportsFullScreen=!0;else for(var b=0,d=c.length;b<d;b++)if(a.prefix=c[b],"undefined"!=typeof document[a.prefix+"CancelFullScreen"]){a.supportsFullScreen=!0;break}if(a.supportsFullScreen)a.fullScreenEventName=a.prefix+"fullscreenchange",a.isFullScreen=
   function(){switch(this.prefix){case "":return document.fullScreen;case "webkit":return document.webkitIsFullScreen;default:return document[this.prefix+"FullScreen"]}},a.requestFullScreen=function(a){return""===this.prefix?a.requestFullScreen():a[this.prefix+"RequestFullScreen"]()},a.cancelFullScreen=function(){return""===this.prefix?document.cancelFullScreen():document[this.prefix+"CancelFullScreen"]()};if("undefined"!=typeof jQuery)jQuery.fn.requestFullScreen=function(){return this.each(function(){a.supportsFullScreen&&
   a.requestFullScreen(this)})};window.fullScreenApi=a})();
@@ -346,7 +347,8 @@
     });
 
     //Sets up the fullscreen editor/previewer
-    if (fullScreenApi.supportsFullScreen) {
+    //TODO: Deal with the fact Firefox doesn't really support fullscreen and don't browser sniff
+    if (fullScreenApi.supportsFullScreen && document.body.webkitRequestFullScreen) {
       var fsElement = document.getElementById(self.settings.id)
       ,   fsBtns = self.iframe.getElementsByClassName('epiceditor-utilbar')[0];
 
@@ -421,6 +423,7 @@
     }
     else{
       //TODO: homebrew support by position:fixed and width/height 100% of document size
+      self.iframe.getElementsByClassName('epiceditor-fullscreen-btn')[0].style.display = 'none';
     }
 
     var utilBar = self.iframe.getElementsByClassName('epiceditor-utilbar')[0];
