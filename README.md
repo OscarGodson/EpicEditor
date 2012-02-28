@@ -58,6 +58,7 @@ The constructor is first (`EpicEditor()`), but everything after are methods of t
   <li><a href="#api-import"><code>import()</code></a></li>
   <li><a href="#api-rename"><code>rename()</code></a></li>
   <li><a href="#api-save"><code>save()</code></a></li>
+  <li><a href="#api-remove"><code>remove()</code></a></li>
   <li><a href="#api-on"><code>on()</code></a></li>
   <li><a href="#api-emit"><code>emit()</code></a></li>
   <li><a href="#api-removeListener"><code>removeListener()</code></a></li>
