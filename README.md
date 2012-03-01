@@ -1,4 +1,4 @@
-**alpha 0.0.2**
+**alpha 0.0.3**
 
 _Note: this is a developer preview. We're releasing early so we can get other people's input and pull requests. While it works, there are still bugs and missing features. Use at your own risk._
 
@@ -141,6 +141,7 @@ Will grab an element of the editor for easy DOM manipulation inside of the edito
 - `'body'`: Returns the iframe's inner `<body>` element.
 - `'editor'`: Returns the editor which is a `<textarea>`.
 - `'previewer'`: Returns the previewer element which is a `<div>`.
+- `'wrapper'`: Returns the wrapping `<div>` containing everything inside the `<iframe>`.
 
 **Example:**
 

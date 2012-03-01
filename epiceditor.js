@@ -121,6 +121,11 @@
     headID.appendChild(cssNode);
   }
 
+  //Simply replaces a class (o), to a new class (n) on an element provided (e)
+  function _replaceClass(e, o, n){
+    e.className = e.className.replace(o, n);
+  }
+
   /**
    * Overwrites obj1's values with obj2's and adds obj2's if non existent in obj1
    * @param {boolean} [deepMerge=false] If true, will deep merge meaning it will merge sub-objects like {obj:obj2{foo:'bar'}}
@@ -298,30 +303,6 @@
     //Add a relative style to the overall wrapper to keep CSS relative to the editor
     self.iframe.getElementsByClassName('epiceditor-wrapper')[0].style.position = 'relative';
 
-    //Add keyboard shortcuts for convenience.
-    var isAlt = false;
-    self.iframe.body.addEventListener('keyup', function(e){
-      if(e.altKey) isAlt = false;
-    });
-    self.iframe.body.addEventListener('keydown', function(e){
-      if(e.altKey)
-        isAlt = true;
-      if(isAlt === true && e.keyCode === 80){
-        self.preview();
-        return false;
-      }
-      if(isAlt === true && e.keyCode === 69){
-        e.preventDefault() ? e.preventDefault() : e.returnValue = false;
-        self.edit();
-        return false;
-      }
-      if(isAlt === true && e.keyCode === 70){
-        e.preventDefault() ? e.preventDefault() : e.returnValue = false;
-        fullScreenApi.requestFullScreen(fsElement);
-        return false;
-      }
-    })
-
     //Now grab the editor and previewer for later use
     this.editor = self.iframe.getElementsByClassName('epiceditor-textarea')[0];
     this.previewer = self.iframe.getElementsByClassName('epiceditor-preview')[0];
@@ -343,6 +324,9 @@
     this.previewer.style.width  = this.element.offsetWidth - _outerWidth(this.previewer) - widthDiff +'px';
     this.previewer.style.height = this.element.offsetHeight - _outerHeight(this.previewer) - heightDiff +'px';
 
+    //Preload the preview theme:
+    _insertCSSLink(self.settings.basePath+self.settings.themes.preview, self.iframe, 'theme');
+
     //If there is a file to be opened with that filename and it has content...
     this.open(self.settings.file.name);
 
@@ -351,20 +335,14 @@
     }
 
     //Sets up the onclick event on the previewer/editor toggle button
+    //TODO: Should use EE's state object rather than classes
     self.iframe.getElementsByClassName('epiceditor-toggle-btn')[0].addEventListener('click',function(){
-      var editorWrapper = self.iframe.getElementsByClassName('epiceditor-wrapper')[0];
-      //Simply replaces a class (o), to a new class (n) on an element provided (e)
-      function replaceClass(e, o, n){
-        e.className = editorWrapper.className.replace(o, n);
-      }
       //If it was in edit mode...
-      if(editorWrapper.className.indexOf('epiceditor-edit-mode') > -1){
-        replaceClass(editorWrapper,'epiceditor-edit-mode','epiceditor-preview-mode');
+      if(self.get('wrapper').className.indexOf('epiceditor-edit-mode') > -1){
         self.preview();
       }
       //If it was in preview mode...
       else{
-        replaceClass(editorWrapper,'epiceditor-preview-mode','epiceditor-edit-mode');
         self.edit();
       }
     });
@@ -487,9 +465,29 @@
     //TODO: This should have a timer to save on performance
     //TODO: The save file shoudl be dynamic, not just default
     //On keyup, save the content to the proper file for offline use
-    this.editor.addEventListener('keyup',function(){
+    self.editor.addEventListener('keyup',function(){
       self.content = this.value;
       self.save(self.settings.file.name,this.value);
+    });
+
+    //Add keyboard shortcuts for convenience.
+    self.iframe.addEventListener('keydown', function(e){
+      //Check for alt+p and make sure were not in fullscreen
+      if(e.altKey && e.keyCode === 80 && !fullScreenApi.isFullScreen()){
+        self.preview();
+      }
+      //Because Macs e == 69, but alt+e == 229 which is the ´ character, we need to support both cases
+      if(e.altKey && e.keyCode === 69 || e.keyCode === 229){
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+        if(!fullScreenApi.isFullScreen()){
+          self.edit();
+        }
+      }
+      //Check for alt+f
+      if(e.altKey && e.keyCode === 70){
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+        fullScreenApi.requestFullScreen(fsElement);
+      }
     });
 
     self.iframe.close();
@@ -528,6 +526,8 @@
       theme = theme || themePath
     }
 
+    _replaceClass(self.get('wrapper'),'epiceditor-edit-mode','epiceditor-preview-mode');
+
     //Check if no CSS theme link exists
     if(!self.iframe.getElementById('theme')){
       _insertCSSLink(theme, self.iframe, 'theme');
@@ -555,6 +555,7 @@
    */
   EpicEditor.prototype.edit = function(){
     var self = this;
+    _replaceClass(self.get('wrapper'),'epiceditor-preview-mode','epiceditor-edit-mode');
     this.editor.style.display = 'block';
     this.previewer.style.display = 'none';
     self.emit('edit');
@@ -563,7 +564,7 @@
 
   /**
    * Grabs a specificed HTML node. Use it as a shortcut to getting the iframe contents
-   * @param   {String} name The name of the node (can be document, body, editor, or previewer)
+   * @param   {String} name The name of the node (can be document, body, editor, previewer, or wrapper)
    * @returns {Object|Null}
    */ 
   EpicEditor.prototype.get = function(name){
@@ -572,6 +573,7 @@
     , body: this.iframe.body
     , editor: this.editor
     , previewer: this.previewer
+    , wrapper: this.iframe.getElementsByClassName('epiceditor-wrapper')[0]
     }
     if(!available[name]){
       return null;
