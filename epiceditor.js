@@ -298,6 +298,7 @@
     //Add a relative style to the overall wrapper to keep CSS relative to the editor
     self.iframe.getElementsByClassName('epiceditor-wrapper')[0].style.position = 'relative';
 
+    //Add keyboard shortcuts for convenience.
     var isAlt = false;
     self.iframe.body.addEventListener('keyup', function(e){
       if(e.altKey) isAlt = false;
@@ -312,6 +313,11 @@
       if(isAlt === true && e.keyCode === 69){
         e.preventDefault() ? e.preventDefault() : e.returnValue = false;
         self.edit();
+        return false;
+      }
+      if(isAlt === true && e.keyCode === 70){
+        e.preventDefault() ? e.preventDefault() : e.returnValue = false;
+        fullScreenApi.requestFullScreen(fsElement);
         return false;
       }
     })
