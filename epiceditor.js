@@ -471,21 +471,27 @@
     });
 
     //Add keyboard shortcuts for convenience.
+    var isAlt = false;
+    self.iframe.addEventListener('keyup', function(e){
+      if(e.keyCode === 18) isAlt = false;
+    });
     self.iframe.addEventListener('keydown', function(e){
-      //Check for alt+p and make sure were not in fullscreen
-      if(e.altKey && e.keyCode === 80 && !fullScreenApi.isFullScreen()){
+      if(e.keyCode === 18) isAlt = true;
+
+      //Check for alt+p and make sure were not in fullscreen - default shortcut to switch to editor
+      if(isAlt === true && e.keyCode === 80 && !fullScreenApi.isFullScreen()){
         self.preview();
       }
-      //Because Macs e == 69, but alt+e == 229 which is the ´ character, we need to support both cases
-      if(e.altKey && e.keyCode === 69 || e.keyCode === 229){
-        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+      //Check for alt+o - default shortcut to switch back to the editor
+      if(isAlt === true && e.keyCode === 79){
+        e.preventDefault();
         if(!fullScreenApi.isFullScreen()){
           self.edit();
         }
       }
-      //Check for alt+f
-      if(e.altKey && e.keyCode === 70){
-        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+      //Check for alt+f - default shortcut to make editor fullscreen
+      if(isAlt === true && e.keyCode === 70){
+        e.preventDefault();
         fullScreenApi.requestFullScreen(fsElement);
       }
     });
