@@ -116,7 +116,15 @@ Lets you set options for the editor. The example below has all the options avail
 
 - `themes.preview`: The theme for the previewer which is a div of content inside of an iframe.
 
-- `focusOnLoad`: Will focus on the editor on load. It's `false</code> by default.`
+- `focusOnLoad`: Will focus on the editor on load. It's `false` by default.
+
+- `shortcuts.modifier`: The modifying key for shortcuts. It's `18` (the alt key) by default, to reduce default browser shortcut conflicts.
+
+- `shortcuts.fullscreen`: The fullscreen shortcut key. It's `70` (f keycode) by default.
+
+- `shortcuts.preview`: The preview shortcut key. It's `80` (p keycode) by default.
+
+- `shortcuts.edit`: The edit mode shortcut key. It's `79` (o keycode) by default.
 
 **Example:**
 
@@ -130,7 +138,8 @@ editor.options({
     editor:'/css/epiceditor/editor-custom.css',
     preview:'/css/epiceditor/preview-custom.css'
   },
-  focusOnLoad:true
+  focusOnLoad:true,
+  shortcuts.preview: 77 //M
 }).load();
 ```
 

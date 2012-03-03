@@ -218,6 +218,12 @@
       //Because there might be multiple editors, we create a random id
     , id:uId
     , focusOnLoad:false
+    , shortcuts: { 
+        modifier: 18 // alt keycode
+      , fullscreen: 70 // f keycode
+      , preview: 80 // p keycode
+      , edit: 79 // o keycode
+    }
     };
 
     //Setup local storage of files
@@ -471,26 +477,27 @@
     });
 
     //Add keyboard shortcuts for convenience.
-    var isAlt = false;
+    var isMod = false;
     self.iframe.addEventListener('keyup', function(e){
-      if(e.keyCode === 18) isAlt = false;
+      if(e.keyCode === self.settings.shortcuts.modifier) isMod = false;
     });
     self.iframe.addEventListener('keydown', function(e){
-      if(e.keyCode === 18) isAlt = true;
+      if(e.keyCode === self.settings.shortcuts.modifier) isMod = true; //check for modifier press(default is alt key), save to var
 
-      //Check for alt+p and make sure were not in fullscreen - default shortcut to switch to editor
-      if(isAlt === true && e.keyCode === 80 && !fullScreenApi.isFullScreen()){
+      //Check for alt+p and make sure were not in fullscreen - default shortcut to switch to preview
+      if(isMod === true && e.keyCode === self.settings.shortcuts.preview && !fullScreenApi.isFullScreen()){
+        e.preventDefault();
         self.preview();
       }
       //Check for alt+o - default shortcut to switch back to the editor
-      if(isAlt === true && e.keyCode === 79){
+      if(isMod === true && e.keyCode === self.settings.shortcuts.edit){
         e.preventDefault();
         if(!fullScreenApi.isFullScreen()){
           self.edit();
         }
       }
       //Check for alt+f - default shortcut to make editor fullscreen
-      if(isAlt === true && e.keyCode === 70){
+      if(isMod === true && e.keyCode === self.settings.shortcuts.fullscreen){
         e.preventDefault();
         fullScreenApi.requestFullScreen(fsElement);
       }
