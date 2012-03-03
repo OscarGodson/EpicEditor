@@ -79,7 +79,9 @@
     var b = parseInt(_getStyle(el,'border-left-width'))+parseInt(_getStyle(el,'border-right-width'))
     ,   p = parseInt(_getStyle(el,'padding-left'))+parseInt(_getStyle(el,'padding-right'))
     ,   w = el.offsetWidth
-    ,   t = b+p+w;
+    //For IE in case no border is set and it defaults to "medium"
+    if(isNaN(b)){ var b = 0; }
+    var t = b+p+w;
     return t;
   }
 
@@ -92,7 +94,9 @@
     var b = parseInt(_getStyle(el,'border-top-width'))+parseInt(_getStyle(el,'border-bottom-width'))
     ,   p = parseInt(_getStyle(el,'padding-top'))+parseInt(_getStyle(el,'padding-bottom'))
     ,   w = el.offsetHeight
-    ,   t = b+p+w;
+    //For IE in case no border is set and it defaults to "medium"
+    if(isNaN(b)){ var b = 0; }
+    var t = b+p+w;
     return t;
   }
 
@@ -119,6 +123,22 @@
 
     cssNode.media = 'screen';
     headID.appendChild(cssNode);
+  }
+
+  /**
+   * Will return the version number if the browser is IE. If not will return -1
+   * TRY NEVER TO USE THIS AND USE FEATURE DETECTION IF POSSIBLE
+   * @returns {Number} -1 if false or the version number if true
+   */
+  function _isIE(){
+    var rv = -1; // Return value assumes failure.
+    if (navigator.appName == 'Microsoft Internet Explorer'){
+      var ua = navigator.userAgent;
+      var re  = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+      if (re.exec(ua) != null)
+        rv = parseFloat( RegExp.$1 );
+    }
+    return rv;
   }
 
   /**
@@ -319,6 +339,11 @@
     this.previewer.style['padding'] = '10px';
     this.previewer.style.width  = this.element.offsetWidth - _outerWidth(this.previewer) - widthDiff +'px';
     this.previewer.style.height = this.element.offsetHeight - _outerHeight(this.previewer) - heightDiff +'px';
+
+    //FIXME figure out why it needs +2 px
+    if(_isIE() > -1){
+      this.previewer.style.height = parseInt(_getStyle(this.previewer,'height'))+2;
+    }
 
     //If there is a file to be opened with that filename and it has content...
     this.open(self.settings.file.name);
