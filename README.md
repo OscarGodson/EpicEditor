@@ -1,4 +1,4 @@
-**alpha 0.0.2**
+**alpha 0.0.3**
 
 _Note: this is a developer preview. We're releasing early so we can get other people's input and pull requests. While it works, there are still bugs and missing features. Use at your own risk._
 
@@ -116,7 +116,15 @@ Lets you set options for the editor. The example below has all the options avail
 
 - `themes.preview`: The theme for the previewer which is a div of content inside of an iframe.
 
-- `focusOnLoad`: Will focus on the editor on load. It's `false</code> by default.`
+- `focusOnLoad`: Will focus on the editor on load. It's `false` by default.
+
+- `shortcuts.modifier`: The modifying key for shortcuts. It's `18` (the alt key) by default, to reduce default browser shortcut conflicts.
+
+- `shortcuts.fullscreen`: The fullscreen shortcut key. It's `70` (f keycode) by default.
+
+- `shortcuts.preview`: The preview shortcut key. It's `80` (p keycode) by default.
+
+- `shortcuts.edit`: The edit mode shortcut key. It's `79` (o keycode) by default.
 
 **Example:**
 
@@ -130,7 +138,10 @@ editor.options({
     editor:'/css/epiceditor/editor-custom.css',
     preview:'/css/epiceditor/preview-custom.css'
   },
-  focusOnLoad:true
+  focusOnLoad:true,
+  shortcuts: {
+    preview: 77 //M
+  }
 }).load();
 ```
 
@@ -141,6 +152,7 @@ Will grab an element of the editor for easy DOM manipulation inside of the edito
 - `'body'`: Returns the iframe's inner `<body>` element.
 - `'editor'`: Returns the editor which is a `<textarea>`.
 - `'previewer'`: Returns the previewer element which is a `<div>`.
+- `'wrapper'`: Returns the wrapping `<div>` containing everything inside the `<iframe>`.
 
 **Example:**
 

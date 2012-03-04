@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>EpicEditor Docs</title>
+    <title>EpicEditor - An embeddable JavaScript Markdown editor</title>
     <style>
       body {background:#FEED79;}
       #wrapper { width:600px;margin:0 auto;font-family:helvetica,arial,sans-serif;line-height:1.4em; }
@@ -23,7 +23,7 @@
   </head>
   <body>
     <div id="wrapper">
-      <h1>EpicEditor <span>alpha 0.0.2</span></h1>
+      <h1>EpicEditor <span>alpha 0.0.3</span></h1>
       <h2>An Embeddable JavaScript Markdown Editor</h2>
       <p>EpicEditor is an embeddable JavaScript <a href="http://daringfireball.net/projects/markdown/">Markdown</a> editor with some minor Markdown enhancements such as automatic link creation and code fencing.</p>
 
@@ -105,6 +105,10 @@ var editor = new EpicEditor(element).load();</code></pre>
         <li><code>themes.editor</code>: The theme for the editor which is a textarea inside of an iframe.</li>
         <li><code>themes.preview</code>: The theme for the previewer which is a div of content inside of an iframe.</li>
         <li><code>focusOnLoad</code>: Will focus on the editor on load. It's <code>false</code> by default.</li>
+        <li><code>shortcuts.modifier</code>: The modifying key for shortcuts. It's <code>18</code> (the <kbd>alt</kbd> key) by default, to reduce default browser shortcut conflicts.</li>
+        <li><code>shortcuts.fullscreen</code>: The fullscreen shortcut key. It's <code>70</code> (<kbd>f</kbd> key) by default.</li>
+        <li><code>shortcuts.preview</code>: The preview shortcut key. It's <code>80</code> (<kbd>p</kbd> key) by default.</li>
+        <li><code>shortcuts.edit</code>: The edit mode shortcut key. It's <code>79</code> (<kbd>o</kbd> key) by default.</li>
       </ul>
       <p class="example">Example:</p>
       <pre><code class="javascript">editor.options({
@@ -116,7 +120,10 @@ var editor = new EpicEditor(element).load();</code></pre>
     editor:'/css/epiceditor/editor-custom.css',
     preview:'/css/epiceditor/preview-custom.css'
   },
-  focusOnLoad:true
+  focusOnLoad:true,
+  shortcuts: {
+    preview: 77 //M
+  }
 }).load();</code></pre>
       
       <h6 id="api-get">get(<em>element</em>)</h6>
@@ -126,6 +133,7 @@ var editor = new EpicEditor(element).load();</code></pre>
         <li><code>'body'</code>: Returns the iframe's inner &lt;body&gt; element.</li>
         <li><code>'editor'</code>: Returns the editor which is a &lt;textarea&gt;.</li>
         <li><code>'previewer'</code>: Returns the previewer element which is a &lt;div&gt;.</li>
+        <li><code>'wrapper'</code>: Returns the wrapping &lt;div&gt; containing everything inside the &lt;iframe&gt;.</li>
       </ul>
        <p class="example">Example:</p>
       <pre><code class="javascript">someBtn.onclick = function(){
@@ -247,6 +255,7 @@ var editor = new EpicEditor(element).load();</code></pre>
       <h3>Who</h3>
       <p><a href="http://twitter.com/oscargodson">Oscar Godson</a> (me!), created EpicEditor with help from <a href="http://twitter.com/adam_bickford">Adam Bickford</a>. With many thanks to John Fraser (<em>site is no longer up</em>) for his <a href="https://github.com/coreyti/showdown">Showdown.js</a> script and <a href="http://daringfireball.net/">John Gruber</a> for <a href="http://daringfireball.net/projects/markdown/">Markdown</a>. Also, <a href="http://blog.izs.me">Isaac Z. Schlueter</a> for his port of <a href="https://github.com/isaacs/github-flavored-markdown">GitHub Flavored Markdown</a> which I <a href="https://github.com/oscargodson/github-flavored-markdown">forked</a>.</p>
     </div>
+    <a href="https://github.com/OscarGodson/EpicEditor"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/7afbc8b248c68eb468279e8c17986ad46549fb71/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub"></a>
     <script src="http://yandex.st/highlightjs/6.1/highlight.min.js"></script>
     <script src="epiceditor.js"></script>
     <script>
@@ -264,8 +273,8 @@ var editor = new EpicEditor(element).load();</code></pre>
       ee1.options({
         file:{
           defaultContent:"#EpicEditor\nThis is some default content. Go ahead, _change me_. "
-        }, 
-        focusOnLoad:true
+        }
+        , focusOnLoad:true
       })
       .load();
     </script>
