@@ -223,7 +223,7 @@
       , fullscreen: 70 // f keycode
       , preview: 80 // p keycode
       , edit: 79 // o keycode
-    }
+      }
     };
 
     //Setup local storage of files
