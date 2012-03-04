@@ -23,7 +23,7 @@
   </head>
   <body>
     <div id="wrapper">
-      <h1>EpicEditor <span>alpha 0.0.2</span></h1>
+      <h1>EpicEditor <span>alpha 0.0.3</span></h1>
       <h2>An Embeddable JavaScript Markdown Editor</h2>
       <p>EpicEditor is an embeddable JavaScript <a href="http://daringfireball.net/projects/markdown/">Markdown</a> editor with some minor Markdown enhancements such as automatic link creation and code fencing.</p>
 
@@ -105,6 +105,10 @@ var editor = new EpicEditor(element).load();</code></pre>
         <li><code>themes.editor</code>: The theme for the editor which is a textarea inside of an iframe.</li>
         <li><code>themes.preview</code>: The theme for the previewer which is a div of content inside of an iframe.</li>
         <li><code>focusOnLoad</code>: Will focus on the editor on load. It's <code>false</code> by default.</li>
+        <li><code>shortcuts.modifier</code>: The modifying key for shortcuts. It's <code>18</code> (the <kbd>alt</kbd> key) by default, to reduce default browser shortcut conflicts.</li>
+        <li><code>shortcuts.fullscreen</code>: The fullscreen shortcut key. It's <code>70</code> (<kbd>f</kbd> key) by default.</li>
+        <li><code>shortcuts.preview</code>: The preview shortcut key. It's <code>80</code> (<kbd>p</kbd> key) by default.</li>
+        <li><code>shortcuts.edit</code>: The edit mode shortcut key. It's <code>79</code> (<kbd>o</kbd> key) by default.</li>
       </ul>
       <p class="example">Example:</p>
       <pre><code class="javascript">editor.options({
@@ -116,7 +120,10 @@ var editor = new EpicEditor(element).load();</code></pre>
     editor:'/css/epiceditor/editor-custom.css',
     preview:'/css/epiceditor/preview-custom.css'
   },
-  focusOnLoad:true
+  focusOnLoad:true,
+  shortcuts: {
+    preview: 77 //M
+  }
 }).load();</code></pre>
       
       <h6 id="api-get">get(<em>element</em>)</h6>

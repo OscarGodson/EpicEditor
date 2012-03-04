@@ -139,7 +139,9 @@ editor.options({
     preview:'/css/epiceditor/preview-custom.css'
   },
   focusOnLoad:true,
-  shortcuts.preview: 77 //M
+  shortcuts: {
+    preview: 77 //M
+  }
 }).load();
 ```
 

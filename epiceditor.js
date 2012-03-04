@@ -479,10 +479,10 @@
     //Add keyboard shortcuts for convenience.
     var isMod = false;
     self.iframe.addEventListener('keyup', function(e){
-      if(e.keyCode === self.settings.shortcuts.modifier) isMod = false;
+      if(e.keyCode === self.settings.shortcuts.modifier){ isMod = false };
     });
     self.iframe.addEventListener('keydown', function(e){
-      if(e.keyCode === self.settings.shortcuts.modifier) isMod = true; //check for modifier press(default is alt key), save to var
+      if(e.keyCode === self.settings.shortcuts.modifier){ isMod = true }; //check for modifier press(default is alt key), save to var
 
       //Check for alt+p and make sure were not in fullscreen - default shortcut to switch to preview
       if(isMod === true && e.keyCode === self.settings.shortcuts.preview && !fullScreenApi.isFullScreen()){
@@ -499,7 +499,10 @@
       //Check for alt+f - default shortcut to make editor fullscreen
       if(isMod === true && e.keyCode === self.settings.shortcuts.fullscreen){
         e.preventDefault();
-        fullScreenApi.requestFullScreen(fsElement);
+        //TODO remove this once issue #32 is fixed, but don't until #32 or else FF will error out
+        if(document.body.webkitRequestFullScreen){
+          fullScreenApi.requestFullScreen(fsElement);
+        }
       }
     });
 
