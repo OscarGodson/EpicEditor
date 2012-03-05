@@ -12,7 +12,7 @@ EpicEditor is an embeddable JavaScript [Markdown](http://daringfireball.net/proj
 WYSIWYGs suck and they suck hard. Markdown is quickly becoming the replacement. [GitHub](http://github.com), [Stackoverflow](http://stackoverflow.com), and even blogging apps like [Posterous](http://posterous.com) support Markdown now. This allows you to generate a Markdown editor with a preview, fullscreen editing, full CSS theming, and offline support with a simple:
 
 ```javascript
-var editor = new EpicEditor(element).load();
+var editor = new EpicEditor(options).load();
 ```
 
 ###How
@@ -37,8 +37,8 @@ $ git clone git@github.com:OscarGodson/EpicEditor
 #####Step 3: Init EpicEditor
 
 ```javascript
-var element = document.getElementById('editor-wrapper');
-var editor = new EpicEditor(element).load();
+var el = document.getElementById('editor-wrapper');
+var editor = new EpicEditor({element: el}).load();
 ```
 
 ####API
@@ -52,7 +52,7 @@ The constructor is first (`EpicEditor()`), but everything after are methods of t
   <li><a href="#api-epiceditor"><code>EpicEditor()</code></a></li>
   <li><a href="#api-load"><code>load()</code></a></li>
   <li><a href="#api-unload"><code>unload()</code></a></li>
-  <li><a href="#api-options"><code>options()</code></a></li>
+  <li><a href="#api-options"><code>Customizable options</code></a></li>
   <li><a href="#api-get"><code>get()</code></a></li>
   <li><a href="#api-open"><code>open()</code></a></li>
   <li><a href="#api-import"><code>import()</code></a></li>
@@ -76,7 +76,7 @@ Creates a new EpicEditor instance. Give it an element you want to insert the edi
 **Example:**
 
 ```javascript
-var editor = new EpicEditor(element);
+var editor = new EpicEditor(options);
 ```
 
 _Note:_ all the examples below will continue to use this same constructor.
@@ -102,11 +102,14 @@ Unloads the editor by removing the `<iframe>`, but will keep any options you set
 editor.unload();
 ```
 
-<h6 id="api-options">options(<em>options</em>)</h6>
+<h6 id="api-options">Custom options object</h6>
 Lets you set options for the editor. The example below has all the options available currently.
 
+- `element`: The HTML element in which to inject the editor. By default it will look for `document.getElementByID('epiceditor')`.
 
 - `basePath`: The base path of the directory containing the `/themes`, `/images`, etc. It's `epiceditor` by default. _Don't add a trailing slash!_.
+
+- `localStorageName`: The name to use for the localStorage object. It is set to `epiceditor` by default.
 
 - `file.name`: If no file exists with this name a new one will be made, otherwise the existing will be opened.
 
@@ -129,7 +132,7 @@ Lets you set options for the editor. The example below has all the options avail
 **Example:**
 
 ```javascript
-editor.options({
+var editor = new EpicEditor({
   file:{
     name:'example',
     defaultContent:'Write text in here!'
