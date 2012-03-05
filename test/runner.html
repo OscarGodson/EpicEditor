@@ -1,0 +1,128 @@
+<html>
+<head>
+<title>EpicEditor - Test Suite</title>
+
+<style type="text/css">
+  body {
+    font-family: Lucida Console, Monaco, monospace;
+    font-size: 8pt;
+  }
+
+  .title {
+    padding-bottom: 10px;
+  }
+
+  .example {
+    margin-bottom: 12px;
+  }
+
+  .stack {
+    background-color: #FFFFD1;
+    margin-top: 5px;
+    border-radius: 5px;
+    padding: 5px;
+  }
+
+  .failure, .success {
+    padding: 10px;
+    border-radius: 5px;
+  }
+
+  .failure {
+    background-color: #E99494;
+  }
+
+  .success {
+    background-color: #339933;
+  }
+
+  .example.success {
+    color: #ccc;
+  }
+
+  .example.pending {
+    background-color: #E6E600;
+    padding: 2px 2px 2px 10px;
+    border-radius: 5px;
+  }
+
+  .progress-bar {
+    padding: 10px;
+    margin:  10px 0;
+    background-color: #ccc;
+    border-radius: 5px;
+    word-wrap: break-word;
+  }
+
+  .progress-bar a {
+    text-decoration: none;
+  }
+
+  .progress-bar .success,
+  .progress-bar .failure,
+  .progress-bar .pending {
+    background-color: #ccc;
+    font-size: 14px;
+    padding: 0;
+  }
+
+  .progress-bar .success { color: #339933; }
+  .progress-bar .failure { color: #ff0000; }
+  .progress-bar .pending { font-weight: bold; color: #E8E819; }
+
+  .topnav, .topnav:visited { color: #0000ff; text-decoration: none; }
+  .example .topnav { visibility: hidden; }
+  .example:hover .topnav { visibility: visible; }
+
+  body {background:#FEED79;}
+/*  #wrapper { width:600px;margin:0 auto;font-family:helvetica,arial,sans-serif;line-height:1.4em; }
+  #example-1 { height:349px;border:1px solid #000; }
+  h1 { border-bottom:2px solid #000; padding:0 0 15px 0; font-size:38px; position:relative; }
+  h3,h4,h5,h6 { margin-bottom:0; }
+  h3 { font-size:20px; }
+  h4 { font-size:18px; }
+  h5 { font-size:16px; }
+  h6 { font-size:14px; padding:10px 0; border-top:1px solid #000; }
+  h1 span { opacity:0.25; font-weight:normal; font-size:20px; background:#000; color:#fff; padding:0 5px; border-radius:3px; position:absolute; top:0; right:0; }
+  pre { border:1px solid #000; overflow-x:auto; background:#000; }
+  .offline-mode pre { padding:5px; background:#000; color:#fff; }
+  p { font-size:13px; margin:5px 0; }
+  a { background:#000;color:#fff;text-decoration:none; }
+  .example { font-weight:bold; font-size:12px; }*/
+  
+/*  #example-1 { display: none; }*/
+</style>
+
+<script src="foounit/foounit.js"></script>
+<script src="foounit/foounit-browser.js"></script>
+<script src="suite.js"></script>
+
+</head>
+<body>
+
+    <h1>Tests for core API</h1>
+
+    <ol>
+      <li><a href="#api-epiceditor"><code>EpicEditor()</code></a></li>
+      <li><a href="#api-load"><code>load()</code></a></li>
+      <li><a href="#api-unload"><code>unload()</code></a></li>
+      <li><a href="#api-options"><code>options()</code></a></li>
+      <li><a href="#api-get"><code>get()</code></a></li>
+      <li><a href="#api-open"><code>open()</code></a></li>
+      <li><a href="#api-import"><code>import()</code></a></li>
+      <li><a href="#api-rename"><code>rename()</code></a></li>
+      <li><a href="#api-save"><code>save()</code></a></li>
+      <li><a href="#api-remove"><code>remove()</code></a></li>
+      <li><a href="#api-on"><code>on()</code></a></li>
+      <li><a href="#api-emit"><code>emit()</code></a></li>
+      <li><a href="#api-removeListener"><code>removeListener()</code></a></li>
+      <li><a href="#api-preview"><code>preview()</code></a></li>
+      <li><a href="#api-edit"><code>edit()</code></a></li>
+      <li><a href="#api-exportHTML"><code>exportHTML()</code></a></li>
+    </ol>
+    
+    <div id="epiceditor"></div>
+    <div id="option-test"></div>
+  
+</body>
+</html>
