@@ -60,13 +60,15 @@
    * @returns {string} Returns a string of the value. If property is not set it will return a blank string
    */
   function _getStyle(el,styleProp){
-    var x = el;
-    if(x.currentStyle) {
-      var y = x.currentStyle[styleProp];
+    var x = el,
+      y = null;
+      
+    if (window.getComputedStyle) {
+      y = document.defaultView.getComputedStyle(x,null).getPropertyValue(styleProp); 
+    } else if (x.currentStyle) {
+      y = x.currentStyle[styleProp];
     }
-    else if(window.getComputedStyle){
-      var y = document.defaultView.getComputedStyle(x,null).getPropertyValue(styleProp); 
-    }
+
     return y;
   }
 
