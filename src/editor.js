@@ -27,7 +27,7 @@
         , y = null
 
       if (window.getComputedStyle) {
-        y = document.defaultView.getComputedStyle(x,null).getPropertyValue(styleProp); 
+        y = document.defaultView.getComputedStyle(x, null).getPropertyValue(styleProp);
       } else if (x.currentStyle) {
         y = x.currentStyle[styleProp];
       }
