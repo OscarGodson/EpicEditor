@@ -1,6 +1,10 @@
 #
 # Makefile for EpicEditor
 #
+# This build requires the following packages
+# - UglifyJS: https://github.com/mishoo/UglifyJS
+# - JSHint: https://github.com/jshint/node-jshint
+#
 
 NO_COLOR	= \033[0m
 YELLOW	= \033[33;01m
