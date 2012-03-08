@@ -214,51 +214,54 @@
   /**
    * Initiates the EpicEditor object and sets up offline storage as well
    * @class Represents an EpicEditor instance
-   * @param {object} e A DOM object for the editor to be placed in
+   * @param {object} options An optional customization object
    * @returns {object} EpicEditor will be returned
    */
-  function EpicEditor(e){
+  function EpicEditor(options){
     var uId = 'epiceditor-'+Math.round(Math.random()*100000)
-    ,   fileName = e.id;
+      , fileName = options.element ? options.element.id : 'epiceditor';
 
     //TODO: Check for data-filename as well
     if(!fileName){ //If there is no id on the element to use, just use "default"
       fileName = 'default';
     }
 
-    //Default settings (will be overwritten if .options() is called with parameters)
-    this.settings = {
-      basePath:'epiceditor'
-    , themes: {
-        preview:'/themes/preview/preview-dark.css'
-      , editor:'/themes/editor/epic-dark.css'
-      }
-    , file: {
-        name:fileName //Use the DOM element's ID for an unique persistent file name
-      , defaultContent:''
-      }
-      //Because there might be multiple editors, we create a random id
-    , id:uId
-    , focusOnLoad:false
-    , shortcuts: { 
-        modifier: 18 // alt keycode
-      , fullscreen: 70 // f keycode
-      , preview: 80 // p keycode
-      , edit: 79 // o keycode
-      }
-    };
+    //Default settings will be overwritten/extended by options arg
+    var defaults = {
+          id: uId //Because there might be multiple editors, we create a random id
+        , container: 'epiceditor'
+        , basePath: 'epiceditor'
+        , localStorageName: 'epiceditor'
+        , file: {
+            name: fileName //Use the DOM element's ID for an unique persistent file name
+          , defaultContent: ''
+          }
+        , themes: {
+            preview:'/themes/preview/preview-dark.css'
+          , editor:'/themes/editor/epic-dark.css'
+          }
+        , focusOnLoad:false
+        , shortcuts: { 
+            modifier: 18 // alt keycode
+          , fullscreen: 70 // f keycode
+          , preview: 80 // p keycode
+          , edit: 79 // o keycode
+          }
+        };
+
+    this.settings = _mergeObjs(true, defaults, options);
 
     //Setup local storage of files
     if(localStorage){
-      if(!localStorage['epiceditor']){
+      if(!localStorage[this.settings.localStorageName]){
         //TODO: Needs a dynamic file name!
         var defaultStorage = {files:{}};
         defaultStorage.files[this.settings.file.name] = this.settings.file.defaultContent;
         defaultStorage = JSON.stringify(defaultStorage);
-        localStorage['epiceditor'] = defaultStorage;
+        localStorage[this.settings.localStorageName] = defaultStorage;
       }
-      else if(!JSON.parse(localStorage['epiceditor']).files[this.settings.file.name]){
-        JSON.parse(localStorage['epiceditor']).files[this.settings.file.name] = this.settings.file.defaultContent;
+      else if(!JSON.parse(localStorage[this.settings.localStorageName]).files[this.settings.file.name]){
+        JSON.parse(localStorage[this.settings.localStorageName]).files[this.settings.file.name] = this.settings.file.defaultContent;
       }
       else{
         this.content = this.settings.file.defaultContent;
@@ -268,19 +271,8 @@
     if(!this.events){
       this.events = {}; 
     }
-    this.element = e;
+    this.element = document.getElementById(this.settings.container);
     return this;
-  }
-
-  /**
-   * Changes default options such as theme, id, etc for the EpicEditor instance
-   * @param  {object} options A key/value pair of options you want to change from the default
-   * @returns {object} EpicEditor will be returned
-   */
-  EpicEditor.prototype.options = function(options){
-    var self = this;
-    self.settings = _mergeObjs(true, this.settings, options);
-    return self;
   }
 
   /**
@@ -308,6 +300,9 @@
     //Write an iframe and then select it for the editor
     this.element.innerHTML = '<iframe scrolling="no" frameborder="0" id= "'+self.settings.id+'"></iframe>';
     var iframeElement = document.getElementById(self.settings.id);
+
+    // Store a reference to the iframeElement itself
+    self.iframeElement = iframeElement;
 
     //Grab the innards of the iframe (returns the document.body)
     self.iframe = iframeElement.contentDocument || iframeElement.contentWindow.document;
@@ -634,8 +629,8 @@
   EpicEditor.prototype.open = function(name){
     var self = this;
     name = name || self.settings.file.name;
-    if(localStorage && localStorage['epiceditor']){
-      var fileObj = JSON.parse(localStorage['epiceditor']).files;
+    if(localStorage && localStorage[self.settings.localStorageName]){
+      var fileObj = JSON.parse(localStorage[self.settings.localStorageName]).files;
       if(fileObj[name]){
         self.editor.value = fileObj[name];
       }
@@ -659,9 +654,9 @@
     var self = this;
     file = file || self.settings.file.name;
     content = content || this.editor.value;
-    var s = JSON.parse(localStorage['epiceditor']);
+    var s = JSON.parse(localStorage[self.settings.localStorageName]);
     s.files[file] = content;
-    localStorage['epiceditor'] = JSON.stringify(s);
+    localStorage[self.settings.localStorageName] = JSON.stringify(s);
     this.emit('save');
     return this;
   }
@@ -674,9 +669,9 @@
   EpicEditor.prototype.remove = function(name){
     var self = this;
     name = name || self.settings.file.name;
-    var s = JSON.parse(localStorage['epiceditor']);
+    var s = JSON.parse(localStorage[self.settings.localStorageName]);
     delete s.files[name];
-    localStorage['epiceditor'] = JSON.stringify(s);
+    localStorage[self.settings.localStorageName] = JSON.stringify(s);
     this.emit('remove');
     return this;
   };
@@ -706,10 +701,10 @@
    */
   EpicEditor.prototype.rename = function(oldName,newName){
     var self = this;
-    var s = JSON.parse(localStorage['epiceditor']);
+    var s = JSON.parse(localStorage[self.settings.localStorageName]);
     s.files[newName] = s.files[oldName];
     delete s.files[oldName];
-    localStorage['epiceditor'] = JSON.stringify(s);
+    localStorage[self.settings.localStorageName] = JSON.stringify(s);
     self.open(newName);
     return this;
   };
