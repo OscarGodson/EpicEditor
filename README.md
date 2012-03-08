@@ -12,7 +12,7 @@ EpicEditor is an embeddable JavaScript [Markdown](http://daringfireball.net/proj
 WYSIWYGs suck and they suck hard. Markdown is quickly becoming the replacement. [GitHub](http://github.com), [Stackoverflow](http://stackoverflow.com), and even blogging apps like [Posterous](http://posterous.com) support Markdown now. This allows you to generate a Markdown editor with a preview, fullscreen editing, full CSS theming, and offline support with a simple:
 
 ```javascript
-var editor = new EpicEditor(element).load();
+var editor = new EpicEditor().load();
 ```
 
 ###How
@@ -20,7 +20,7 @@ var editor = new EpicEditor(element).load();
 EpicEditor allows for all kinds of customization. For simple drop-in-and-go support see the quick start right below, otherwise checkout the full API.
 
 ####Quick Start
-EpicEditor is easy to implement simply clone the repo and then it only needs an element to add the editor to and then you call `load()` when you're ready.
+EpicEditor is easy to implement. Simply clone the repo, provide a container and call `load()` when you're ready.
 
 #####Step 1: Clone the repo
 
@@ -28,17 +28,17 @@ EpicEditor is easy to implement simply clone the repo and then it only needs an 
 $ git clone git@github.com:OscarGodson/EpicEditor
 ```
 
-#####Step 2: Load the script
+#####Step 2: Position the container and load the script
 
 ```html
+<div id="epiceditor"></div>
 <script src="epiceditor.js"></script>
 ```
 
 #####Step 3: Init EpicEditor
 
 ```javascript
-var element = document.getElementById('editor-wrapper');
-var editor = new EpicEditor(element).load();
+var editor = new EpicEditor().load();
 ```
 
 ####API
@@ -49,10 +49,9 @@ The constructor is first (`EpicEditor()`), but everything after are methods of t
 **Table of Contents:**
 
 <ol>
-  <li><a href="#api-epiceditor"><code>EpicEditor()</code></a></li>
+  <li><a href="#api-epiceditor"><code>EpicEditor</code></a>(<a href="#api-options"><code>[<em>options</em>]</code></a>)</li>
   <li><a href="#api-load"><code>load()</code></a></li>
   <li><a href="#api-unload"><code>unload()</code></a></li>
-  <li><a href="#api-options"><code>options()</code></a></li>
   <li><a href="#api-get"><code>get()</code></a></li>
   <li><a href="#api-open"><code>open()</code></a></li>
   <li><a href="#api-import"><code>import()</code></a></li>
@@ -69,17 +68,75 @@ The constructor is first (`EpicEditor()`), but everything after are methods of t
 
 #####Constructor
 
-<h6 id="api-epiceditor">EpicEditor(<em>element</em>)</h6>
+<h6 id="api-epiceditor">EpicEditor([<em>options</em>])</h6>
 
-Creates a new EpicEditor instance. Give it an element you want to insert the editor into
+Creates a new EpicEditor instance. Customize the instance by passing the <code>options</code> parameter.</p>
 
 **Example:**
 
 ```javascript
-var editor = new EpicEditor(element);
+var opts = { /* options */ },
+    editor = new EpicEditor(opts);
 ```
 
-_Note:_ all the examples below will continue to use this same constructor.
+<h6 id="api-options">Options</h6>
+
+Customize the editor instance. The example below has all the options available currently with their respective defaults.
+
+<ul>
+  <li><code>container</code>: The ID of the target container element. By default it will look for an element with ID <code>epiceditor</code>.</li>
+  <li><code>basePath</code>: The base path of the directory containing the <code>/themes</code>, <code>/images</code>, etc. It's <code>epiceditor</code> by default. <em>Don't add a trailing slash!</em></li>
+  <li><code>localStorageName</code>: The name to use for the localStorage object, set to <code>epiceditor</code> by default.</li>
+  <li><code>file</code>
+    <ul>
+      <li><code>name</code>: If no file exists with this name a new one will be made, otherwise the existing will be opened.</li>
+      <li><code>defaultContent</code>: The content to show if no content exists for that file.</li>
+    </ul>
+  </li>
+  <li><code>themes</code>
+    <ul>
+      <li><code>editor</code>: The theme for the editor which is a textarea inside of an iframe.</li>
+      <li><code>preview</code>: The theme for the previewer which is a div of content inside of an iframe.</li>
+    </ul>
+  </li>
+  <li><code>focusOnLoad</code>: Will focus on the editor on load. It's <code>false</code> by default.</li>
+  <li><code>shortcuts</code>
+    <ul>
+      <li><code>modifier</code>: The modifying key for shortcuts. It's <code>18</code> (the <kbd>alt</kbd> key) by default, to reduce default browser shortcut conflicts.</li>
+      <li><code>fullscreen</code>: The fullscreen shortcut key. It's <code>70</code> (<kbd>f</kbd> key) by default.</li>
+      <li><code>preview</code>: The preview shortcut key. It's <code>80</code> (<kbd>p</kbd> key) by default.</li>
+      <li><code>edit</code>: The edit mode shortcut key. It's <code>79</code> (<kbd>o</kbd> key) by default.</li>
+    </ul>
+  </li>
+</ul>
+
+Example with defaults:
+
+```javascript
+var opts = {
+  container: 'epiceditor',
+  basePath: 'epiceditor',
+  localStorageName: 'epiceditor',
+  file: {
+    name: 'epiceditor',
+    defaultContent: ''
+  },
+  themes: {
+    preview:'/themes/preview/preview-dark.css',
+    editor:'/themes/editor/epic-dark.css'
+  },
+  focusOnLoad: false,
+  shortcuts: {
+    modifier: 18
+    fullscreen: 70
+    preview: 80
+    edit: 79
+  }
+}
+var editor = new EpicEditor(opts);
+```
+
+_Note: all the examples below will continue to use this same constructor._
 
 #####Methods
 
@@ -94,6 +151,7 @@ editor.load();
 ```
 
 <h6 id="api-unload">unload([<em>callback</em>])</h6>
+
 Unloads the editor by removing the `<iframe>`, but will keep any options you set and file contents so you can easily call `.load()` again. Will trigger the `unload` event, or you can use the callback instead.
 
 **Example:**
@@ -102,50 +160,8 @@ Unloads the editor by removing the `<iframe>`, but will keep any options you set
 editor.unload();
 ```
 
-<h6 id="api-options">options(<em>options</em>)</h6>
-Lets you set options for the editor. The example below has all the options available currently.
-
-
-- `basePath`: The base path of the directory containing the `/themes`, `/images`, etc. It's `epiceditor` by default. _Don't add a trailing slash!_.
-
-- `file.name`: If no file exists with this name a new one will be made, otherwise the existing will be opened.
-
-- `file.defaultContent`: The content to show if no content exists for that file.
-
-- `themes.editor`: The theme for the editor which is a textarea inside of an iframe.
-
-- `themes.preview`: The theme for the previewer which is a div of content inside of an iframe.
-
-- `focusOnLoad`: Will focus on the editor on load. It's `false` by default.
-
-- `shortcuts.modifier`: The modifying key for shortcuts. It's `18` (the alt key) by default, to reduce default browser shortcut conflicts.
-
-- `shortcuts.fullscreen`: The fullscreen shortcut key. It's `70` (f keycode) by default.
-
-- `shortcuts.preview`: The preview shortcut key. It's `80` (p keycode) by default.
-
-- `shortcuts.edit`: The edit mode shortcut key. It's `79` (o keycode) by default.
-
-**Example:**
-
-```javascript
-editor.options({
-  file:{
-    name:'example',
-    defaultContent:'Write text in here!'
-  },
-  themes:{
-    editor:'/css/epiceditor/editor-custom.css',
-    preview:'/css/epiceditor/preview-custom.css'
-  },
-  focusOnLoad:true,
-  shortcuts: {
-    preview: 77 //M
-  }
-}).load();
-```
-
 <h6 id="api-get">get(<em>element</em>)</h6>
+
 Will grab an element of the editor for easy DOM manipulation inside of the editor.
 
 - `'document'`: Returns the iframe element.
@@ -158,33 +174,36 @@ Will grab an element of the editor for easy DOM manipulation inside of the edito
 
 ```javascript
 someBtn.onclick = function(){
-  console.log(ee.get('editor').value); //Would return the editor's content
+  console.log(editor.get('editor').value); //Would return the editor's content
 }
 ```
 
 <h6 id="api-open">open(<em>filename</em>)</h6>
+
 Opens a file into the editor.
 
 **Example:**
 
 ```javascript
 openFileBtn.onclick = function(){
-  ee.open('some-file'); //Open a file when the user clicks this button
+  editor.open('some-file'); //Open a file when the user clicks this button
 }
 ```
 
 <h6 id="api-import">import(<em>filename</em>,[<em>content</em>])</h6>
+
 Imports a string of markdown into a file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX.
 
 **Example:**
 
 ```javascript
 importFileBtn.onclick = function(){
-  ee.import('some-file',"#Imported markdown\nFancy, huh?"); //Imports a file when the user clicks this button
+  editor.import('some-file',"#Imported markdown\nFancy, huh?"); //Imports a file when the user clicks this button
 }
 ```
 
 <h6 id="api-rename">rename(<em>oldName</em>,<em>newName</em>)</h6>
+
 Renames a file.
 
 **Example:**
@@ -192,50 +211,54 @@ Renames a file.
 ```javascript
 renameFileBtn.onclick = function(){
   var newName = prompt('What do you want to rename this file to?');
-  ee.rename('old-filename',newName); //Prompts a user and renames a file on button click
+  editor.rename('old-filename',newName); //Prompts a user and renames a file on button click
 }
 ```
 
 <h6 id="api-save">save()</h6>
+
 Manually save a file. EpicEditor will save on keyup by default but if you are inserting content via ajax for example, this is useful.
 
 **Example:**
 
 ```javascript
 saveFileBtn.onclick = function(){
-  ee.save();
+  editor.save();
 }
 ```
 
 <h6 id="api-remove">remove(<em>name</em>)</h6>
+
 Deletes a file.
 
 **Example:**
 
 ```javascript
 removeFileBtn.onclick = function(){
-  ee.remove('some-file');
+  editor.remove('some-file');
 }
 ```
 
 <h6 id="api-on">on(<em>event</em>,<em>handler</em>)</h6>
+
 Sets up an event handler (callback) for a specified event. For all event types, see the <a href="#events">Events</a> section below.
 
 **Example:**
 
 ```javascript
-ee.on('unload',function(){
+editor.on('unload',function(){
   console.log('Editor was removed');
 });
 ```
 
 <h6 id="api-emit">emit(<em>event</em>)</h6>
+
 Sets off an event manually. Like jQuery's `.trigger()`
 
 **Example:**
 
 ```javascript
-ee.emit('unload'); //Would trigger the above handler
+editor.emit('unload'); //Would trigger the above handler
 ```
 
 <h6 id="api-removeListener">removeListener(<em>event</em>,[<em>handler</em>])</h6>
@@ -245,39 +268,42 @@ Allows you to remove all listeners for an event, or just the specified one.
 **Example:**
 
 ```javascript
-ee.removeListener('unload'); //The handler above would no longer fire
+editor.removeListener('unload'); //The handler above would no longer fire
 ```
 
 <h6 id="api-preview">preview()</h6>
+
 Will put the editor into preview mode.
 
 **Example:**
 
 ```javascript
 previewBtn.onclick = function(){
-  ee.preview();
+  editor.preview();
 }
 ```
 
 <h6 id="api-edit">edit()</h6>
+
 Will put the editor into edit mode.
 
 **Example:**
 
 ```javascript
 editBtn.onclick = function(){
-  ee.edit();
+  editor.edit();
 }
 ```
 
 <h6 id="api-exportHTML">exportHTML()</h6>
+
 Will return the generated HTML from the Markdown that you see in the preview mode. Useful to saving content to a database.
 
 **Example:**
 
 ```javascript
 syncWithServerBtn.onclick = function(){
-  var theHTML = ee.exportHTML();
+  var theHTML = editor.exportHTML();
   saveToServerAjaxCall('/save',{data:theHTML},function(){
     console.log('data was saved to a db');
   });
@@ -287,21 +313,27 @@ syncWithServerBtn.onclick = function(){
 <h5 id="events">Events</h5>
 
 <h6 id="">load</h6>
+
 Fires when the editor is loaded via `.load()`.
 
 <h6 id="">unload</h6>
+
 Fires when the editor is unloaded via `.unload()`.
 
 <h6 id="">preview</h6>
+
 Fires when the user clicks the preview button, or when `.preview()` is called.
 
 <h6 id="">edit</h6>
+
 Fires when the user clicks the edit button, or when `.edit()` is called.
 
 <h6 id="">save</h6>
+
 Fires when the file is saved automatically by EpicEditor, or when `.save()` is called.
 
 <h6 id="">open</h6>
+
 Fires when the file is opened on load automatically by EpicEditor, or when `.open()` is called.
 
 ####Theming
