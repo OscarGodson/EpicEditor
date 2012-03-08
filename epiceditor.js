@@ -236,12 +236,12 @@
             name: fileName //Use the DOM element's ID for an unique persistent file name
           , defaultContent: ''
           }
-        , themes: {
+        , theme: {
             preview:'/themes/preview/preview-dark.css'
           , editor:'/themes/editor/epic-dark.css'
           }
         , focusOnLoad:false
-        , shortcuts: { 
+        , shortcut: { 
             modifier: 18 // alt keycode
           , fullscreen: 70 // f keycode
           , preview: 80 // p keycode
@@ -321,7 +321,7 @@
     var iframeBody = self.iframe.body;
     iframeBody.style.padding = '0';
     iframeBody.style.margin = '0';
-    _insertCSSLink(self.settings.basePath+self.settings.themes.editor,self.iframe);
+    _insertCSSLink(self.settings.basePath+self.settings.theme.editor,self.iframe);
     
     //Add a relative style to the overall wrapper to keep CSS relative to the editor
     self.iframe.getElementsByClassName('epiceditor-wrapper')[0].style.position = 'relative';
@@ -353,7 +353,7 @@
     }
 
     //Preload the preview theme:
-    _insertCSSLink(self.settings.basePath+self.settings.themes.preview, self.iframe, 'theme');
+    _insertCSSLink(self.settings.basePath+self.settings.theme.preview, self.iframe, 'theme');
 
     //If there is a file to be opened with that filename and it has content...
     this.open(self.settings.file.name);
@@ -501,25 +501,25 @@
     //Add keyboard shortcuts for convenience.
     var isMod = false;
     self.iframe.addEventListener('keyup', function(e){
-      if(e.keyCode === self.settings.shortcuts.modifier){ isMod = false };
+      if(e.keyCode === self.settings.shortcut.modifier){ isMod = false };
     });
     self.iframe.addEventListener('keydown', function(e){
-      if(e.keyCode === self.settings.shortcuts.modifier){ isMod = true }; //check for modifier press(default is alt key), save to var
+      if(e.keyCode === self.settings.shortcut.modifier){ isMod = true }; //check for modifier press(default is alt key), save to var
 
       //Check for alt+p and make sure were not in fullscreen - default shortcut to switch to preview
-      if(isMod === true && e.keyCode === self.settings.shortcuts.preview && !fullScreenApi.isFullScreen()){
+      if(isMod === true && e.keyCode === self.settings.shortcut.preview && !fullScreenApi.isFullScreen()){
         e.preventDefault();
         self.preview();
       }
       //Check for alt+o - default shortcut to switch back to the editor
-      if(isMod === true && e.keyCode === self.settings.shortcuts.edit){
+      if(isMod === true && e.keyCode === self.settings.shortcut.edit){
         e.preventDefault();
         if(!fullScreenApi.isFullScreen()){
           self.edit();
         }
       }
       //Check for alt+f - default shortcut to make editor fullscreen
-      if(isMod === true && e.keyCode === self.settings.shortcuts.fullscreen){
+      if(isMod === true && e.keyCode === self.settings.shortcut.fullscreen){
         e.preventDefault();
         //TODO remove this once issue #32 is fixed, but don't until #32 or else FF will error out
         if(document.body.webkitRequestFullScreen){
@@ -555,7 +555,7 @@
    */
   EpicEditor.prototype.preview = function(theme,live){
     var self = this
-    ,   themePath = self.settings.basePath+self.settings.themes.preview;
+    ,   themePath = self.settings.basePath+self.settings.theme.preview;
     if(typeof theme === 'boolean'){
       live = theme;
       theme = themePath
