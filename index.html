@@ -94,14 +94,14 @@
             <li><code>defaultContent</code>: The content to show if no content exists for that file.</li>
           </ul>
         </li>
-        <li><code>themes</code>
+        <li><code>theme</code>
           <ul>
             <li><code>editor</code>: The theme for the editor which is a textarea inside of an iframe.</li>
             <li><code>preview</code>: The theme for the previewer which is a div of content inside of an iframe.</li>
           </ul>
         </li>
         <li><code>focusOnLoad</code>: Will focus on the editor on load. It's <code>false</code> by default.</li>
-        <li><code>shortcuts</code>
+        <li><code>shortcut</code>
           <ul>
             <li><code>modifier</code>: The modifying key for shortcuts. It's <code>18</code> (the <kbd>alt</kbd> key) by default, to reduce default browser shortcut conflicts.</li>
             <li><code>fullscreen</code>: The fullscreen shortcut key. It's <code>70</code> (<kbd>f</kbd> key) by default.</li>
@@ -119,12 +119,12 @@
     name: 'epiceditor',
     defaultContent: ''
   },
-  themes: {
+  theme: {
     preview:'/themes/preview/preview-dark.css',
     editor:'/themes/editor/epic-dark.css'
   },
   focusOnLoad: false,
-  shortcuts: {
+  shortcut: {
     modifier: 18
     fullscreen: 70
     preview: 80
