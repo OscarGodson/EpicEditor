@@ -43,6 +43,7 @@
   font-size:14px;
   padding:10px;
   color:#141414;
+  line-height:1.35em;
 }
 
 .epiceditor-wrapper textarea:focus { outline:none; }

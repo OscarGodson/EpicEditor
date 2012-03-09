@@ -15,7 +15,7 @@
 }
 
 .epiceditor-preview {
-  font:13.34px helvetica,arial,freesans,clean,sans-serif;
+  font:14px helvetica,arial,freesans,clean,sans-serif;
   color:black;
   line-height:1.4em;
   background: #fff;
@@ -41,7 +41,7 @@
   margin:1em 0;
   font-size:12px;
   background-color:#eee;
-  border:1px solid lightgray;
+  border:1px solid #ccc;
   padding:5px;
   line-height:1.5em;
   color:#444;
@@ -59,7 +59,7 @@
   background-color:#eee;
   color:#444;
   padding:0 .2em;
-  border:1px solid lightgray;
+  border:1px solid #ccc;
 }
 .epiceditor-preview img{border:0;max-width:100%;}
 .epiceditor-preview abbr{border-bottom:none;}
@@ -68,10 +68,13 @@
 .epiceditor-preview a code,.epiceditor-preview a:link code,.epiceditor-preview a:visited code{color:#4183c4;}
 .epiceditor-preview h2,.epiceditor-preview h3{margin:1em 0;}
 .epiceditor-preview h1,.epiceditor-preview h2,.epiceditor-preview h3,.epiceditor-preview h4,.epiceditor-preview h5,.epiceditor-preview h6{border:0;}
-.epiceditor-preview h1{font-size:170%;border-top:4px solid #aaa;padding-top:.5em;margin-top:1.5em;}
-.epiceditor-preview h1:first-child{margin-top:0;padding-top:.25em;border-top:none;}
-.epiceditor-preview h2{font-size:150%;margin-top:1.5em;padding-top:.5em;}
-.epiceditor-preview h3{margin-top:1em;}
+.epiceditor-preview h1{font-size:28px;margin:10px 0 20px;line-height:44px;}
+.epiceditor-preview h1:first-child{margin-top:0;}
+.epiceditor-preview h2{font-size:24px;margin-top:20px; padding-bottom:10px; border-bottom:1px solid #ccc;}
+.epiceditor-preview h3{margin-top:18px; color:#333;}
+.epiceditor-preview h4{margin-top:16px; color:#333;}
+.epiceditor-preview h5{margin-top:14px; color:#333;}
+.epiceditor-preview h6{margin-top:14px; color:#777;}
 .epiceditor-preview hr{border:0;border-bottom:1px solid #ddd;}
 .epiceditor-preview ul{margin:1em 0;}
 .epiceditor-preview ol{margin:1em 0;}

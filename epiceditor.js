@@ -227,9 +227,10 @@
         , file: {
             name: opts.container || 'epiceditor' //Use the container's ID for an unique persistent file name - will be overwritten if passed a file.name opt
           , defaultContent: ''
+          , autoSave: 100 //Set to false for no auto saving
           }
         , theme: {
-            preview:'/themes/preview/preview-dark.css'
+            preview:'/themes/preview/github.css'
           , editor:'/themes/editor/epic-dark.css'
           }
         , focusOnLoad:false
@@ -486,13 +487,13 @@
       iframeElement.style.width  = self.element.offsetWidth - widthDiff +'px';
     });
 
-    //TODO: This should have a timer to save on performance
-    //TODO: The save file shoudl be dynamic, not just default
-    //On keyup, save the content to the proper file for offline use
-    self.editor.addEventListener('keyup',function(){
-      self.content = this.value;
-      self.save(self.settings.file.name,this.value);
-    });
+    //Save the document every 100ms by default
+    if(self.settings.file.autoSave){
+      var saveTimer = window.setInterval(function(){
+        self.content = this.value;
+        self.save(self.settings.file.name,this.value);
+      },self.settings.file.autoSave);
+    }
 
     //Add keyboard shortcuts for convenience.
     var isMod = false;

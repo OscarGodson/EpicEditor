@@ -5,7 +5,7 @@
 .epiceditor-wrapper {
   background:rgb(241,241,241);  
 }
-.epiceditor-utilbar {
+.epiceditor-edit-mode .epiceditor-utilbar {
   position:fixed;
   bottom:10px;
   right:10px;
@@ -42,6 +42,7 @@
   font-size:14px;
   padding:10px;
   color:#ddd;
+  line-height:1.35em;
 }
 
 .epiceditor-wrapper textarea:focus { outline:none; }
