@@ -218,22 +218,14 @@
    * @returns {object} EpicEditor will be returned
    */
   function EpicEditor(options){
-    var uId = 'epiceditor-'+Math.round(Math.random()*100000)
-      , fileName = options.element ? options.element.id : 'epiceditor';
-
-    //TODO: Check for data-filename as well
-    if(!fileName){ //If there is no id on the element to use, just use "default"
-      fileName = 'default';
-    }
-
     //Default settings will be overwritten/extended by options arg
-    var defaults = {
-          id: uId //Because there might be multiple editors, we create a random id
-        , container: 'epiceditor'
+    var opts = options || {}
+      , defaults = {
+          container: 'epiceditor'
         , basePath: 'epiceditor'
         , localStorageName: 'epiceditor'
         , file: {
-            name: fileName //Use the DOM element's ID for an unique persistent file name
+            name: opts.container || 'epiceditor' //Use the container's ID for an unique persistent file name - will be overwritten if passed a file.name opt
           , defaultContent: ''
           }
         , theme: {
@@ -249,8 +241,12 @@
           }
         };
 
-    this.settings = _mergeObjs(true, defaults, options);
-
+    this.settings = _mergeObjs(true, defaults, opts);
+    
+    // Protect the id and overwrite if passed in as an option
+    // TODO: Consider moving this off of the settings object to something like this.instanceId or this.iframeId
+    this.settings.id = 'epiceditor-'+Math.round(Math.random()*100000);
+    
     //Setup local storage of files
     if(localStorage){
       if(!localStorage[this.settings.localStorageName]){
