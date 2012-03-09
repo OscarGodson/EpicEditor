@@ -1,8 +1,4 @@
-**alpha 0.0.3**
-
-_Note: this is a developer preview. We're releasing early so we can get other people's input and pull requests. While it works, there are still bugs and missing features. Use at your own risk._
-
-#EpicEditor 
+#EpicEditor
 
 ##An Embeddable JavaScript Markdown Editor
 
