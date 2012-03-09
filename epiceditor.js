@@ -539,6 +539,8 @@
     var self = this;
     var editor = window.parent.document.getElementById(self.settings.id);
     editor.parentNode.removeChild(editor);
+    callback = callback || function(){};
+    
     callback.call(this);
     self.emit('unload');
     return self;
