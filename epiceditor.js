@@ -78,11 +78,11 @@
    * @returns {int}
    */
   function _outerWidth(el){
-    var b = parseInt(_getStyle(el,'border-left-width'))+parseInt(_getStyle(el,'border-right-width'))
-    ,   p = parseInt(_getStyle(el,'padding-left'))+parseInt(_getStyle(el,'padding-right'))
+    var b = parseInt(_getStyle(el,'border-left-width'), 10)+parseInt(_getStyle(el,'border-right-width'), 10)
+    ,   p = parseInt(_getStyle(el,'padding-left'), 10)+parseInt(_getStyle(el,'padding-right'), 10)
     ,   w = el.offsetWidth
     //For IE in case no border is set and it defaults to "medium"
-    if(isNaN(b)){ var b = 0; }
+    if(isNaN(b)){ b = 0; }
     var t = b+p+w;
     return t;
   }
@@ -93,11 +93,11 @@
    * @returns {int}
    */
   function _outerHeight(el){
-    var b = parseInt(_getStyle(el,'border-top-width'))+parseInt(_getStyle(el,'border-bottom-width'))
-    ,   p = parseInt(_getStyle(el,'padding-top'))+parseInt(_getStyle(el,'padding-bottom'))
+    var b = parseInt(_getStyle(el,'border-top-width'), 10)+parseInt(_getStyle(el,'border-bottom-width'), 10)
+    ,   p = parseInt(_getStyle(el,'padding-top'), 10)+parseInt(_getStyle(el,'padding-bottom'), 10)
     ,   w = el.offsetHeight
     //For IE in case no border is set and it defaults to "medium"
-    if(isNaN(b)){ var b = 0; }
+    if(isNaN(b)){ b = 0; }
     var t = b+p+w;
     return t;
   }
@@ -123,7 +123,6 @@
     , media: 'screen'
     });
 
-    cssNode.media = 'screen';
     headID.appendChild(cssNode);
   }
 
@@ -143,9 +142,18 @@
       var ua = navigator.userAgent;
       var re  = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
       if (re.exec(ua) != null)
-        rv = parseFloat( RegExp.$1 );
+        rv = parseFloat( RegExp.$1, 10 );
     }
     return rv;
+  }
+
+  /**
+   * Determines if supplied value is a function
+   * @param {object} object to determine type
+   */
+  function _isFunction(functionToCheck) {
+      var getType = {};
+      return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
   }
 
   /**
@@ -159,10 +167,6 @@
     // copy reference to target object
     var target = arguments[0] || {}, i = 1, length = arguments.length, deep = false, options;
 
-    function isFunction(functionToCheck) {
-      var getType = {};
-      return functionToCheck && getType.toString.call(functionToCheck) == '[object Function]';
-    }
     // Handle a deep copy situation
     if (typeof target === "boolean"){
       deep = target;
@@ -172,7 +176,7 @@
     }
 
     // Handle case when target is a string or something (possible in deep copy)
-    if (typeof target !== "object" && !isFunction(target)){
+    if (typeof target !== "object" && !_isFunction(target)){
       target = {};
     }
     // extend jQuery itself if only one argument is passed
