@@ -33,12 +33,6 @@
   a+'">'+a+"</a>").replace(/">.+:/g,'">')},x=function(a){return a=a.replace(/~E(\d+)E/g,function(a,b){var e=parseInt(b);return String.fromCharCode(e)})},u=function(a){a=a.replace(/^(\t|[ ]{1,4})/gm,"~0");return a=a.replace(/~0/g,"")},v=function(a){a=a.replace(/\t(?=\t)/g,"    ");a=a.replace(/\t/g,"~A~B");a=a.replace(/~B(.+?)~A/g,function(a,b){for(var e=b,d=4-e.length%4,f=0;f<d;f++)e+=" ";return e});a=a.replace(/~A/g,"    ");return a=a.replace(/~B/g,"")},l=function(a,c,b){c="(["+c.replace(/([\[\]\\])/g,
   "\\$1")+"])";b&&(c="\\\\"+c);return a=a.replace(RegExp(c,"g"),r)},r=function(a,c){return"~E"+c.charCodeAt(0)+"E"}};
 
-  //Fullscreen API wrapper ( http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugin/ )
-  //TODO: Need a new wrapper with support for W3C spec
-  (function(){var a={supportsFullScreen:!1,isFullScreen:function(){return!1},requestFullScreen:function(){},cancelFullScreen:function(){},fullScreenEventName:"",prefix:""},c="webkit moz o ms khtml".split(" ");if("undefined"!=typeof document.cancelFullScreen)a.supportsFullScreen=!0;else for(var b=0,d=c.length;b<d;b++)if(a.prefix=c[b],"undefined"!=typeof document[a.prefix+"CancelFullScreen"]){a.supportsFullScreen=!0;break}if(a.supportsFullScreen)a.fullScreenEventName=a.prefix+"fullscreenchange",a.isFullScreen=
-  function(){switch(this.prefix){case "":return document.fullScreen;case "webkit":return document.webkitIsFullScreen;default:return document[this.prefix+"FullScreen"]}},a.requestFullScreen=function(a){return""===this.prefix?a.requestFullScreen():a[this.prefix+"RequestFullScreen"]()},a.cancelFullScreen=function(){return""===this.prefix?document.cancelFullScreen():document[this.prefix+"CancelFullScreen"]()};if("undefined"!=typeof jQuery)jQuery.fn.requestFullScreen=function(){return this.each(function(){a.supportsFullScreen&&
-  a.requestFullScreen(this)})};window.fullScreenApi=a})();
-
   /**
    * Applies attributes to a DOM object
    * @param  {object} context The DOM obj you want to apply the attributes to
@@ -47,8 +41,22 @@
    */
   function _applyAttrs(context,attrs){
     for(var attr in attrs){
-       if(attrs.hasOwnProperty(attr)) {
+       if(attrs.hasOwnProperty(attr)){
         context[attr] = attrs[attr];
+      }
+    }
+  }
+
+  /**
+   * Applies styles to a DOM object
+   * @param  {object} context The DOM obj you want to apply the attributes to
+   * @param  {object} attrs A key/value pair of attributes you want to apply
+   * @returns {undefined}
+   */
+  function _applyStyles(context,attrs){
+    for(var attr in attrs){
+       if(attrs.hasOwnProperty(attr)){
+        context.style[attr] = attrs[attr];
       }
     }
   }
@@ -61,15 +69,38 @@
    */
   function _getStyle(el,styleProp){
     var x = el
-    ,   y = null;
-      
-    if (window.getComputedStyle) {
+      , y = null;
+    if (window.getComputedStyle){
       y = document.defaultView.getComputedStyle(x,null).getPropertyValue(styleProp); 
-    } else if (x.currentStyle) {
+    } 
+    else if (x.currentStyle){
       y = x.currentStyle[styleProp];
     }
-
     return y;
+  }
+
+  function _saveStyleState(el){
+    var state = {}
+      ,  styles;
+    if (window.getComputedStyle){
+      styles = document.defaultView.getComputedStyle(el,null);
+      for(var style in styles){
+        if(styles.hasOwnProperty(style)){
+          //Some keys are just numbers for some reason, so rip those out
+          if(isNaN(parseInt(style))){
+            state[style] = styles.getPropertyValue(style);
+          }
+        }
+      }
+    }
+    else if (x.currentStyle){
+      //y = x.currentStyle[styleProp];
+    }
+    return state;
+  }
+
+  function _revertStyleState(el,state){
+    _applyStyles(el,state);
   }
 
   /**
@@ -79,8 +110,8 @@
    */
   function _outerWidth(el){
     var b = parseInt(_getStyle(el,'border-left-width'))+parseInt(_getStyle(el,'border-right-width'))
-    ,   p = parseInt(_getStyle(el,'padding-left'))+parseInt(_getStyle(el,'padding-right'))
-    ,   w = el.offsetWidth
+      , p = parseInt(_getStyle(el,'padding-left'))+parseInt(_getStyle(el,'padding-right'))
+      , w = el.offsetWidth
     //For IE in case no border is set and it defaults to "medium"
     if(isNaN(b)){ var b = 0; }
     var t = b+p+w;
@@ -94,8 +125,8 @@
    */
   function _outerHeight(el){
     var b = parseInt(_getStyle(el,'border-top-width'))+parseInt(_getStyle(el,'border-bottom-width'))
-    ,   p = parseInt(_getStyle(el,'padding-top'))+parseInt(_getStyle(el,'padding-bottom'))
-    ,   w = el.offsetHeight
+      , p = parseInt(_getStyle(el,'padding-top'))+parseInt(_getStyle(el,'padding-bottom'))
+      , w = el.offsetHeight
     //For IE in case no border is set and it defaults to "medium"
     if(isNaN(b)){ var b = 0; }
     var t = b+p+w;
@@ -281,6 +312,13 @@
 
     callback = callback || function(){};
 
+    //This needs to replace the use of classes to check the state of EE
+    self.eeState = {
+      fullscreen: false
+    , preview: false
+    , edit: true
+    }
+
   //The editor HTML
   //TODO: edit-mode class should be dynamicly added!
   var _HtmlTemplate = '<div class="epiceditor-wrapper epiceditor-edit-mode">'+
@@ -307,7 +345,6 @@
     self.iframe.write(_HtmlTemplate);
 
     //Set the default styles for the iframe
-
     var widthDiff = _outerWidth(this.element) - this.element.offsetWidth;
     var heightDiff = _outerHeight(this.element) - this.element.offsetHeight;
 
@@ -360,10 +397,9 @@
     }
 
     //Sets up the onclick event on the previewer/editor toggle button
-    //TODO: Should use EE's state object rather than classes
     self.iframe.getElementsByClassName('epiceditor-toggle-btn')[0].addEventListener('click',function(){
       //If it was in edit mode...
-      if(self.get('wrapper').className.indexOf('epiceditor-edit-mode') > -1){
+      if(self.eeState.edit){
         self.preview();
       }
       //If it was in preview mode...
@@ -372,13 +408,80 @@
       }
     });
 
+    var utilBtns = self.iframe.getElementsByClassName('epiceditor-utilbar')[0];
+
+    var goFullscreen = function(el){
+        var nativeFs = el.webkitRequestFullScreen ? true : false;
+
+        if(nativeFs){
+          el.webkitRequestFullScreen();
+        }
+
+        //Set the state. of EE in fullscreen
+        self.eeState.fullscreen = true;
+        self.eeState.edit = true;
+        self.eeState.preview = true;
+
+        savedElementStates = {
+          'editor': _saveStyleState(self.editor)
+        , 'previewer': _saveStyleState(self.previewer)
+        , 'element': _saveStyleState(self.element)
+        , 'iframe': _saveStyleState(self.iframeElement)
+        }
+
+        //Setup the containing element CSS for fullscreen
+        _applyStyles(self.element,{
+          'position':'fixed'
+        , 'top':'0'
+        , 'left':'0'
+        , 'width':'100%'
+        , 'z-index':'9999' //Most browsers
+        , 'zIndex':'9999' //Firefox
+        , 'border':'none'
+        });
+
+        //The iframe element
+        _applyStyles(self.iframeElement,{
+          'width':window.innerWidth+'px'
+        , 'height':window.innerHeight+'px'
+        });
+
+        //...the editor...
+        _applyStyles(self.editor,{
+          'width':window.outerWidth/2+'px'
+        , 'height':window.outerHeight+'px'
+        , 'float':'left' //Most browsers
+        , 'cssFloat':'left' //FF
+        , 'styleFloat':'left' //Older IEs
+        , 'display':'block'
+        });
+
+        //...and finally, the previewer
+        _applyStyles(self.previewer,{
+          'width':(window.outerWidth-_outerWidth(self.editor))+'px'
+        , 'height':window.outerHeight+'px'
+        , 'float':'right' //Most browsers
+        , 'cssFloat':'right' //FF
+        , 'styleFloat':'right' //Older IEs
+        , 'display':'block'
+        });
+
+        //...Oh, and hide the buttons and prevent scrolling
+        utilBtns.style.visibility = 'hidden';
+        document.body.style.overflow = 'hidden';
+
+        self.preview(true);
+        self.editor.addEventListener('keyup',function(){ self.preview(true); });
+    }
+
+
+
+
+    var fsElement = document.getElementById(self.settings.id);
+
     //Sets up the fullscreen editor/previewer
     //TODO: Deal with the fact Firefox doesn't really support fullscreen and don't browser sniff
-    if (fullScreenApi.supportsFullScreen && document.body.webkitRequestFullScreen) {
-      var fsElement = document.getElementById(self.settings.id)
-      ,   fsBtns = self.iframe.getElementsByClassName('epiceditor-utilbar')[0];
-
-
+    if(document.body.webkitRequestFullScreen) {
       //A simple helper to save the state of the styles on an element to make reverting easier
       var currentStyleState = [];
       var styleState = function(e,t){
@@ -409,33 +512,16 @@
         if(_getStyle(self.previewer,'display') === 'block'){
           revertBackTo = self.previewer;
         }
-        fullScreenApi.requestFullScreen(fsElement);
+        goFullscreen(fsElement);
       });
-      fsElement.addEventListener(fullScreenApi.fullScreenEventName,function(){
-        if (fullScreenApi.isFullScreen()) {
-          fsBtns.style.visibility = 'hidden';
 
-          //Editor styles
-          self.editor.style.height  = window.outerHeight+'px';
-          self.editor.style.width   = window.outerWidth/2+'px'; //Half of the screen
-          self.editor.style.float   = 'left';
-          self.editor.style.display = 'block';
 
-          //Previewer styles
-          self.previewer.style.height  = window.outerHeight+'px'
-          self.previewer.style.width   = (window.outerWidth-_outerWidth(self.editor))+'px'; //Fill in the remaining space
-          self.previewer.style.float   = 'right';
-          self.previewer.style.display = 'block';
-
-          self.preview(true);
-
-          var fullscreenLivePreview = self.editor.addEventListener('keyup',function(){
-            self.preview(true);
-          });
-
+      fsElement.addEventListener('webkitfullscreenchange',function(){
+        if(document.webkitIsFullScreen){
+          goFullscreen(fsElement);
         }
         else{
-          fsBtns.style.visibility = 'visible';
+          utilBtns.style.visibility = 'visible';
           styleState(self.editor);
           styleState(self.previewer);
           if(revertBackTo === self.editor){
@@ -445,11 +531,7 @@
             self.preview();
           }
         }
-      }, true);
-    }
-    else{
-      //TODO: homebrew support by position:fixed and width/height 100% of document size
-      self.iframe.getElementsByClassName('epiceditor-fullscreen-btn')[0].style.display = 'none';
+      }, false);
     }
 
     var utilBar = self.iframe.getElementsByClassName('epiceditor-utilbar')[0];
@@ -496,7 +578,9 @@
     }
 
     //Add keyboard shortcuts for convenience.
-    var isMod = false;
+    var isMod = false
+      , savedElementStates;
+
     self.iframe.addEventListener('keyup', function(e){
       if(e.keyCode === self.settings.shortcut.modifier){ isMod = false };
     });
@@ -504,24 +588,51 @@
       if(e.keyCode === self.settings.shortcut.modifier){ isMod = true }; //check for modifier press(default is alt key), save to var
 
       //Check for alt+p and make sure were not in fullscreen - default shortcut to switch to preview
-      if(isMod === true && e.keyCode === self.settings.shortcut.preview && !fullScreenApi.isFullScreen()){
+      if(isMod === true && e.keyCode === self.settings.shortcut.preview && !self.eeState.fullscreen){
         e.preventDefault();
         self.preview();
       }
       //Check for alt+o - default shortcut to switch back to the editor
       if(isMod === true && e.keyCode === self.settings.shortcut.edit){
         e.preventDefault();
-        if(!fullScreenApi.isFullScreen()){
+        if(!self.eeState.fullscreen){
           self.edit();
         }
       }
       //Check for alt+f - default shortcut to make editor fullscreen
       if(isMod === true && e.keyCode === self.settings.shortcut.fullscreen){
         e.preventDefault();
-        //TODO remove this once issue #32 is fixed, but don't until #32 or else FF will error out
-        if(document.body.webkitRequestFullScreen){
-          fullScreenApi.requestFullScreen(fsElement);
-        }
+        goFullscreen(fsElement);
+      }
+
+      //When a user presses "esc", revert everything!
+      if(e.keyCode == 27 && self.eeState.fullscreen){
+        _revertStyleState(self.element,savedElementStates.element);
+        _revertStyleState(self.iframeElement,savedElementStates.iframe);
+        _revertStyleState(self.previewer,savedElementStates.previewer);
+        _revertStyleState(self.editor,savedElementStates.editor);
+        utilBtns.style.visibility = 'visible';
+        document.body.style.overflow = 'auto';
+        //self.editor.removeEventListener('keyup',livePreview);
+      }
+    });
+
+    window.addEventListener('resize',function(){
+      if(self.eeState.fullscreen){
+        _applyStyles(self.previewer,{
+          'width':(window.outerWidth-_outerWidth(self.editor))+'px'
+        , 'height':window.outerHeight+'px'
+        });
+
+        _applyStyles(self.editor,{
+          'width':window.outerWidth/2+'px'
+        , 'height':window.outerHeight+'px'
+        });
+
+        _applyStyles(self.iframeElement,{
+          'width':window.innerWidth+'px'
+        , 'height':window.innerHeight+'px'
+        });
       }
     });
 
@@ -554,7 +665,7 @@
    */
   EpicEditor.prototype.preview = function(theme,live){
     var self = this
-    ,   themePath = self.settings.basePath+self.settings.theme.preview;
+      , themePath = self.settings.basePath+self.settings.theme.preview;
     if(typeof theme === 'boolean'){
       live = theme;
       theme = themePath
@@ -564,6 +675,8 @@
     }
 
     _replaceClass(self.get('wrapper'),'epiceditor-edit-mode','epiceditor-preview-mode');
+    self.eeState.preview = true;
+    self.eeState.edit = false;
 
     //Check if no CSS theme link exists
     if(!self.iframe.getElementById('theme')){
@@ -593,6 +706,8 @@
   EpicEditor.prototype.edit = function(){
     var self = this;
     _replaceClass(self.get('wrapper'),'epiceditor-preview-mode','epiceditor-edit-mode');
+    self.eeState.preview = false;
+    self.eeState.edit = true;
     this.editor.style.display = 'block';
     this.previewer.style.display = 'none';
     self.emit('edit');
