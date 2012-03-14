@@ -79,30 +79,6 @@
     return y;
   }
 
-  function _saveStyleState(el){
-    var state = {}
-      ,  styles;
-    if (window.getComputedStyle){
-      styles = document.defaultView.getComputedStyle(el,null);
-      for(var style in styles){
-        if(styles.hasOwnProperty(style)){
-          //Some keys are just numbers for some reason, so rip those out
-          if(isNaN(parseInt(style))){
-            state[style] = styles.getPropertyValue(style);
-          }
-        }
-      }
-    }
-    else if (x.currentStyle){
-      //y = x.currentStyle[styleProp];
-    }
-    return state;
-  }
-
-  function _revertStyleState(el,state){
-    _applyStyles(el,state);
-  }
-
   /**
    * Gets an elements total width including it's borders and padding
    * @param  {object} el The element to get the total width of
@@ -414,126 +390,128 @@
 
     var utilBtns = self.iframe.getElementsByClassName('epiceditor-utilbar')[0];
 
-    var goFullscreen = function(el){
-        var nativeFs = el.webkitRequestFullScreen ? true : false;
 
-        if(nativeFs){
-          el.webkitRequestFullScreen();
+    var _saveStyleState = function(el,type,styles){
+      var returnState = {};
+      if(type === 'save'){
+        for(style in styles){
+          if(styles.hasOwnProperty(style)){
+            returnState[style] = _getStyle(el,style);
+          }
         }
-
-        //Set the state. of EE in fullscreen
-        self.eeState.fullscreen = true;
-        self.eeState.edit = true;
-        self.eeState.preview = true;
-
-        savedElementStates = {
-          'editor': _saveStyleState(self.editor)
-        , 'previewer': _saveStyleState(self.previewer)
-        , 'element': _saveStyleState(self.element)
-        , 'iframe': _saveStyleState(self.iframeElement)
-        }
-
-        //Setup the containing element CSS for fullscreen
-        _applyStyles(self.element,{
-          'position':'fixed'
-        , 'top':'0'
-        , 'left':'0'
-        , 'width':'100%'
-        , 'z-index':'9999' //Most browsers
-        , 'zIndex':'9999' //Firefox
-        , 'border':'none'
-        });
-
-        //The iframe element
-        _applyStyles(self.iframeElement,{
-          'width':window.innerWidth+'px'
-        , 'height':window.innerHeight+'px'
-        });
-
-        //...the editor...
-        _applyStyles(self.editor,{
-          'width':window.outerWidth/2+'px'
-        , 'height':window.outerHeight+'px'
-        , 'float':'left' //Most browsers
-        , 'cssFloat':'left' //FF
-        , 'styleFloat':'left' //Older IEs
-        , 'display':'block'
-        });
-
-        //...and finally, the previewer
-        _applyStyles(self.previewer,{
-          'width':(window.outerWidth-_outerWidth(self.editor))+'px'
-        , 'height':window.outerHeight+'px'
-        , 'float':'right' //Most browsers
-        , 'cssFloat':'right' //FF
-        , 'styleFloat':'right' //Older IEs
-        , 'display':'block'
-        });
-
-        //...Oh, and hide the buttons and prevent scrolling
-        utilBtns.style.visibility = 'hidden';
-        document.body.style.overflow = 'hidden';
-
-        self.preview(true);
-        self.editor.addEventListener('keyup',function(){ self.preview(true); });
+        //After it's all done saving all the previous states, change the styles
+        _applyStyles(el,styles);
+      }
+      else if(type === 'apply'){
+        _applyStyles(el,styles);
+      }
+      return returnState;
     }
 
+    var _elementStates = {};
+    var _goFullscreen = function(el){
+      var nativeFs = el.webkitRequestFullScreen ? true : false;
 
+      if(nativeFs){
+        el.webkitRequestFullScreen();
+      }
+
+      //Set the state. of EE in fullscreen
+      //We set edit and preview to true also because they're visible
+      //we might want to allow fullscreen edit mode without preview (like a "zen" mode)
+      self.eeState.fullscreen = true;
+      self.eeState.edit = true;
+      self.eeState.preview = true;
+
+      //Cache calculations
+      var windowInnerWidth = window.innerWidth
+        , windowInnerHeight = window.innerHeight
+        , windowOuterWidth = window.outerWidth
+        , windowOuterHeight = window.outerHeight;
+
+      //Setup the containing element CSS for fullscreen
+      _elementStates.element = _saveStyleState(self.element,'save',{
+        'position':'fixed'
+      , 'top':'0'
+      , 'left':'0'
+      , 'width':'100%'
+      , 'z-index':'9999' //Most browsers
+      , 'zIndex':'9999' //Firefox
+      , 'border':'none'
+      , 'background':_getStyle(self.editor,'background-color') //Try to hide the site below
+      , 'height':windowInnerHeight+'px'
+      });
+
+      //The iframe element
+      _elementStates.iframeElement = _saveStyleState(self.iframeElement,'save',{
+        'width':windowInnerWidth+'px'
+      , 'height':windowInnerHeight+'px'
+      });
+
+      //...the editor...
+      _elementStates.editor = _saveStyleState(self.editor,'save',{
+        'width':windowOuterWidth/2+'px'
+      , 'height':windowOuterHeight+'px'
+      , 'float':'left' //Most browsers
+      , 'cssFloat':'left' //FF
+      , 'styleFloat':'left' //Older IEs
+      , 'display':'block'
+      });
+
+      //...and finally, the previewer
+      _elementStates.previewer = _saveStyleState(self.previewer,'save',{
+        'width':(windowOuterWidth-_outerWidth(self.editor))+'px'
+      , 'height':windowOuterHeight+'px'
+      , 'float':'right' //Most browsers
+      , 'cssFloat':'right' //FF
+      , 'styleFloat':'right' //Older IEs
+      , 'display':'block'
+      });
+
+      console.log(_elementStates.element,_elementStates.iframeElement,_elementStates.editor,_elementStates.previewer);
+
+      //...Oh, and hide the buttons and prevent scrolling
+      utilBtns.style.visibility = 'hidden';
+
+      if(!nativeFs){
+        document.body.style.overflow = 'hidden';
+      }
+
+      self.preview(true);
+      self.editor.addEventListener('keyup',function(){ self.preview(true); });
+    };
+
+    var _exitFullscreen = function(el){
+      var nativeFs = el.webkitRequestFullScreen ? true : false;
+      _saveStyleState(self.element,'apply',_elementStates.element);
+      _saveStyleState(self.iframeElement,'apply',_elementStates.iframeElement);
+      _saveStyleState(self.editor,'apply',_elementStates.editor);
+      _saveStyleState(self.previewer,'apply',_elementStates.previewer);
+      utilBtns.style.visibility = 'hidden';
+      if(!nativeFs){
+        document.body.style.overflow = 'auto';
+      }
+    };
 
 
     var fsElement = document.getElementById(self.settings.id);
 
-    //Sets up the fullscreen editor/previewer
-    //TODO: Deal with the fact Firefox doesn't really support fullscreen and don't browser sniff
-    if(document.body.webkitRequestFullScreen) {
-      //A simple helper to save the state of the styles on an element to make reverting easier
-      var currentStyleState = [];
-      var styleState = function(e,t){
-        t = t || 'load';
-        if(t === 'save'){
-          currentStyleState[e] = {
-            width:_getStyle(e,'width')
-          , height:_getStyle(e,'height')
-          , float:_getStyle(e,'float')
-          , display:_getStyle(e,'display')
-          }
-        }
-        else{
-          for(x in currentStyleState[e]){
-            if(currentStyleState[e].hasOwnProperty(x)){
-              e.style[x] = currentStyleState[e][x];
-            }
-          }
-        }
-      }
-
-      styleState(self.editor,'save');
-      styleState(self.previewer,'save');
-
-      var revertBackTo = self.editor;
-
+    //Sets up the NATIVE fullscreen editor/previewer for WebKit
+    if(document.body.webkitRequestFullScreen){
       self.iframe.getElementsByClassName('epiceditor-fullscreen-btn')[0].addEventListener('click',function(){
         if(_getStyle(self.previewer,'display') === 'block'){
           revertBackTo = self.previewer;
         }
-        goFullscreen(fsElement);
+        _goFullscreen(fsElement);
       });
 
 
       fsElement.addEventListener('webkitfullscreenchange',function(){
         if(document.webkitIsFullScreen){
-          goFullscreen(fsElement);
+          //_goFullscreen(fsElement);
         }
         else{
-          utilBtns.style.visibility = 'visible';
-          styleState(self.editor);
-          styleState(self.previewer);
-          if(revertBackTo === self.editor){
-            self.edit(); 
-          }
-          else{
-            self.preview();
-          }
+          _exitFullscreen(fsElement);
         }
       }, false);
     }
@@ -567,12 +545,6 @@
       mousePos = { y:e.pageY, x:e.pageX };
     });
 
-    //Make sure, on window resize, if the containing element changes size keep it fitting inside
-    window.addEventListener('resize',function(){
-      var widthDiff = _outerWidth(self.element) - self.element.offsetWidth;
-      iframeElement.style.width  = self.element.offsetWidth - widthDiff +'px';
-    });
-
     //Save the document every 100ms by default
     if(self.settings.file.autoSave){
       var saveTimer = window.setInterval(function(){
@@ -582,8 +554,7 @@
     }
 
     //Add keyboard shortcuts for convenience.
-    var isMod = false
-      , savedElementStates;
+    var isMod = false;
 
     self.iframe.addEventListener('keyup', function(e){
       if(e.keyCode === self.settings.shortcut.modifier){ isMod = false };
@@ -606,22 +577,21 @@
       //Check for alt+f - default shortcut to make editor fullscreen
       if(isMod === true && e.keyCode === self.settings.shortcut.fullscreen){
         e.preventDefault();
-        goFullscreen(fsElement);
+        _goFullscreen(fsElement);
       }
 
       //When a user presses "esc", revert everything!
       if(e.keyCode == 27 && self.eeState.fullscreen){
-        _revertStyleState(self.element,savedElementStates.element);
-        _revertStyleState(self.iframeElement,savedElementStates.iframe);
-        _revertStyleState(self.previewer,savedElementStates.previewer);
-        _revertStyleState(self.editor,savedElementStates.editor);
-        utilBtns.style.visibility = 'visible';
-        document.body.style.overflow = 'auto';
-        //self.editor.removeEventListener('keyup',livePreview);
+        if(!document.body.webkitRequestFullScreen){
+          _exitFullscreen(fsElement);
+        }
       }
     });
 
     window.addEventListener('resize',function(){
+      var widthDiff = _outerWidth(self.element) - self.element.offsetWidth;
+      iframeElement.style.width  = self.element.offsetWidth - widthDiff +'px';
+
       if(self.eeState.fullscreen){
         _applyStyles(self.previewer,{
           'width':(window.outerWidth-_outerWidth(self.editor))+'px'
