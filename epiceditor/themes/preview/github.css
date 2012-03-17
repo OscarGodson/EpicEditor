@@ -1,3 +1,13 @@
+.epiceditor-utilbar {
+  position:fixed;
+  bottom:10px;
+  right:10px;
+  padding:5px;
+  border-radius:3px;
+  box-shadow:0 0 5px rgba(0,0,0,0.25);
+  background:rgba(0,0,0,.3);
+}
+
 .epiceditor-wrapper{
 	background:white;
 }
@@ -21,7 +31,7 @@
 
 
 .epiceditor-preview a{
-	color:blue;
+	color:#4183C4;
 	text-decoration:none;
 }
 
