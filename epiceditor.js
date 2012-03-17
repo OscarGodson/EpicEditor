@@ -382,15 +382,14 @@
       }
     });
 
+    //TODO Should probably have an ID since we only select one
     var utilBtns = self.iframe.getElementsByClassName('epiceditor-utilbar')[0];
 
-   console.log(_getStyle(self.editor,'width'));
     var _saveStyleState = function(el,type,styles){
       var returnState = {};
       if(type === 'save'){
         for(style in styles){
           if(styles.hasOwnProperty(style)){
-            if(el == self.editor && style == 'width'){ console.log(_getStyle(el,style),window.innerWidth); }
             returnState[style] = _getStyle(el,style);
           }
         }
@@ -420,26 +419,8 @@
         , windowOuterWidth = window.outerWidth
         , windowOuterHeight = window.outerHeight;
 
-      //Setup the containing element CSS for fullscreen
-      _elementStates.element = _saveStyleState(self.element,'save',{
-        'position':'fixed'
-      , 'top':'0'
-      , 'left':'0'
-      , 'width':'100%'
-      , 'z-index':'9999' //Most browsers
-      , 'zIndex':'9999' //Firefox
-      , 'border':'none'
-      , 'background':_getStyle(self.editor,'background-color') //Try to hide the site below
-      , 'height':windowInnerHeight+'px'
-      });
-
-      //The iframe element
-      _elementStates.iframeElement = _saveStyleState(self.iframeElement,'save',{
-        'width':windowInnerWidth+'px'
-      , 'height':windowInnerHeight+'px'
-      });
-
-      //...the editor...
+      //This MUST come first because the editor is 100% width so if we change the width of the iframe or wrapper
+      //the editor's width wont be the same as before
       _elementStates.editor = _saveStyleState(self.editor,'save',{
         'width':windowOuterWidth/2+'px'
       , 'height':windowOuterHeight+'px'
@@ -459,6 +440,25 @@
       , 'display':'block'
       });
 
+      //Setup the containing element CSS for fullscreen
+      _elementStates.element = _saveStyleState(self.element,'save',{
+        'position':'fixed'
+      , 'top':'0'
+      , 'left':'0'
+      , 'width':'100%'
+      , 'z-index':'9999' //Most browsers
+      , 'zIndex':'9999' //Firefox
+      , 'border':'none'
+      , 'background':_getStyle(self.editor,'background-color') //Try to hide the site below
+      , 'height':windowInnerHeight+'px'
+      });
+
+      //The iframe element
+      _elementStates.iframeElement = _saveStyleState(self.iframeElement,'save',{
+        'width':windowInnerWidth+'px'
+      , 'height':windowInnerHeight+'px'
+      });
+
       console.log(_elementStates.element,_elementStates.iframeElement,_elementStates.editor,_elementStates.previewer);
 
       //...Oh, and hide the buttons and prevent scrolling
@@ -468,7 +468,6 @@
         document.body.style.overflow = 'hidden';
       }
       else {
-        console.log('Native Fullscreen');
         el.webkitRequestFullScreen();
       }
       
