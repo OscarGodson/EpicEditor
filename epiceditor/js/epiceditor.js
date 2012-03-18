@@ -1,4 +1,9 @@
 /**
+ * EpicEditor - An Embeddable JavaScript Markdown Editor (https://github.com/OscarGodson/EpicEditor)
+ * Copyright (c) 2011-2012, Oscar Godson. (MIT Licensed)
+ */
+
+/**
  * marked - A markdown parser (https://github.com/chjj/marked)
  * Copyright (c) 2011-2012, Christopher Jeffrey. (MIT Licensed)
  */
@@ -896,7 +901,7 @@ if (typeof module !== 'undefined') {
       ua = navigator.userAgent;
       re = /MSIE ([0-9]{1,}[\.0-9]{0,})/;
       if (re.exec(ua) != null) {
-        rv = parseFloat(RegExp.$1, 10);
+        rv = parseFloat(RegExp.$1);
       }
     }
     return rv;

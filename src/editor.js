@@ -125,7 +125,7 @@
       ua = navigator.userAgent;
       re = /MSIE ([0-9]{1,}[\.0-9]{0,})/;
       if (re.exec(ua) != null) {
-        rv = parseFloat(RegExp.$1, 10);
+        rv = parseFloat(RegExp.$1);
       }
     }
     return rv;
