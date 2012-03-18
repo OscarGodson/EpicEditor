@@ -1,4 +1,4 @@
-;(function (window, undefined) {
+(function (window, undefined) {
 
   /**
    * Applies attributes to a DOM object
