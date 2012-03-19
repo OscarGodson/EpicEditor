@@ -28,7 +28,7 @@ $ git clone git@github.com:OscarGodson/EpicEditor
 
 ```html
 <div id="epiceditor"></div>
-<script src="epiceditor.js"></script>
+<script src="epiceditor.min.js"></script>
 ```
 
 #####Step 3: Init EpicEditor
@@ -50,7 +50,7 @@ The constructor is first (`EpicEditor()`), but everything after are methods of t
   <li><a href="#api-unload"><code>unload()</code></a></li>
   <li><a href="#api-get"><code>get()</code></a></li>
   <li><a href="#api-open"><code>open()</code></a></li>
-  <li><a href="#api-import"><code>import()</code></a></li>
+  <li><a href="#api-importMarkdown"><code>importMarkdown()</code></a></li>
   <li><a href="#api-rename"><code>rename()</code></a></li>
   <li><a href="#api-save"><code>save()</code></a></li>
   <li><a href="#api-remove"><code>remove()</code></a></li>
@@ -186,7 +186,7 @@ openFileBtn.onclick = function(){
 }
 ```
 
-<h6 id="api-import">import(<em>filename</em>,[<em>content</em>])</h6>
+<h6 id="api-importMarkdown">importMarkdown(<em>filename</em>,[<em>content</em>])</h6>
 
 Imports a string of markdown into a file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX.
 
@@ -194,7 +194,7 @@ Imports a string of markdown into a file. If the file already exists, it will be
 
 ```javascript
 importFileBtn.onclick = function(){
-  editor.import('some-file',"#Imported markdown\nFancy, huh?"); //Imports a file when the user clicks this button
+  editor.importMarkdown('some-file',"#Imported markdown\nFancy, huh?"); //Imports a file when the user clicks this button
 }
 ```
 

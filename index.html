@@ -46,7 +46,7 @@
 
       <h5>Step 2: Position the container and load the script</h5>
       <pre><code ="html">&lt;div id="epiceditor"&gt;&lt;/div&gt;
-&lt;script src="epiceditor.js"&gt;&lt;/script&gt;</code></pre>
+&lt;script src="epiceditor.min.js"&gt;&lt;/script&gt;</code></pre>
 
       <h5>Step 3: Init EpicEditor</h5>
       <pre><code class="javascript">var editor = new EpicEditor().load();</code></pre>
@@ -67,7 +67,7 @@
         <li><a href="#api-unload"><code>unload()</code></a></li>
         <li><a href="#api-get"><code>get()</code></a></li>
         <li><a href="#api-open"><code>open()</code></a></li>
-        <li><a href="#api-import"><code>import()</code></a></li>
+        <li><a href="#api-importMarkdown"><code>importMarkdown()</code></a></li>
         <li><a href="#api-rename"><code>rename()</code></a></li>
         <li><a href="#api-save"><code>save()</code></a></li>
         <li><a href="#api-remove"><code>remove()</code></a></li>
@@ -173,11 +173,11 @@ var editor = new EpicEditor(opts);</code></pre>
   editor.open('some-file'); //Open a file when the user clicks this button
 }</code></pre>
 
-      <h6 id="api-import">import(<em>filename</em>,[<em>content</em>])</h6>
+      <h6 id="api-importMarkdown">importMarkdown(<em>filename</em>,[<em>content</em>])</h6>
       <p>Imports a string of markdown into a file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX.</p>
       <p class="example">Example:</p>
       <pre><code class="javascript">importFileBtn.onclick = function(){
-  editor.import('some-file',"#Imported markdown\nFancy, huh?"); //Imports a file when the user clicks this button
+  editor.importMarkdown('some-file',"#Imported markdown\nFancy, huh?"); //Imports a file when the user clicks this button
 }</code></pre>
 
       <h6 id="api-rename">rename(<em>oldName</em>,<em>newName</em>)</h6>
@@ -283,7 +283,7 @@ var editor = new EpicEditor(opts);</code></pre>
     </div>
     <a href="https://github.com/OscarGodson/EpicEditor"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/7afbc8b248c68eb468279e8c17986ad46549fb71/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub"></a>
     <script src="http://yandex.st/highlightjs/6.1/highlight.min.js"></script>
-    <script src="epiceditor.js"></script>
+    <script src="epiceditor/js/epiceditor.min.js"></script>
     <script>
       
       try{
