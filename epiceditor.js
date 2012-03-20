@@ -132,6 +132,11 @@
     e.className = e.className.replace(o, n);
   }
 
+  //Feature detects an iframe to get the inner document for writing to
+  function _getIframeInnards(el){
+    return el.contentDocument || el.contentWindow.document;
+  };
+
   /**
    * Will return the version number if the browser is IE. If not will return -1
    * TRY NEVER TO USE THIS AND USE FEATURE DETECTION IF POSSIBLE
@@ -235,7 +240,8 @@
           , autoSave: 100 //Set to false for no auto saving
           }
         , theme: {
-            preview:'/themes/preview/github.css'
+            base:'/themes/base/epiceditor.css'
+          , preview:'/themes/preview/github.css'
           , editor:'/themes/editor/epic-dark.css'
           }
         , focusOnLoad:false
@@ -293,67 +299,92 @@
     , edit: true
     }
 
-  //The editor HTML
-  //TODO: edit-mode class should be dynamicly added!
-  var _HtmlTemplate = '<div class="epiceditor-wrapper epiceditor-edit-mode">'+
-                        '<div class="epiceditor-utilbar">'+
-                          '<img width="16" src="'+this.settings.basePath+'/images/preview.png" class="epiceditor-toggle-btn"> '+
-                          '<img width="16" src="'+this.settings.basePath+'/images/fullscreen.png" class="epiceditor-fullscreen-btn">'+
-                        '</div>'+
-                        '<div class="epiceditor-editor">'+
-                          '<textarea class="epiceditor-textarea"></textarea>'+
-                        '</div>'+
-                        '<div class="epiceditor-preview"></div>'+
-                      '</div>';
+    //The editor HTML
+    //TODO: edit-mode class should be dynamically added
+    var _HtmlTemplates = {
+      //This is wrapping iframe element. It contains the other two iframes and the utilbar
+      chrome:   '<div class="epiceditor-wrapper epiceditor-edit-mode">'+
+                  '<iframe frameborder="0" id="epiceditor-editor-frame"></iframe>'+
+                  '<iframe frameborder="0" id="epiceditor-previewer-frame"></iframe>'+
+                  '<div class="epiceditor-utilbar">'+
+                    '<img width="16" src="'+this.settings.basePath+'/images/preview.png" class="epiceditor-toggle-btn"> '+
+                    '<img width="16" src="'+this.settings.basePath+'/images/fullscreen.png" class="epiceditor-fullscreen-btn">'+
+                  '</div>'+
+                '</div>'
+    
+    //The previewer is just an empty box for the generated HTML to go into
+    , previewer:'<div class="epiceditor-preview"></div>'
+    };
 
     //Write an iframe and then select it for the editor
-    this.element.innerHTML = '<iframe scrolling="no" frameborder="0" id= "'+self.settings.id+'"></iframe>';
+    self.element.innerHTML = '<iframe scrolling="no" frameborder="0" id= "'+self.settings.id+'"></iframe>';
     var iframeElement = document.getElementById(self.settings.id);
-
+    
     // Store a reference to the iframeElement itself
     self.iframeElement = iframeElement;
 
     //Grab the innards of the iframe (returns the document.body)
-    self.iframe = iframeElement.contentDocument || iframeElement.contentWindow.document;
+    //TODO: Change self.iframe to self.iframeDocument
+    self.iframe = _getIframeInnards(iframeElement);
     self.iframe.open();
-    self.iframe.write(_HtmlTemplate);
+    self.iframe.write(_HtmlTemplates.chrome);
+
+    //Now that we got the innards of the iframe, we can grab the other iframes
+    self.editorIframe = self.iframe.getElementById('epiceditor-editor-frame')
+    self.previewerIframe = self.iframe.getElementById('epiceditor-previewer-frame');
+
+    //Setup the editor iframe
+    self.editorIframeDocument = _getIframeInnards(self.editorIframe);
+    self.editorIframeDocument.open();
+    self.editorIframeDocument.write(_HtmlTemplates.editor);
+    self.editorIframeDocument.close();
+    
+    //Setup the previewer iframe 
+    self.previewerIframeDocument = _getIframeInnards(self.previewerIframe);
+    self.previewerIframeDocument.open();
+    self.previewerIframeDocument.write(_HtmlTemplates.previewer);
+    self.previewerIframeDocument.close();
+
 
     //Set the default styles for the iframe
-    var widthDiff = _outerWidth(this.element) - this.element.offsetWidth;
-    var heightDiff = _outerHeight(this.element) - this.element.offsetHeight;
+    var widthDiff = _outerWidth(self.element) - self.element.offsetWidth
+      , heightDiff = _outerHeight(self.element) - self.element.offsetHeight;
+      
+    function setupIframeStyles(iframes){ 
+      for(var x = 0; x < iframes.length; x++){
+        iframes[x].style.width  = self.element.offsetWidth - widthDiff +'px';
+        iframes[x].style.height = self.element.offsetHeight - heightDiff +'px';
+      }
+    };
 
-    iframeElement.style.width  = this.element.offsetWidth - widthDiff +'px';
-    iframeElement.style.height = this.element.offsetHeight - heightDiff +'px';
+    setupIframeStyles([self.iframeElement,self.editorIframe,self.previewerIframe]); 
+
+    //Insert Base Stylesheet
+    _insertCSSLink(self.settings.basePath+self.settings.theme.base,self.iframe);
     
-    //Remove the default browser CSS body styles, then add base CSS styles for the editor
-    var iframeBody = self.iframe.body;
-    iframeBody.style.padding = '0';
-    iframeBody.style.margin = '0';
-    _insertCSSLink(self.settings.basePath+self.settings.theme.editor,self.iframe);
+    //Insert Editor Stylesheet
+    _insertCSSLink(self.settings.basePath+self.settings.theme.editor,self.editorIframeDocument);
     
+    //Insert Previewer Stylesheet
+    _insertCSSLink(self.settings.basePath+self.settings.theme.preview,self.previewerIframeDocument); 
+
     //Add a relative style to the overall wrapper to keep CSS relative to the editor
     self.iframe.getElementsByClassName('epiceditor-wrapper')[0].style.position = 'relative';
 
     //Now grab the editor and previewer for later use
-    this.editor = self.iframe.getElementsByClassName('epiceditor-textarea')[0];
-    this.previewer = self.iframe.getElementsByClassName('epiceditor-preview')[0];
-    
+    self.editor = self.editorIframeDocument.body;
+    self.previewer = self.previewerIframeDocument.body.getElementsByClassName('epiceditor-preview')[0];
+   
+    self.editor.contentEditable = true;
+ 
     //Firefox's <body> gets all fucked up so, to be sure, we need to hardcode it
     self.iframe.body.style.height = this.element.offsetHeight+'px';
 
     //Generate the width
     this.editor.style.width  = '100%';
-    this.editor.style.height = this.element.offsetHeight+'px';
-
+  
     //Should actually check what mode it's in!
-    this.previewer.style.display = 'none';
-    this.previewer.style.overflow = 'auto';
-
-    //Fit the preview window into the container
-    //FIXME Should be in theme!
-    this.previewer.style['padding'] = '10px';
-    this.previewer.style.width  = this.element.offsetWidth - _outerWidth(this.previewer) - widthDiff +'px';
-    this.previewer.style.height = this.element.offsetHeight - _outerHeight(this.previewer) - heightDiff +'px';
+    this.previewerIframe.style.display = 'none';
 
     //FIXME figure out why it needs +2 px
     if(_isIE() > -1){
@@ -361,7 +392,7 @@
     }
 
     //Preload the preview theme:
-    _insertCSSLink(self.settings.basePath+self.settings.theme.preview, self.iframe, 'theme');
+    _insertCSSLink(self.settings.basePath+self.settings.theme.preview, self.previewerIframeDocument, 'theme');
 
     //If there is a file to be opened with that filename and it has content...
     this.open(self.settings.file.name);
@@ -511,15 +542,14 @@
       }, false);
     }
 
-    var utilBar = self.iframe.getElementsByClassName('epiceditor-utilbar')[0];
-    
+    var utilBar = self.iframe.getElementsByClassName('epiceditor-utilbar')[0]
+      , utilBarTimer
+      , mousePos = { y:-1, x:-1 };
+
     //Hide it at first until they move their mouse
     utilBar.style.display = 'none';
 
-    //Hide and show the util bar based on mouse movements
-    var utilBarTimer
-    ,   mousePos = { y:-1, x:-1 };
-    this.iframe.addEventListener('mousemove',function(e){
+    function utilBarHandler(e){
       //Here we check if the mouse has moves more than 5px in any direction before triggering the mousemove code
       //we do this for 2 reasons:
       //1. On Mac OS X lion when you scroll and it does the iOS like "jump" when it hits the top/bottom of the page itll fire off
@@ -538,7 +568,17 @@
         }, 1000);
       }
       mousePos = { y:e.pageY, x:e.pageX };
-    });
+    }
+
+
+    //Hide and show the util bar based on mouse movements
+    var eventableIframes = [self.previewerIframeDocument,self.editorIframeDocument];
+    
+    for(var i = 0; i < eventableIframes.length; i++){
+      eventableIframes[i].addEventListener('mousemove',function(e){
+        utilBarHandler(e);
+      });
+    }
 
     //Save the document every 100ms by default
     if(self.settings.file.autoSave){
@@ -590,6 +630,7 @@
       }
     });
 
+    //TODO: CHECK TO MAKE SURE THIS WORKS WITH THE NEW IFRAME STUFF
     window.addEventListener('resize',function(){
       var widthDiff = _outerWidth(self.element) - self.element.offsetWidth;
       iframeElement.style.width  = self.element.offsetWidth - widthDiff +'px';
@@ -655,24 +696,24 @@
     self.eeState.edit = false;
 
     //Check if no CSS theme link exists
-    if(!self.iframe.getElementById('theme')){
-      _insertCSSLink(theme, self.iframe, 'theme');
+    if(!self.previewerIframeDocument.getElementById('theme')){
+      _insertCSSLink(theme, self.previewerIframeDocument, 'theme');
     }
-    else if(self.iframe.getElementById('theme').name !== theme){
-      self.iframe.getElementById('theme').href = theme;
+    else if(self.previewerIframeDocument.getElementById('theme').name !== theme){
+      self.previewerIframeDocument.getElementById('theme').href = theme;
     }
     
     //Add the generated HTML into the previewer
-    this.previewer.innerHTML = this.exportHTML();
+    self.previewer.innerHTML = self.exportHTML();
     
     //Hide the editor and display the previewer
     if(!live){
-      this.editor.style.display = 'none';
-      this.previewer.style.display = 'block'; 
+      self.editorIframe.style.display = 'none';
+      self.previewerIframe.style.display = 'block'; 
     }
 
     self.emit('preview');
-    return this;
+    return self;
   }
 
   /**
@@ -684,8 +725,8 @@
     _replaceClass(self.get('wrapper'),'epiceditor-preview-mode','epiceditor-edit-mode');
     self.eeState.preview = false;
     self.eeState.edit = true;
-    this.editor.style.display = 'block';
-    this.previewer.style.display = 'none';
+    self.editorIframe.style.display = 'block';
+    self.previewerIframe.style.display = 'none';
     self.emit('edit');
     return this;
   }
@@ -722,10 +763,10 @@
     if(localStorage && localStorage[self.settings.localStorageName]){
       var fileObj = JSON.parse(localStorage[self.settings.localStorageName]).files;
       if(fileObj[name]){
-        self.editor.value = fileObj[name];
+        self.editor.innerText = fileObj[name];
       }
       else{
-        self.editor.value = this.settings.file.defaultContent;
+        self.editor.innerText = self.settings.file.defaultContent;
       }
       self.settings.file.name = name;
       this.previewer.innerHTML = this.exportHTML();
@@ -804,7 +845,7 @@
    * @returns {string} Returns the HTML that was converted from the markdown
    */
   EpicEditor.prototype.exportHTML = function(){
-      return marked(this.editor.value);
+    return marked(this.editor.innerText);
   }
 
   //EVENTS
