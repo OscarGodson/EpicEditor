@@ -137,6 +137,29 @@
     return el.contentDocument || el.contentWindow.document;
   };
 
+
+  //Grabs the text from an element and preserves whitespace
+  function _getText(el){
+    var theText;
+    if (document.body.innerText) {
+      theText = el.innerText;
+    } 
+    else {
+      theText = el.innerHTML.replace(/<br>/gi,"\n").replace(/(&lt;([^&gt;]+)&gt;)/gi, "");
+    }
+    return theText; 
+  }
+
+  function _setText(el,content){
+    if (document.body.innerText) {
+      el.innerText = content;
+    } 
+    else {
+      el.innerHTML = content.replace(/\n/g,"<br>").replace(/(&lt;([^&gt;]+)&gt;)/gi, "");
+    }
+    return true;
+  }
+ 
   /**
    * Will return the version number if the browser is IE. If not will return -1
    * TRY NEVER TO USE THIS AND USE FEATURE DETECTION IF POSSIBLE
@@ -763,10 +786,10 @@
     if(localStorage && localStorage[self.settings.localStorageName]){
       var fileObj = JSON.parse(localStorage[self.settings.localStorageName]).files;
       if(fileObj[name]){
-        self.editor.innerText = fileObj[name];
+        _setText(self.editor,fileObj[name]); 
       }
       else{
-        self.editor.innerText = self.settings.file.defaultContent;
+        _setText(self.editor,self.settings.file.defaultContent); 
       }
       self.settings.file.name = name;
       this.previewer.innerHTML = this.exportHTML();
@@ -784,7 +807,7 @@
   EpicEditor.prototype.save = function(file,content){
     var self = this;
     file = file || self.settings.file.name;
-    content = content || this.editor.value;
+    content = content || _getText(this.editor);
     var s = JSON.parse(localStorage[self.settings.localStorageName]);
     s.files[file] = content;
     localStorage[self.settings.localStorageName] = JSON.stringify(s);
@@ -845,7 +868,7 @@
    * @returns {string} Returns the HTML that was converted from the markdown
    */
   EpicEditor.prototype.exportHTML = function(){
-    return marked(this.editor.innerText);
+    return marked(_getText(this.editor));
   }
 
   //EVENTS
