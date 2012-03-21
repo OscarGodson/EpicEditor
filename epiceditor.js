@@ -593,32 +593,11 @@
       mousePos = { y:e.pageY, x:e.pageX };
     }
 
-
-    //Hide and show the util bar based on mouse movements
-    var eventableIframes = [self.previewerIframeDocument,self.editorIframeDocument];
-    
-    for(var i = 0; i < eventableIframes.length; i++){
-      eventableIframes[i].addEventListener('mousemove',function(e){
-        utilBarHandler(e);
-      });
-    }
-
-    //Save the document every 100ms by default
-    if(self.settings.file.autoSave){
-      var saveTimer = window.setInterval(function(){
-        self.content = this.value;
-        self.save(self.settings.file.name,this.value);
-      },self.settings.file.autoSave);
-    }
-
+ 
     //Add keyboard shortcuts for convenience.
     var isMod = false;
     var isCtrl = false;
-    self.iframe.addEventListener('keyup', function(e){
-      if(e.keyCode == self.settings.shortcut.modifier){ isMod = false };
-      if(e.keyCode == 17){ isCtrl = false };
-    });
-    self.iframe.addEventListener('keydown', function(e){
+    function shortcutHandler(e){ 
       if(e.keyCode == self.settings.shortcut.modifier){ isMod = true }; //check for modifier press(default is alt key), save to var
       if(e.keyCode == 17){ isCtrl = true }; //check for ctrl/cmnd press, in order to catch ctrl/cmnd + s
 
@@ -651,7 +630,35 @@
       if(isCtrl == true && e.keyCode == 83){
         e.preventDefault();
       }
-    });
+    }
+    
+    function shortcutUpHandler(e){
+      if(e.keyCode == self.settings.shortcut.modifier){ isMod = false };
+      if(e.keyCode == 17){ isCtrl = false };
+    }
+
+    //Hide and show the util bar based on mouse movements
+    var eventableIframes = [self.previewerIframeDocument,self.editorIframeDocument];
+    
+    for(var i = 0; i < eventableIframes.length; i++){
+      eventableIframes[i].addEventListener('mousemove',function(e){
+        utilBarHandler(e);
+      });
+      eventableIframes[i].addEventListener('keyup',function(e){
+        shortcutUpHandler(e)
+      });
+      eventableIframes[i].addEventListener('keydown',function(e){
+        shortcutHandler(e);
+      });
+    }
+
+    //Save the document every 100ms by default
+    if(self.settings.file.autoSave){
+      var saveTimer = window.setInterval(function(){
+        self.content = this.value;
+        self.save(self.settings.file.name,this.value);
+      },self.settings.file.autoSave);
+    }
 
     //TODO: CHECK TO MAKE SURE THIS WORKS WITH THE NEW IFRAME STUFF
     window.addEventListener('resize',function(){
