@@ -145,7 +145,7 @@
       theText = el.innerText;
     } 
     else {
-      theText = el.innerHTML.replace(/<br>/gi,"\n").replace(/(&lt;([^&gt;]+)&gt;)/gi, "");
+      theText = el.innerHTML.replace(/<br>/gi,"\n");
     }
     return theText; 
   }
@@ -155,7 +155,7 @@
       el.innerText = content;
     } 
     else {
-      el.innerHTML = content.replace(/\n/g,"<br>").replace(/(&lt;([^&gt;]+)&gt;)/gi, "");
+      el.innerHTML = content.replace(/\n/g,"<br>");
     }
     return true;
   }
@@ -359,7 +359,8 @@
     //Setup the editor iframe
     self.editorIframeDocument = _getIframeInnards(self.editorIframe);
     self.editorIframeDocument.open();
-    self.editorIframeDocument.write(_HtmlTemplates.editor);
+    //Need something for... you guessed it, Firefox
+    self.editorIframeDocument.write('');
     self.editorIframeDocument.close();
     
     //Setup the previewer iframe 
@@ -483,7 +484,7 @@
 
       //...and finally, the previewer
       _elementStates.previewer = _saveStyleState(self.previewerIframe,'save',{
-        'width':(windowOuterWidth-_outerWidth(self.editorIframe))+'px'
+        'width':windowOuterWidth/2+'px'
       , 'height':windowOuterHeight+'px'
       , 'float':'right' //Most browsers
       , 'cssFloat':'right' //FF
@@ -555,7 +556,7 @@
 
       fsElement.addEventListener('webkitfullscreenchange',function(){
         if(document.webkitIsFullScreen){
-          //_goFullscreen(fsElement);
+          _goFullscreen(fsElement);
         }
         else{
           _exitFullscreen(fsElement);
@@ -739,7 +740,7 @@
       self.editorIframe.style.display = 'none';
       self.previewerIframe.style.display = 'block'; 
     }
-
+    
     self.emit('preview');
     return self;
   }
