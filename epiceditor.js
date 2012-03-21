@@ -403,9 +403,6 @@
     //Firefox's <body> gets all fucked up so, to be sure, we need to hardcode it
     self.iframe.body.style.height = this.element.offsetHeight+'px';
 
-    //Generate the width
-    this.editor.style.width  = '100%';
-  
     //Should actually check what mode it's in!
     this.previewerIframe.style.display = 'none';
 
@@ -475,7 +472,7 @@
 
       //This MUST come first because the editor is 100% width so if we change the width of the iframe or wrapper
       //the editor's width wont be the same as before
-      _elementStates.editor = _saveStyleState(self.editor,'save',{
+      _elementStates.editor = _saveStyleState(self.editorIframe,'save',{
         'width':windowOuterWidth/2+'px'
       , 'height':windowOuterHeight+'px'
       , 'float':'left' //Most browsers
@@ -485,8 +482,8 @@
       });
 
       //...and finally, the previewer
-      _elementStates.previewer = _saveStyleState(self.previewer,'save',{
-        'width':(windowOuterWidth-_outerWidth(self.editor))+'px'
+      _elementStates.previewer = _saveStyleState(self.previewerIframe,'save',{
+        'width':(windowOuterWidth-_outerWidth(self.editorIframe))+'px'
       , 'height':windowOuterHeight+'px'
       , 'float':'right' //Most browsers
       , 'cssFloat':'right' //FF
@@ -503,6 +500,7 @@
       , 'z-index':'9999' //Most browsers
       , 'zIndex':'9999' //Firefox
       , 'border':'none'
+      //Should use the base styles background!
       , 'background':_getStyle(self.editor,'background-color') //Try to hide the site below
       , 'height':windowInnerHeight+'px'
       });
