@@ -457,6 +457,10 @@
     var _elementStates = {};
     var _goFullscreen = function(el){
       var nativeFs = el.webkitRequestFullScreen ? true : false;
+      
+      if(nativeFs){
+        el.webkitRequestFullScreen();      
+      }
 
       //Set the state of EE in fullscreen
       //We set edit and preview to true also because they're visible
@@ -520,10 +524,6 @@
       if(!nativeFs){
         document.body.style.overflow = 'hidden';
       }
-      else {
-        el.webkitRequestFullScreen();
-      }
-      
 
       self.preview(true);
       self.editor.addEventListener('keyup',function(){ self.preview(true); });
@@ -556,7 +556,7 @@
 
       fsElement.addEventListener('webkitfullscreenchange',function(){
         if(document.webkitIsFullScreen){
-          _goFullscreen(fsElement);
+          //_goFullscreen(fsElement);
         }
         else{
           _exitFullscreen(fsElement);
