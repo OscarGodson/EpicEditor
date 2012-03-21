@@ -51,7 +51,7 @@
       <h5>Step 3: Init EpicEditor</h5>
       <pre><code class="javascript">var editor = new EpicEditor().load();</code></pre>
 
-      <a id="tryit-load-btn" onclick="toggleTryIt(true)">Try it!</a> <a id="tryit-unload-btn" onclick="toggleTryIt(false)">Unload it.</a>
+      <button id="tryit-load-btn" onclick="toggleTryIt(true)">Try it!</button> <button id="tryit-unload-btn" onclick="toggleTryIt(false)">Unload it.</button>
       <div id="epiceditor"></div>
       
       <h4 id="api">API</h4>
@@ -130,9 +130,9 @@
   },
   focusOnLoad: false,
   shortcut: {
-    modifier: 18
-    fullscreen: 70
-    preview: 80
+    modifier: 18,
+    fullscreen: 70,
+    preview: 80,
     edit: 79
   }
 }
@@ -279,7 +279,7 @@ var editor = new EpicEditor(opts);</code></pre>
 &lt;/div&gt;</code></pre>
 
       <h3>Who</h3>
-      <p><a href="http://twitter.com/oscargodson">Oscar Godson</a> (me!), created EpicEditor with help from <a href="http://twitter.com/adam_bickford">Adam Bickford</a>. With many thanks to John Fraser (<em>site is no longer up</em>) for his <a href="https://github.com/coreyti/showdown">Showdown.js</a> script and <a href="http://daringfireball.net/">John Gruber</a> for <a href="http://daringfireball.net/projects/markdown/">Markdown</a>. Also, <a href="http://blog.izs.me">Isaac Z. Schlueter</a> for his port of <a href="https://github.com/isaacs/github-flavored-markdown">GitHub Flavored Markdown</a> which I <a href="https://github.com/oscargodson/github-flavored-markdown">forked</a>.</p>
+      <p><a href="http://twitter.com/oscargodson">Oscar Godson</a> (me!), created EpicEditor with help from <a href="http://twitter.com/adam_bickford">Adam Bickford</a>. With many thanks to <a href="https://github.com/chjj">Christopher Jeffrey</a> for his <a href="https://github.com/chjj/marked">Marked</a> markdown parser and <a href="http://daringfireball.net/">John Gruber</a> for <a href="http://daringfireball.net/projects/markdown/">Markdown</a>. Also, <a href="http://blog.izs.me">Isaac Z. Schlueter</a> for his port of <a href="https://github.com/isaacs/github-flavored-markdown">GitHub Flavored Markdown</a> which I <a href="https://github.com/oscargodson/github-flavored-markdown">forked</a>.</p>
     </div>
     <a href="https://github.com/OscarGodson/EpicEditor"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/7afbc8b248c68eb468279e8c17986ad46549fb71/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub"></a>
     <script src="http://yandex.st/highlightjs/6.1/highlight.min.js"></script>

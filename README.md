@@ -123,9 +123,9 @@ var opts = {
   },
   focusOnLoad: false,
   shortcut: {
-    modifier: 18
-    fullscreen: 70
-    preview: 80
+    modifier: 18,
+    fullscreen: 70,
+    preview: 80,
     edit: 79
   }
 }
@@ -353,5 +353,5 @@ The HTML of a generated editor (excluding any content) looks like this:
 
 ###Who
 
-[Oscar Godson](http://twitter.com/oscargodson) (me!), created EpicEditor with help from [Adam Bickford](http://twitter.com/adam_bickford). With many thanks to John Fraser (_site is no longer up_) for his [Showdown.js](https://github.com/coreyti/showdown) script and [John Gruber](http://daringfireball.net/) for [Markdown](http://daringfireball.net/projects/markdown/). Also, [Isaac Z. Schlueter](http://blog.izs.me) for his port of [GitHub Flavored Markdown](https://github.com/isaacs/github-flavored-markdown) which I [forked](https://github.com/oscargodson/github-flavored-markdown).</p>
+[Oscar Godson](http://twitter.com/oscargodson) (me!), created EpicEditor with help from [Adam Bickford](http://twitter.com/adam_bickford). With many thanks to [Christopher Jeffrey](https://github.com/chjj) for his [Marked](https://github.com/chjj/marked) markdown parser and [John Gruber](http://daringfireball.net/) for [Markdown](http://daringfireball.net/projects/markdown/). Also, [Isaac Z. Schlueter](http://blog.izs.me) for his port of [GitHub Flavored Markdown](https://github.com/isaacs/github-flavored-markdown) which I [forked](https://github.com/oscargodson/github-flavored-markdown).</p>
 </div>
