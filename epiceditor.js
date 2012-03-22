@@ -477,7 +477,7 @@
 
       //This MUST come first because the editor is 100% width so if we change the width of the iframe or wrapper
       //the editor's width wont be the same as before
-      _elementStates.editor = _saveStyleState(self.editorIframe,'save',{
+      _elementStates.editorIframe = _saveStyleState(self.editorIframe,'save',{
         'width':windowOuterWidth/2+'px'
       , 'height':windowOuterHeight+'px'
       , 'float':'left' //Most browsers
@@ -487,7 +487,7 @@
       });
 
       //...and finally, the previewer
-      _elementStates.previewer = _saveStyleState(self.previewerIframe,'save',{
+      _elementStates.previewerIframe = _saveStyleState(self.previewerIframe,'save',{
         'width':windowOuterWidth/2+'px'
       , 'height':windowOuterHeight+'px'
       , 'float':'right' //Most browsers
@@ -516,8 +516,6 @@
       , 'height':windowInnerHeight+'px'
       });
 
-      console.log(_elementStates.element,_elementStates.iframeElement,_elementStates.editor,_elementStates.previewer);
-
       //...Oh, and hide the buttons and prevent scrolling
       utilBtns.style.visibility = 'hidden';
 
@@ -533,32 +531,25 @@
       var nativeFs = el.webkitRequestFullScreen ? true : false;
       _saveStyleState(self.element,'apply',_elementStates.element);
       _saveStyleState(self.iframeElement,'apply',_elementStates.iframeElement);
-      _saveStyleState(self.editor,'apply',_elementStates.editor);
-      _saveStyleState(self.previewer,'apply',_elementStates.previewer);
-      utilBtns.style.visibility = 'hidden';
+      _saveStyleState(self.editorIframe,'apply',_elementStates.editorIframe);
+      _saveStyleState(self.previewerIframe,'apply',_elementStates.previewerIframe);
+      utilBtns.style.visibility = 'visible';
       if(!nativeFs){
         document.body.style.overflow = 'auto';
       }
     };
 
-
     var fsElement = document.getElementById(self.settings.id);
+
+
+    self.iframe.getElementsByClassName('epiceditor-fullscreen-btn')[0].addEventListener('click',function(){
+      _goFullscreen(fsElement);
+    });
 
     //Sets up the NATIVE fullscreen editor/previewer for WebKit
     if(document.body.webkitRequestFullScreen){
-      self.iframe.getElementsByClassName('epiceditor-fullscreen-btn')[0].addEventListener('click',function(){
-        if(_getStyle(self.previewer,'display') === 'block'){
-          revertBackTo = self.previewer;
-        }
-        _goFullscreen(fsElement);
-      });
-
-
       fsElement.addEventListener('webkitfullscreenchange',function(){
-        if(document.webkitIsFullScreen){
-          //_goFullscreen(fsElement);
-        }
-        else{
+        if(!document.webkitIsFullScreen){
           _exitFullscreen(fsElement);
         }
       }, false);
