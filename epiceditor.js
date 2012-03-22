@@ -512,7 +512,7 @@
 
       //The iframe element
       _elementStates.iframeElement = _saveStyleState(self.iframeElement,'save',{
-        'width':windowInnerWidth+'px'
+        'width':windowOuterWidth+'px'
       , 'height':windowInnerHeight+'px'
       });
 

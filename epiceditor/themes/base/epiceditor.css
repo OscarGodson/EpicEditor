@@ -1,4 +1,4 @@
-body { margin:0; padding:0; }
+html, body, iframe, div { margin:0; padding:0; }
 
 .epiceditor-utilbar {
   position:fixed;
