@@ -454,7 +454,8 @@
       return returnState;
     }
 
-    var _elementStates = {};
+    var _elementStates = {}
+      , _isInEdit = self.eeState.edit;
     var _goFullscreen = function(el){
       var nativeFs = el.webkitRequestFullScreen ? true : false;
       
@@ -537,10 +538,18 @@
       if(!nativeFs){
         document.body.style.overflow = 'auto';
       }
+      //Put the editor back in the right state
+      //TODO: This is ugly... how do we make this nicer?
+      self.eeState.fullscreen = false;
+      if(_isInEdit){
+        self.eeState.preview = false;
+      }
+      else{
+        self.eeState.edit = false;
+      }
     };
 
-    var fsElement = document.getElementById(self.settings.id);
-
+    var fsElement = self.iframeElement;
 
     self.iframe.getElementsByClassName('epiceditor-fullscreen-btn')[0].addEventListener('click',function(){
       _goFullscreen(fsElement);
@@ -582,7 +591,6 @@
       }
       mousePos = { y:e.pageY, x:e.pageX };
     }
-
  
     //Add keyboard shortcuts for convenience.
     var isMod = false;
@@ -652,25 +660,29 @@
 
     //TODO: CHECK TO MAKE SURE THIS WORKS WITH THE NEW IFRAME STUFF
     window.addEventListener('resize',function(){
-      var widthDiff = _outerWidth(self.element) - self.element.offsetWidth;
-      iframeElement.style.width  = self.element.offsetWidth - widthDiff +'px';
 
-      if(self.eeState.fullscreen){
-        _applyStyles(self.previewer,{
-          'width':(window.outerWidth-_outerWidth(self.editor))+'px'
-        , 'height':window.outerHeight+'px'
-        });
-
-        _applyStyles(self.editor,{
-          'width':window.outerWidth/2+'px'
-        , 'height':window.outerHeight+'px'
-        });
-
-        _applyStyles(self.iframeElement,{
-          'width':window.innerWidth+'px'
-        , 'height':window.innerHeight+'px'
-        });
+      if(!self.iframe.webkitRequestFullScreen && self.eeState.fullscreen){
+        //Resize code for faux fullscreen here...
       }
+     //var widthDiff = _outerWidth(self.element) - self.element.offsetWidth;
+     //iframeElement.style.width  = self.element.offsetWidth - widthDiff +'px';
+
+     //if(self.eeState.fullscreen){
+     //  _applyStyles(self.previewer,{
+     //    'width':(window.outerWidth-_outerWidth(self.editor))+'px'
+     //  , 'height':window.outerHeight+'px'
+     //  });
+
+     //  _applyStyles(self.editor,{
+     //    'width':window.outerWidth/2+'px'
+     //  , 'height':window.outerHeight+'px'
+     //  });
+
+     //  _applyStyles(self.iframeElement,{
+     //    'width':window.innerWidth+'px'
+     //  , 'height':window.innerHeight+'px'
+     //  });
+     //}
     });
 
     self.iframe.close();
@@ -712,8 +724,6 @@
     }
 
     _replaceClass(self.get('wrapper'),'epiceditor-edit-mode','epiceditor-preview-mode');
-    self.eeState.preview = true;
-    self.eeState.edit = false;
 
     //Check if no CSS theme link exists
     if(!self.previewerIframeDocument.getElementById('theme')){
@@ -729,7 +739,9 @@
     //Hide the editor and display the previewer
     if(!live){
       self.editorIframe.style.display = 'none';
-      self.previewerIframe.style.display = 'block'; 
+      self.previewerIframe.style.display = 'block';
+      self.eeState.preview = true;
+      self.eeState.edit = false;
     }
     
     self.emit('preview');
