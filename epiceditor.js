@@ -658,31 +658,27 @@
       },self.settings.file.autoSave);
     }
 
-    //TODO: CHECK TO MAKE SURE THIS WORKS WITH THE NEW IFRAME STUFF
     window.addEventListener('resize',function(){
-
       if(!self.iframe.webkitRequestFullScreen && self.eeState.fullscreen){
-        //Resize code for faux fullscreen here...
+        _applyStyles(self.iframeElement,{
+          'width':window.outerWidth+'px'
+        , 'height':window.innerHeight+'px'
+        });
+
+        _applyStyles(self.element,{
+          'height':window.innerHeight+'px'
+        });
+
+        _applyStyles(self.previewerIframe,{
+          'width':window.outerWidth/2+'px'
+        , 'height':window.innerHeight+'px'
+        });
+
+        _applyStyles(self.editorIframe,{
+          'width':window.outerWidth/2+'px'
+        , 'height':window.innerHeight+'px'
+        });
       }
-     //var widthDiff = _outerWidth(self.element) - self.element.offsetWidth;
-     //iframeElement.style.width  = self.element.offsetWidth - widthDiff +'px';
-
-     //if(self.eeState.fullscreen){
-     //  _applyStyles(self.previewer,{
-     //    'width':(window.outerWidth-_outerWidth(self.editor))+'px'
-     //  , 'height':window.outerHeight+'px'
-     //  });
-
-     //  _applyStyles(self.editor,{
-     //    'width':window.outerWidth/2+'px'
-     //  , 'height':window.outerHeight+'px'
-     //  });
-
-     //  _applyStyles(self.iframeElement,{
-     //    'width':window.innerWidth+'px'
-     //  , 'height':window.innerHeight+'px'
-     //  });
-     //}
     });
 
     self.iframe.close();
