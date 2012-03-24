@@ -476,6 +476,11 @@
         , windowOuterWidth = window.outerWidth
         , windowOuterHeight = window.outerHeight;
 
+      //Without this the scrollbars will get hidden when scrolled to the bottom in faux fullscreen (see #66)
+      if(!nativeFs){
+        windowOuterHeight = window.innerHeight;
+      }
+
       //This MUST come first because the editor is 100% width so if we change the width of the iframe or wrapper
       //the editor's width wont be the same as before
       _elementStates.editorIframe = _saveStyleState(self.editorIframe,'save',{
