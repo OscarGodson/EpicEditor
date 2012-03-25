@@ -8,7 +8,7 @@
   , "debug"           : false     // if debugger statements should be allowed
   , "devel"           : false     // if logging globals should be predefined (console, alert, etc.)
   , "dojo"            : false     // if Dojo Toolkit globals should be predefined
-  , "eqeqeq"          : true      // if === should be required
+  , "eqeqeq"          : false      // if === should be required
   , "eqnull"          : true      // if == null comparisons should be tolerated
   , "es5"             : false     // if ES5 syntax should be allowed
   , "esnext"          : false     // if es.next specific syntax should be allowed
@@ -52,7 +52,7 @@
   , "supernew"        : false     // if `new function () { ... };` and `new Object;` should be tolerated
   , "trailing"        : true      // if trailing whitespace rules apply
   , "validthis"       : true      // if 'this' inside a non-constructor function is valid. This is a function scoped option only.
-  , "white"           : true      // if strict whitespace rules apply
+  , "white"           : false      // if strict whitespace rules apply
   , "wsh"             : false     // if the Windows Scripting Host environment globals should be predefined
 
   , "indent"          : 2
