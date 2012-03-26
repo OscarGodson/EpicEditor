@@ -552,7 +552,7 @@
     var self = this;
     var editor = window.parent.document.getElementById(self.settings.id);
     editor.parentNode.removeChild(editor);
-    callback.call(this);
+    if (callback) callback.call(this);
     self.emit('unload');
     return self;
   }
