@@ -52,7 +52,7 @@
   , "supernew"        : false     // if `new function () { ... };` and `new Object;` should be tolerated
   , "trailing"        : true      // if trailing whitespace rules apply
   , "validthis"       : true      // if 'this' inside a non-constructor function is valid. This is a function scoped option only.
-  , "white"           : false      // if strict whitespace rules apply
+  , "white"           : true      // if strict whitespace rules apply
   , "wsh"             : false     // if the Windows Scripting Host environment globals should be predefined
 
   , "indent"          : 2
