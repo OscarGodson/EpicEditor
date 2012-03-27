@@ -19,28 +19,43 @@ console.log(colorize('\nEpicEditor - An Embeddable JavaScript Markdown Editor', 
 
 desc('Build tmp from core code and run through JSHint');
 task('lint', [], function () {
-  var eeCorePath = 'src/editor.js'
+  var srcPaths = ['src/intro.js', 'src/editor.js']
+    , destPath = 'src/editor.tmp.js'
     , tmpStr = ''
     , cat
     , jshint
     , jshintErrors = ''
+    , buff = ''
 
     console.log(colorize('--> Running JSHint', 'magenta'));
-    jshint = spawn('jshint', [eeCorePath, '--config', '.jshintrc']);
-    jshint.stdout.on('data', function (data) {
-      jshintErrors += new Buffer(data).toString("utf-8")
+    // This is hacky as hell, needs to be optimized:
+    // Create the tmp source from core code
+    cat = spawn('cat', srcPaths)
+    cat.stdout.on("data", function (data) {
+      buff += data;
     });
-    jshint.stdout.on('end', function () {
-      if (jshintErrors) {
-        console.log(jshintErrors)
-        console.log(colorize('Lint failed.', 'red') + '\n')
-      } else {
-        console.log(colorize('√ Lint success! Giddyup.', 'green'))
-      }
+    cat.stdout.on("end", function () {
+      fs.writeFile(destPath, buff, function (err) {
+        jshint = spawn('jshint', [destPath, '--config', '.jshintrc']);
+        jshint.stdout.on('data', function (data) {
+          jshintErrors += new Buffer(data).toString("utf-8")
+        });
+        jshint.stdout.on('end', function () {
+          if (jshintErrors) {
+            console.log(jshintErrors)
+            console.log(colorize('Lint failed.', 'red') + '\n')
+          } else {
+            console.log(colorize('√ Lint success! Giddyup.', 'green'))
+          }
+          fs.unlink(destPath);
+        });
+        jshint.stderr.on('data', function (data) {
+          console.log('ERROR:', new Buffer(data).toString("utf-8"));
+          fs.unlink(destPath);
+        });
+      });
     });
-    jshint.stderr.on('data', function (data) {
-      console.log('ERROR:', new Buffer(data).toString("utf-8"))
-    });
+    
 });
 
 desc('Build epiceditor.js and epiceditor.min.js');
