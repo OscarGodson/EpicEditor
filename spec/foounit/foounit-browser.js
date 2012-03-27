@@ -1073,17 +1073,15 @@ foounit.browser.XhrLoaderStrategy = function (){
    */
   this.require = function (path){
     var code = get(path)
-      , module = { exports: {} }
-      , funcString = '(function (foounit, module, exports, __dirname, __filename){' + code + '});';
-  
+      , funcString = '(function (foounit, __dirname, __filename){' + code + '});';
+
     try {
       var func = leval(funcString, path);
-      func.call({}, foounit, module, module.exports, dirname(path), basename(path));
+      func.call({}, foounit, dirname(path), basename(path));
     } catch (e){
       console.error('Failed to load path: ' + path + ': ' + e.message, e);
     }
 
-    return module.exports;
   };
 
   /** 
