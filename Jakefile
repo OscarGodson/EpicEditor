@@ -25,7 +25,7 @@ task('lint', [], function () {
     , jshint
     , jshintErrors = ''
 
-    console.log(colorize('* Running JSHint', 'magenta'));
+    console.log(colorize('--> Running JSHint', 'magenta'));
     jshint = spawn('jshint', [eeCorePath, '--config', '.jshintrc']);
     jshint.stdout.on('data', function (data) {
       jshintErrors += new Buffer(data).toString("utf-8")
@@ -35,7 +35,7 @@ task('lint', [], function () {
         console.log(jshintErrors)
         console.log(colorize('Lint failed.', 'red') + '\n')
       } else {
-        console.log(colorize('Lint success! Giddyup.', 'yellow'))
+        console.log(colorize('√ Lint success! Giddyup.', 'green'))
       }
     });
     jshint.stderr.on('data', function (data) {
@@ -68,7 +68,7 @@ task('build', [], function () {
     buff += data;
   });
   cat.stdout.on("end", function () {
-    console.log(colorize('* Building source', 'magenta'));
+    console.log(colorize('--> Building source', 'magenta'));
     fs.writeFile(destPath, buff, function (err) {
       if (err) {
         console.log('ERROR:', err);
@@ -81,12 +81,12 @@ task('build', [], function () {
           buffMin += data;
         });
         uglify.stdout.on("end", function () {
-          console.log(colorize('* Minifying', 'magenta'));
+          console.log(colorize('--> Minifying', 'magenta'));
           fs.writeFile(destPathMin, buffMin, function (err) {
             if (err) {
-              console.log(colorize('Build failed.', 'red'), err)
+              console.log(colorize('Build failed.', 'red'), err);
             } else {
-              console.log(colorize('Build finished successfully', 'yellow'))
+              console.log(colorize('√ Build success!', 'green'));
             }
           });
         });
@@ -95,6 +95,11 @@ task('build', [], function () {
   });
 
 }, true);
+
+desc('Tests code against specs');
+task('test', [], function(){
+  //TBC
+});
 
 desc('Kick out some ascii')
 task('ascii', [], function () {

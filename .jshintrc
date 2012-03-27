@@ -24,7 +24,7 @@
   , "latedef"         : true      // if the use before definition should not be tolerated
   , "laxbreak"        : false     // if line breaks should not be checked
   , "laxcomma"        : true      // if line breaks should not be checked around commas
-  , "loopfunc"        : false     // if functions should be allowed to be defined within loops
+  , "loopfunc"        : true     // if functions should be allowed to be defined within loops
   , "mootools"        : false     // if MooTools globals should be predefined
   , "multistr"        : false     // allow multiline strings
   , "newcap"          : true      // if constructor names must be capitalized

@@ -169,9 +169,9 @@
   function _isIE() {
     var rv = -1 // Return value assumes failure.
       , ua = navigator.userAgent
-      , re  = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
-
+      , re;
     if (navigator.appName == 'Microsoft Internet Explorer') {
+      re = /MSIE ([0-9]{1,}[\.0-9]{0,})/;
       if (re.exec(ua) != null) {
         rv = parseFloat(RegExp.$1, 10);
       }

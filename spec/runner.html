@@ -1,0 +1,27 @@
+<html>
+<head>
+  <title>test suite</title>
+  <style type="text/css">
+    @import url(foounit/suite.css);
+  </style>
+
+  <script type="text/javascript" src="foounit/foounit.js"></script>
+  <script type="text/javascript" src="foounit/foounit-browser.js"></script>
+</head>
+<body>
+
+<script type="text/javascript">
+foounit.globalize();
+
+// This sets up the foounit loader
+foounit.browser.setLoaderStrategy(new foounit.browser.XhrLoaderStrategy());
+
+// TODO: Require your test files here
+foounit.require('example-spec');
+
+// This runs the tests
+foounit.run();
+</script>
+
+</body>
+</html>
