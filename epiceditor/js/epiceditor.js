@@ -1130,7 +1130,7 @@ if (typeof module !== 'undefined') {
     //TODO: edit-mode class should be dynamically added
     _HtmlTemplates = {
       //This is wrapping iframe element. It contains the other two iframes and the utilbar
-      chrome:   '<div class="epiceditor-wrapper epiceditor-edit-mode">' +
+      chrome:   '<div id="epiceditor-wrapper" class="epiceditor-edit-mode">' +
                   '<iframe frameborder="0" id="epiceditor-editor-frame"></iframe>' +
                   '<iframe frameborder="0" id="epiceditor-previewer-frame"></iframe>' +
                   '<div class="epiceditor-utilbar">' +
@@ -1197,7 +1197,7 @@ if (typeof module !== 'undefined') {
     _insertCSSLink(self.settings.basePath + self.settings.theme.preview, self.previewerIframeDocument);
 
     //Add a relative style to the overall wrapper to keep CSS relative to the editor
-    self.iframe.getElementsByClassName('epiceditor-wrapper')[0].style.position = 'relative';
+    self.iframe.getElementById('epiceditor-wrapper').style.position = 'relative';
 
     //Now grab the editor and previewer for later use
     self.editor = self.editorIframeDocument.body;
@@ -1510,7 +1510,7 @@ if (typeof module !== 'undefined') {
       theme = theme || themePath
     }
 
-    _replaceClass(self.get('wrapper'), 'epiceditor-edit-mode', 'epiceditor-preview-mode');
+    _replaceClass(self.getElement('wrapper'), 'epiceditor-edit-mode', 'epiceditor-preview-mode');
 
     //Check if no CSS theme link exists
     if (!self.previewerIframeDocument.getElementById('theme')) {
@@ -1541,7 +1541,7 @@ if (typeof module !== 'undefined') {
    */
   EpicEditor.prototype.edit = function () {
     var self = this;
-    _replaceClass(self.get('wrapper'), 'epiceditor-preview-mode', 'epiceditor-edit-mode');
+    _replaceClass(self.getElement('wrapper'), 'epiceditor-preview-mode', 'epiceditor-edit-mode');
     self.eeState.preview = false;
     self.eeState.edit = true;
     self.editorIframe.style.display = 'block';
@@ -1555,14 +1555,17 @@ if (typeof module !== 'undefined') {
    * @param   {String} name The name of the node (can be document, body, editor, previewer, or wrapper)
    * @returns {Object|Null}
    */
-  EpicEditor.prototype.get = function (name) {
+  EpicEditor.prototype.getElement = function (name) {
     var available = {
-      document: this.iframe
-    , body: this.iframe.body
-    , editor: this.editor
-    , previewer: this.previewer
-    , wrapper: this.iframe.getElementsByClassName('epiceditor-wrapper')[0]
+      "container": this.element
+    , "wrapper": this.iframe.getElementById('epiceditor-wrapper')
+    , "wrapperIframe": this.iframeElement
+    , "editor": this.editorIframeDocument
+    , "editorIframe": this.editorIframe
+    , "previewer": this.previewerIframeDocument
+    , "previewerIframe": this.previewerIframe
     }
+    
     if (!available[name]) {
       return null;
     }
@@ -1640,7 +1643,7 @@ if (typeof module !== 'undefined') {
   EpicEditor.prototype.importFile = function (name, content) {
     var self = this;
     content = content || '';
-    self.open(name).get('editor').value = content;
+    self.open(name).getElement('editor').value = content;
     //we reopen the file after saving so that it will preview correctly if in the previewer
     self.save().open(name);
     return this;
@@ -1700,7 +1703,7 @@ if (typeof module !== 'undefined') {
     }
     //TODO: Cross browser support!
     function invokeHandler(handler) {
-      handler.call(self.iframe, data);
+      handler.call(self, data);
     }
     this.events[ev].forEach(invokeHandler);
     return self;

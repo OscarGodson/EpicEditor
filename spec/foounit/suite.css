@@ -1,5 +1,5 @@
 body {
-  font-family: Lucida Console, Monaco, monospace;
+  font-family: Helvetica, Arial, sans-serif;
   font-size: 8pt;
 }
 
@@ -24,11 +24,9 @@ body {
 }
 
 .failure {
-  background-color: #E99494;
 }
 
 .success {
-  background-color: #339933;
 }
 
 .example.success {
@@ -42,10 +40,9 @@ body {
 }
 
 .progress-bar {
+  
   padding: 10px;
   margin:  10px 0;
-  background-color: #ccc;
-  border-radius: 5px;
   word-wrap: break-word;
 }
 
@@ -56,7 +53,6 @@ body {
 .progress-bar .success,
 .progress-bar .failure,
 .progress-bar .pending {
-  background-color: #ccc;
   font-size: 14px;
   padding: 0;
 }

@@ -554,11 +554,11 @@ if (typeof foounit.ui == 'undefined'){
     }
 
     this.fail = function (index){
-      this._appendStatus('failure', 'F', index);
+      this._appendStatus('failure', '&#x2717;', index);
     }
 
     this.success = function (index){
-      this._appendStatus('success', '.', index);
+      this._appendStatus('success', '&#x2713;', index);
     }
 
     this.pending = function (index){

@@ -3,71 +3,135 @@
 // Include your source file here
 foounit.require('/epiceditor/js/epiceditor')
 
-describe('epic editor load', function () {
-  // Lets you set options for the editor. The example below has all the options available currently.
-  // basePath: The base path of the directory containing the /themes, /images, etc. It's epiceditor by default. Don't add a trailing slash!
-  // file.name: If no file exists with this name a new one will be made, otherwise the existing will be opened.
-  // file.defaultContent: The content to show if no content exists for that file.
-  // themes.editor: The theme for the editor which is a textarea inside of an iframe.
-  // themes.preview: The theme for the previewer which is a div of content inside of an iframe.
-  // focusOnLoad: Will focus on the editor on load. It's false by default.
-  // shortcuts.modifier: The modifying key for shortcuts. It's 18 (the alt key) by default, to reduce default browser shortcut conflicts.
-  // shortcuts.fullscreen: The fullscreen shortcut key. It's 70 (f key) by default.
-  // shortcuts.preview: The preview shortcut key. It's 80 (p key) by default.
-  // shortcuts.edit: The edit mode shortcut key. It's 79 (o key) by default.
+function _getIframeInnards(el) {
+  return el.contentDocument || el.contentWindow.document;
+}
 
-  var opts = {
-        container: 'epiceditor'
-      , basePath: '../epiceditor'
-      , localStorageName: 'epiceditor-test'
-      , file: {
-            name: 'test-file'
-          , defaultContent: 'Write your epic markdown here!'
-        }
-      , theme: {
-            preview:'/themes/preview/preview-dark.css'
-          , editor:'/themes/editor/epic-dark.css'
-        }
-      , focusOnLoad: false
-      , shortcut: {
-            modifier: 18
-          , fullscreen: 70
-          , preview: 80
-          , edit: 79
-        }
-      }
-    , editor
-  
-  before(function () {
-    editor && editor.unload();
+describe('EpicEditor.load', function () {
 
-    // Reset local storage on epiceditor-test
-    localStorage && localStorage[opts.localStorageName] && localStorage.removeItem(opts.localStorageName);
-  })
-  
-  it('initializes a new epic editor', function () {
-    editor = new EpicEditor(opts).load();
-    expect(typeof editor).to(be, 'object');
+  var editor = new EpicEditor({ basePath:'/epiceditor/' })
+    , editorIframe
+    , editorInnards
+    , wasLoaded = false;
+
+  editor.on('load',function(){
+    wasLoaded = this;
   });
-  
-  it('uses the optional storage location name to save content', function () {
-    editor = new EpicEditor(opts).load();
-    editor.save();
-    expect(JSON.parse(localStorage[opts.localStorageName]).files[opts.file.name]).to(be, editor.get('editor').innerText)
+
+  editor.load();
+
+  it('check if EE returns an object reference',function(){
+    expect(typeof editor).to(be,'object');
   });
-  
-  it('uses the provided default content', function () {
-    editor = new EpicEditor(opts).load();
-    expect(editor.get('editor').value).to(be, opts.defaultContent);
+
+
+  it('make sure the load event was fired',function(){
+    expect(typeof wasLoaded).to(be,'object');
   });
-  
-  it('uses the provided container option', function () {
-    // self.iframe points the contentWindow and not the iframe element itself
-    // the iframe HTML element is stored in self.iframeElement
-    optionalEl = 'option-test';
-    opts.container = optionalEl;
-    editor = new EpicEditor(opts).load();
-    expect(document.getElementById(optionalEl).childNodes[0]).to(be, editor.iframeElement);
+
+  describe('check if the DOM is in place',function(){
+
+    editorIframe = document.getElementById('epiceditor').getElementsByTagName('iframe');
+    editorInnards = _getIframeInnards(editorIframe[0]);
+
+    it('make sure there\'s one wrapping iframe',function(){ 
+      expect(editorIframe.length).to(be,1);
+    });
+    
+    it('make sure there\'s two inner iframes',function(){ 
+      expect(editorInnards.getElementsByTagName('iframe').length).to(be,2);
+    });
+
+    it('check to make sure the editor frame exists', function(){
+      expect(editorInnards.getElementById('epiceditor-editor-frame')).toNot(beNull);
+    });
+
+    it('check to make sure the previewer frame exists', function(){
+      expect(editorInnards.getElementById('epiceditor-previewer-frame')).toNot(beNull);
+    });
+
+    it('check to make sure the utility bar exists', function(){
+      // This really needs to be an ID, and when it changes, should check for null and not undefined
+      expect(editorInnards.getElementsByClassName('epiceditor-utilbar')[0]).toNot(beUndefined);
+    });
   });
-  
 });
+
+
+describe('EpicEditor.get',function(){
+
+  var wrapperIframe
+    , innerWrapper;
+  before(function(){
+    wrapperIframe = document.getElementById('epiceditor').getElementsByTagName('iframe')[0];
+    innerWrapper = _getIframeInnards(wrapperIframe);
+  });
+
+  // Check container (whatever element was given)
+  it('check that "container" is the element given at setup', function(){
+    expect(editor.getElement('container')).to(be, document.getElementById('epiceditor'));
+  });
+
+  it('check that the "wrapper" is the div inside the wrapping iframe containing the other two iframes', function(){
+    innerWrapperDiv = innerWrapper.getElementById('epiceditor-wrapper');
+    expect(editor.getElement('wrapper')).to(be, innerWrapperDiv);
+  });
+
+  it('check that the "wrapperIframe" is the iframe containing the other two iframes', function(){
+    expect(editor.getElement('wrapperIframe')).to(be, wrapperIframe);
+  });
+
+  it('check that "editor" is #document of the editor iframe', function(){
+    expect(editor.getElement('editor')).to(be, _getIframeInnards(innerWrapper.getElementById('epiceditor-editor-frame')));
+  });
+
+  it('check that "editorIframe" is <iframe> containing the editor', function(){
+    expect(editor.getElement('editorIframe').id).to(be,'epiceditor-editor-frame');
+  });
+
+  it('check that "previewer" is #document of the previewer iframe', function(){
+    expect(editor.getElement('previewer')).to(be, _getIframeInnards(innerWrapper.getElementById('epiceditor-previewer-frame')));
+  });
+
+  it('check that "previewerIframe" is <iframe> containing the previewer', function(){
+    expect(editor.getElement('previewerIframe').id).to(be,'epiceditor-previewer-frame');
+  });
+});
+
+/*
+describe('When the editor is unloaded', function(){
+
+  // This shit has to be cleaned up
+  var testDOM = document.createElement('div');
+  testDOM.id = 'unload-test';
+  document.body.appendChild(testDOM);
+
+  var editor = new EpicEditor({ basePath:'/epiceditor/', container:'unload-test' })
+    , editorWrapper = document.getElementById('unload-test')
+    , wasLoaded = false
+    , wasUnloaded = false;
+  
+  editor.on('load',function(){
+    wasLoaded = true;
+  });
+
+  editor.on('unload', function(){
+    wasUnloaded = true;
+  });
+
+  editor.load();
+
+  it('check if it was actually loaded first', function(){
+    expect(wasLoaded).to(beTrue);
+  });    
+
+  editor.unload();
+
+  it('check if the is no longer an iframe inside the wrapper', function(){
+    expect(editorWrapper.getElementsByTagName('iframe').length).to(be,0);    
+  });
+  
+  it('check if the unload event was fired', function(){
+    expect(wasUnloaded).to(beTrue);
+  });
+});*/

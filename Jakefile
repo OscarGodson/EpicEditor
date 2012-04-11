@@ -113,7 +113,17 @@ task('build', [], function () {
 
 desc('Tests code against specs');
 task('test', [], function(){
-  //TBC
+  console.log(colorize('--> Test suite server is booting up','magenta'));
+  
+  var testTask = spawn('foounit',['serve']);
+
+  testTask.stdout.on('data', function(data){
+    console.log(colorize(data.toString('utf8'),'yellow'));
+  });
+  //Doesnt run?
+  testTask.stdout.on('end', function(data){
+    console.log(colorize("Test suite server connection has closed\n"+data,'magenta'));
+  });
 });
 
 desc('Kick out some ascii')
