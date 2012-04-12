@@ -57,17 +57,28 @@ describe('EpicEditor.load', function () {
   });
 });
 
+// I patched this so we could play with this to see if it passes but,
+// the new EpicEditor... stuff should probably be in a sort of helper
+// function that generates a DOM element and adds the editor into that
+// because now we're overwriting an existing one and there could be bugs
+// with that method.
 
 describe('EpicEditor.get',function(){
 
-  var wrapperIframe
+  var editor = new EpicEditor({ basePath:'/epiceditor/' })
+    , editorIframe
+    , editorInnards
+    , wasLoaded = false
+    , wrapperIframe
     , innerWrapper;
+
+  editor.load();
+
   before(function(){
     wrapperIframe = document.getElementById('epiceditor').getElementsByTagName('iframe')[0];
     innerWrapper = _getIframeInnards(wrapperIframe);
   });
 
-  // Check container (whatever element was given)
   it('check that "container" is the element given at setup', function(){
     expect(editor.getElement('container')).to(be, document.getElementById('epiceditor'));
   });
