@@ -7,9 +7,18 @@ function _getIframeInnards(el) {
   return el.contentDocument || el.contentWindow.document;
 }
 
+function _createTestElement(){
+  var testEl = document.createElement('div')
+    , testId = 'epiceditor-'+(new Date().getTime())+'-'+(Math.round(Math.random()*1000))
+  testEl.id = testId;
+  document.body.appendChild(testEl);
+  return testId;
+}
+
 describe('EpicEditor.load', function () {
 
-  var editor = new EpicEditor({ basePath:'/epiceditor/' })
+  var testEl = _createTestElement()
+    , editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl })
     , editorIframe
     , editorInnards
     , wasLoaded = false;
@@ -31,7 +40,7 @@ describe('EpicEditor.load', function () {
 
   describe('check if the DOM is in place',function(){
 
-    editorIframe = document.getElementById('epiceditor').getElementsByTagName('iframe');
+    editorIframe = document.getElementById(testEl).getElementsByTagName('iframe');
     editorInnards = _getIframeInnards(editorIframe[0]);
 
     it('make sure there\'s one wrapping iframe',function(){ 
@@ -57,30 +66,20 @@ describe('EpicEditor.load', function () {
   });
 });
 
-// I patched this so we could play with this to see if it passes but,
-// the new EpicEditor... stuff should probably be in a sort of helper
-// function that generates a DOM element and adds the editor into that
-// because now we're overwriting an existing one and there could be bugs
-// with that method.
-
 describe('EpicEditor.get',function(){
 
-  var editor = new EpicEditor({ basePath:'/epiceditor/' })
-    , editorIframe
-    , editorInnards
-    , wasLoaded = false
+  var testEl = _createTestElement()
+    , editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load()
     , wrapperIframe
     , innerWrapper;
 
-  editor.load();
-
   before(function(){
-    wrapperIframe = document.getElementById('epiceditor').getElementsByTagName('iframe')[0];
+    wrapperIframe = document.getElementById(testEl).getElementsByTagName('iframe')[0];
     innerWrapper = _getIframeInnards(wrapperIframe);
   });
 
   it('check that "container" is the element given at setup', function(){
-    expect(editor.getElement('container')).to(be, document.getElementById('epiceditor'));
+    expect(editor.getElement('container')).to(be, document.getElementById(testEl));
   });
 
   it('check that the "wrapper" is the div inside the wrapping iframe containing the other two iframes', function(){
@@ -107,6 +106,33 @@ describe('EpicEditor.get',function(){
   it('check that "previewerIframe" is <iframe> containing the previewer', function(){
     expect(editor.getElement('previewerIframe').id).to(be,'epiceditor-previewer-frame');
   });
+});
+
+
+
+describe('EpicEditor.open', function(){
+
+  var testEl = _createTestElement()
+    , editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+
+   
+
+});
+
+describe('EpicEditor.importFile', function(){
+
+  var testEl = _createTestElement()
+    , editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+
+  it('check that the content is currently blank', function(){
+    expect(editor.exportFile()).to(be,'');
+  });
+
+  it('check that importFile(\'foo\',\'#bar\') is imported and can be received', function(){
+    editor.importFile(testEl,'#bar');
+    expect(editor.exportFile(testEl)).to(be,'#bar');
+  });
+
 });
 
 /*

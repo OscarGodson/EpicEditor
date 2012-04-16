@@ -839,7 +839,7 @@ if (typeof module !== 'undefined') {
           returnState[style] = _getStyle(el, style);
         }
       }
-      //After it's all done saving all the previous states, change the styles
+      // After it's all done saving all the previous states, change the styles
       _applyStyles(el, styles);
     }
     else if (type === 'apply') {
@@ -858,7 +858,7 @@ if (typeof module !== 'undefined') {
       , p = parseInt(_getStyle(el, 'padding-left'), 10) + parseInt(_getStyle(el, 'padding-right'), 10)
       , w = el.offsetWidth
       , t;
-    //For IE in case no border is set and it defaults to "medium"
+    // For IE in case no border is set and it defaults to "medium"
     if (isNaN(b)) { b = 0; }
     t = b + p + w;
     return t;
@@ -874,7 +874,7 @@ if (typeof module !== 'undefined') {
       , p = parseInt(_getStyle(el, 'padding-top'), 10) + parseInt(_getStyle(el, 'padding-bottom'), 10)
       , w = el.offsetHeight
       , t;
-    //For IE in case no border is set and it defaults to "medium"
+    // For IE in case no border is set and it defaults to "medium"
     if (isNaN(b)) { b = 0; }
     t = b + p + w;
     return t;
@@ -904,17 +904,17 @@ if (typeof module !== 'undefined') {
     headID.appendChild(cssNode);
   }
 
-  //Simply replaces a class (o), to a new class (n) on an element provided (e)
+  // Simply replaces a class (o), to a new class (n) on an element provided (e)
   function _replaceClass(e, o, n) {
     e.className = e.className.replace(o, n);
   }
 
-  //Feature detects an iframe to get the inner document for writing to
+  // Feature detects an iframe to get the inner document for writing to
   function _getIframeInnards(el) {
     return el.contentDocument || el.contentWindow.document;
   }
 
-  //Grabs the text from an element and preserves whitespace
+  // Grabs the text from an element and preserves whitespace
   function _getText(el) {
     var theText;
     if (document.body.innerText) {
@@ -1037,14 +1037,14 @@ if (typeof module !== 'undefined') {
    * @returns {object} EpicEditor will be returned
    */
   function EpicEditor(options) {
-    //Default settings will be overwritten/extended by options arg
+    // Default settings will be overwritten/extended by options arg
     var opts = options || {}
       , defaults = { container: 'epiceditor'
         , basePath: 'epiceditor'
         , localStorageName: 'epiceditor'
-        , file: { name: opts.container || 'epiceditor' //Use the container's ID for an unique persistent file name - will be overwritten if passed a file.name opt
+        , file: { name: opts.container || 'epiceditor' // Use the container's ID for an unique persistent file name - will be overwritten if passed a file.name opt
           , defaultContent: ''
-          , autoSave: 100 //Set to false for no auto saving
+          , autoSave: 100 // Set to false for no auto saving
           }
         , theme: { base: '/themes/base/epiceditor.css'
           , preview: '/themes/preview/github.css'
@@ -1065,10 +1065,10 @@ if (typeof module !== 'undefined') {
     // TODO: Consider moving this off of the settings object to something like this.instanceId or this.iframeId
     this.settings.id = 'epiceditor-' + Math.round(Math.random() * 100000);
 
-    //Setup local storage of files
+    // Setup local storage of files
     if (localStorage) {
       if (!localStorage[this.settings.localStorageName]) {
-        //TODO: Needs a dynamic file name!
+        // TODO: Needs a dynamic file name!
         defaultStorage = {files: {}};
         defaultStorage.files[this.settings.file.name] = this.settings.file.defaultContent;
         defaultStorage = JSON.stringify(defaultStorage);
@@ -1081,7 +1081,7 @@ if (typeof module !== 'undefined') {
         this.content = this.settings.file.defaultContent;
       }
     }
-    //Now that it exists, allow binding of events if it doesn't exist yet
+    // Now that it exists, allow binding of events if it doesn't exist yet
     if (!this.events) {
       this.events = {};
     }
@@ -1094,8 +1094,8 @@ if (typeof module !== 'undefined') {
    * @returns {object} EpicEditor will be returned
    */
   EpicEditor.prototype.load = function (callback) {
-    //TODO: Gotta get the privates with underscores!
-    //TODO: Gotta document what these are for...
+    // TODO: Gotta get the privates with underscores!
+    // TODO: Gotta document what these are for...
     var self = this
       , _HtmlTemplates
       , iframeElement
@@ -1115,21 +1115,21 @@ if (typeof module !== 'undefined') {
       , isCtrl = false
       , eventableIframes
       , saveTimer
-      , i; //i is reused for loops
+      , i; // i is reused for loops
 
     callback = callback || function () {};
 
-    //This needs to replace the use of classes to check the state of EE
+    // This needs to replace the use of classes to check the state of EE
     self.eeState = {
       fullscreen: false
     , preview: false
     , edit: true
     }
 
-    //The editor HTML
-    //TODO: edit-mode class should be dynamically added
+    // The editor HTML
+    // TODO: edit-mode class should be dynamically added
     _HtmlTemplates = {
-      //This is wrapping iframe element. It contains the other two iframes and the utilbar
+      // This is wrapping iframe element. It contains the other two iframes and the utilbar
       chrome:   '<div id="epiceditor-wrapper" class="epiceditor-edit-mode">' +
                   '<iframe frameborder="0" id="epiceditor-editor-frame"></iframe>' +
                   '<iframe frameborder="0" id="epiceditor-previewer-frame"></iframe>' +
@@ -1139,42 +1139,42 @@ if (typeof module !== 'undefined') {
                   '</div>' +
                 '</div>'
     
-    //The previewer is just an empty box for the generated HTML to go into
+    // The previewer is just an empty box for the generated HTML to go into
     , previewer: '<div class="epiceditor-preview"></div>'
     };
 
-    //Write an iframe and then select it for the editor
+    // Write an iframe and then select it for the editor
     self.element.innerHTML = '<iframe scrolling="no" frameborder="0" id= "' + self.settings.id + '"></iframe>';
     iframeElement = document.getElementById(self.settings.id);
     
     // Store a reference to the iframeElement itself
     self.iframeElement = iframeElement;
 
-    //Grab the innards of the iframe (returns the document.body)
-    //TODO: Change self.iframe to self.iframeDocument
+    // Grab the innards of the iframe (returns the document.body)
+    // TODO: Change self.iframe to self.iframeDocument
     self.iframe = _getIframeInnards(iframeElement);
     self.iframe.open();
     self.iframe.write(_HtmlTemplates.chrome);
 
-    //Now that we got the innards of the iframe, we can grab the other iframes
+    // Now that we got the innards of the iframe, we can grab the other iframes
     self.editorIframe = self.iframe.getElementById('epiceditor-editor-frame')
     self.previewerIframe = self.iframe.getElementById('epiceditor-previewer-frame');
 
-    //Setup the editor iframe
+    // Setup the editor iframe
     self.editorIframeDocument = _getIframeInnards(self.editorIframe);
     self.editorIframeDocument.open();
-    //Need something for... you guessed it, Firefox
+    // Need something for... you guessed it, Firefox
     self.editorIframeDocument.write('');
     self.editorIframeDocument.close();
     
-    //Setup the previewer iframe
+    // Setup the previewer iframe
     self.previewerIframeDocument = _getIframeInnards(self.previewerIframe);
     self.previewerIframeDocument.open();
     self.previewerIframeDocument.write(_HtmlTemplates.previewer);
     self.previewerIframeDocument.close();
 
 
-    //Set the default styles for the iframe
+    // Set the default styles for the iframe
     widthDiff = _outerWidth(self.element) - self.element.offsetWidth;
     heightDiff = _outerHeight(self.element) - self.element.offsetHeight;
       
@@ -1187,59 +1187,59 @@ if (typeof module !== 'undefined') {
 
     setupIframeStyles([self.iframeElement, self.editorIframe, self.previewerIframe]);
 
-    //Insert Base Stylesheet
+    // Insert Base Stylesheet
     _insertCSSLink(self.settings.basePath + self.settings.theme.base, self.iframe);
     
-    //Insert Editor Stylesheet
+    // Insert Editor Stylesheet
     _insertCSSLink(self.settings.basePath + self.settings.theme.editor, self.editorIframeDocument);
     
-    //Insert Previewer Stylesheet
+    // Insert Previewer Stylesheet
     _insertCSSLink(self.settings.basePath + self.settings.theme.preview, self.previewerIframeDocument);
 
-    //Add a relative style to the overall wrapper to keep CSS relative to the editor
+    // Add a relative style to the overall wrapper to keep CSS relative to the editor
     self.iframe.getElementById('epiceditor-wrapper').style.position = 'relative';
 
-    //Now grab the editor and previewer for later use
+    // Now grab the editor and previewer for later use
     self.editor = self.editorIframeDocument.body;
     self.previewer = self.previewerIframeDocument.body.getElementsByClassName('epiceditor-preview')[0];
    
     self.editor.contentEditable = true;
  
-    //Firefox's <body> gets all fucked up so, to be sure, we need to hardcode it
+    // Firefox's <body> gets all fucked up so, to be sure, we need to hardcode it
     self.iframe.body.style.height = this.element.offsetHeight + 'px';
 
-    //Should actually check what mode it's in!
+    // Should actually check what mode it's in!
     this.previewerIframe.style.display = 'none';
 
-    //FIXME figure out why it needs +2 px
+    // FIXME figure out why it needs +2 px
     if (_isIE() > -1) {
       this.previewer.style.height = parseInt(_getStyle(this.previewer, 'height'), 10) + 2;
     }
 
-    //Preload the preview theme:
+    // Preload the preview theme:
     _insertCSSLink(self.settings.basePath + self.settings.theme.preview, self.previewerIframeDocument, 'theme');
 
-    //If there is a file to be opened with that filename and it has content...
+    // If there is a file to be opened with that filename and it has content...
     this.open(self.settings.file.name);
 
     if (this.settings.focusOnLoad) {
       this.editor.focus();
     }
 
-    //Sets up the onclick event on the previewer/editor toggle button
+    // Sets up the onclick event on the previewer/editor toggle button
     self.iframe.getElementsByClassName('epiceditor-toggle-btn')[0].addEventListener('click', function () {
-      //If it was in edit mode...
+      // If it was in edit mode...
       if (self.eeState.edit) {
         self.preview();
       }
-      //If it was in preview mode...
+      // If it was in preview mode...
       else {
         self.edit();
       }
     });
 
-    //TODO: Should probably have an ID since we only select one
-    //TODO: Should probably have an underscore?
+    // TODO: Should probably have an ID since we only select one
+    // TODO: Should probably have an underscore?
     utilBtns = self.iframe.getElementsByClassName('epiceditor-utilbar')[0];
 
     _elementStates = {}
@@ -1250,66 +1250,66 @@ if (typeof module !== 'undefined') {
         el.webkitRequestFullScreen();
       }
 
-      //Set the state of EE in fullscreen
-      //We set edit and preview to true also because they're visible
-      //we might want to allow fullscreen edit mode without preview (like a "zen" mode)
+      // Set the state of EE in fullscreen
+      // We set edit and preview to true also because they're visible
+      // we might want to allow fullscreen edit mode without preview (like a "zen" mode)
       self.eeState.fullscreen = true;
       self.eeState.edit = true;
       self.eeState.preview = true;
 
-      //Cache calculations
+      // Cache calculations
       var windowInnerWidth = window.innerWidth
         , windowInnerHeight = window.innerHeight
         , windowOuterWidth = window.outerWidth
         , windowOuterHeight = window.outerHeight;
 
-      //Without this the scrollbars will get hidden when scrolled to the bottom in faux fullscreen (see #66)
+      // Without this the scrollbars will get hidden when scrolled to the bottom in faux fullscreen (see #66)
       if (!nativeFs) {
         windowOuterHeight = window.innerHeight;
       }
 
-      //This MUST come first because the editor is 100% width so if we change the width of the iframe or wrapper
-      //the editor's width wont be the same as before
+      // This MUST come first because the editor is 100% width so if we change the width of the iframe or wrapper
+      // the editor's width wont be the same as before
       _elementStates.editorIframe = _saveStyleState(self.editorIframe, 'save', {
         'width': windowOuterWidth / 2 + 'px'
       , 'height': windowOuterHeight + 'px'
-      , 'float': 'left' //Most browsers
-      , 'cssFloat': 'left' //FF
-      , 'styleFloat': 'left' //Older IEs
+      , 'float': 'left' // Most browsers
+      , 'cssFloat': 'left' // FF
+      , 'styleFloat': 'left' // Older IEs
       , 'display': 'block'
       });
 
-      //...and finally, the previewer
+      // the previewer
       _elementStates.previewerIframe = _saveStyleState(self.previewerIframe, 'save', {
         'width': windowOuterWidth / 2 + 'px'
       , 'height': windowOuterHeight + 'px'
-      , 'float': 'right' //Most browsers
-      , 'cssFloat': 'right' //FF
-      , 'styleFloat': 'right' //Older IEs
+      , 'float': 'right' // Most browsers
+      , 'cssFloat': 'right' // FF
+      , 'styleFloat': 'right' // Older IEs
       , 'display': 'block'
       });
 
-      //Setup the containing element CSS for fullscreen
+      // Setup the containing element CSS for fullscreen
       _elementStates.element = _saveStyleState(self.element, 'save', {
         'position': 'fixed'
       , 'top': '0'
       , 'left': '0'
       , 'width': '100%'
-      , 'z-index': '9999' //Most browsers
-      , 'zIndex': '9999' //Firefox
+      , 'z-index': '9999' // Most browsers
+      , 'zIndex': '9999' // Firefox
       , 'border': 'none'
-      //Should use the base styles background!
-      , 'background': _getStyle(self.editor, 'background-color') //Try to hide the site below
+      // Should use the base styles background!
+      , 'background': _getStyle(self.editor, 'background-color') // Try to hide the site below
       , 'height': windowInnerHeight + 'px'
       });
 
-      //The iframe element
+      // The iframe element
       _elementStates.iframeElement = _saveStyleState(self.iframeElement, 'save', {
         'width': windowOuterWidth + 'px'
       , 'height': windowInnerHeight + 'px'
       });
 
-      //...Oh, and hide the buttons and prevent scrolling
+      // ...Oh, and hide the buttons and prevent scrolling
       utilBtns.style.visibility = 'hidden';
 
       if (!nativeFs) {
@@ -1331,8 +1331,8 @@ if (typeof module !== 'undefined') {
       if (!nativeFs) {
         document.body.style.overflow = 'auto';
       }
-      //Put the editor back in the right state
-      //TODO: This is ugly... how do we make this nicer?
+      // Put the editor back in the right state
+      // TODO: This is ugly... how do we make this nicer?
       self.eeState.fullscreen = false;
       
       if (_isInEdit) {
@@ -1349,7 +1349,7 @@ if (typeof module !== 'undefined') {
       _goFullscreen(fsElement);
     });
 
-    //Sets up the NATIVE fullscreen editor/previewer for WebKit
+    // Sets up the NATIVE fullscreen editor/previewer for WebKit
     if (document.body.webkitRequestFullScreen) {
       fsElement.addEventListener('webkitfullscreenchange', function () {
         if (!document.webkitIsFullScreen) {
@@ -1360,15 +1360,15 @@ if (typeof module !== 'undefined') {
 
     utilBar = self.iframe.getElementsByClassName('epiceditor-utilbar')[0]
 
-    //Hide it at first until they move their mouse
+    // Hide it at first until they move their mouse
     utilBar.style.display = 'none';
 
     function utilBarHandler(e) {
-      //Here we check if the mouse has moves more than 5px in any direction before triggering the mousemove code
-      //we do this for 2 reasons:
-      //1. On Mac OS X lion when you scroll and it does the iOS like "jump" when it hits the top/bottom of the page itll fire off
-      //   a mousemove of a few pixels depending on how hard you scroll
-      //2. We give a slight buffer to the user in case he barely touches his touchpad or mouse and not trigger the UI
+      // Here we check if the mouse has moves more than 5px in any direction before triggering the mousemove code
+      // we do this for 2 reasons:
+      // 1. On Mac OS X lion when you scroll and it does the iOS like "jump" when it hits the top/bottom of the page itll fire off
+      //    a mousemove of a few pixels depending on how hard you scroll
+      // 2. We give a slight buffer to the user in case he barely touches his touchpad or mouse and not trigger the UI
       if (Math.abs(mousePos.y - e.pageY) >= 5 || Math.abs(mousePos.x - e.pageX) >= 5) {
         utilBar.style.display = 'block';
         // if we have a timer already running, kill it out
@@ -1384,37 +1384,37 @@ if (typeof module !== 'undefined') {
       mousePos = { y: e.pageY, x: e.pageX };
     }
  
-    //Add keyboard shortcuts for convenience.
+    // Add keyboard shortcuts for convenience.
     function shortcutHandler(e) {
-      if (e.keyCode == self.settings.shortcut.modifier) { isMod = true } //check for modifier press(default is alt key), save to var
-      if (e.keyCode == 17) { isCtrl = true } //check for ctrl/cmnd press, in order to catch ctrl/cmnd + s
+      if (e.keyCode == self.settings.shortcut.modifier) { isMod = true } // check for modifier press(default is alt key), save to var
+      if (e.keyCode == 17) { isCtrl = true } // check for ctrl/cmnd press, in order to catch ctrl/cmnd + s
 
-      //Check for alt+p and make sure were not in fullscreen - default shortcut to switch to preview
+      // Check for alt+p and make sure were not in fullscreen - default shortcut to switch to preview
       if (isMod === true && e.keyCode == self.settings.shortcut.preview && !self.eeState.fullscreen) {
         e.preventDefault();
         self.preview();
       }
-      //Check for alt+o - default shortcut to switch back to the editor
+      // Check for alt+o - default shortcut to switch back to the editor
       if (isMod === true && e.keyCode == self.settings.shortcut.edit) {
         e.preventDefault();
         if (!self.eeState.fullscreen) {
           self.edit();
         }
       }
-      //Check for alt+f - default shortcut to make editor fullscreen
+      // Check for alt+f - default shortcut to make editor fullscreen
       if (isMod === true && e.keyCode == self.settings.shortcut.fullscreen) {
         e.preventDefault();
         _goFullscreen(fsElement);
       }
 
-      //When a user presses "esc", revert everything!
+      // When a user presses "esc", revert everything!
       if (e.keyCode == 27 && self.eeState.fullscreen) {
         if (!document.body.webkitRequestFullScreen) {
           _exitFullscreen(fsElement);
         }
       }
 
-      //Check for ctrl/cmnd + s (since a lot of people do it out of habit) and make it do nothing
+      // Check for ctrl/cmnd + s (since a lot of people do it out of habit) and make it do nothing
       if (isCtrl === true && e.keyCode == 83) {
         e.preventDefault();
       }
@@ -1425,7 +1425,7 @@ if (typeof module !== 'undefined') {
       if (e.keyCode == 17) { isCtrl = false }
     }
 
-    //Hide and show the util bar based on mouse movements
+    // Hide and show the util bar based on mouse movements
     eventableIframes = [self.previewerIframeDocument, self.editorIframeDocument];
     
     for (i = 0; i < eventableIframes.length; i++) {
@@ -1440,7 +1440,7 @@ if (typeof module !== 'undefined') {
       });
     }
 
-    //Save the document every 100ms by default
+    // Save the document every 100ms by default
     if (self.settings.file.autoSave) {
       saveTimer = window.setInterval(function () {
         self.content = this.value;
@@ -1472,7 +1472,7 @@ if (typeof module !== 'undefined') {
     });
 
     self.iframe.close();
-    //The callback and call are the same thing, but different ways to access them
+    // The callback and call are the same thing, but different ways to access them
     callback.call(this);
     this.emit('load');
     return this;
@@ -1512,7 +1512,7 @@ if (typeof module !== 'undefined') {
 
     _replaceClass(self.getElement('wrapper'), 'epiceditor-edit-mode', 'epiceditor-preview-mode');
 
-    //Check if no CSS theme link exists
+    // Check if no CSS theme link exists
     if (!self.previewerIframeDocument.getElementById('theme')) {
       _insertCSSLink(theme, self.previewerIframeDocument, 'theme');
     }
@@ -1520,10 +1520,10 @@ if (typeof module !== 'undefined') {
       self.previewerIframeDocument.getElementById('theme').href = theme;
     }
     
-    //Add the generated HTML into the previewer
-    self.previewer.innerHTML = self.exportHTML();
+    // Add the generated HTML into the previewer
+    self.previewer.innerHTML = self.exportFile(null, 'html');
     
-    //Hide the editor and display the previewer
+    // Hide the editor and display the previewer
     if (!live) {
       self.editorIframe.style.display = 'none';
       self.previewerIframe.style.display = 'block';
@@ -1581,6 +1581,7 @@ if (typeof module !== 'undefined') {
    */
   EpicEditor.prototype.open = function (name) {
     var self = this
+      , defaultContent = self.settings.file.defaultContent
       , fileObj;
     name = name || self.settings.file.name;
     if (localStorage && localStorage[self.settings.localStorageName]) {
@@ -1589,10 +1590,11 @@ if (typeof module !== 'undefined') {
         _setText(self.editor, fileObj[name]);
       }
       else {
-        _setText(self.editor, self.settings.file.defaultContent);
+        _setText(self.editor, defaultContent);
+        self.save(); // ensure a save
       }
       self.settings.file.name = name;
-      this.previewer.innerHTML = this.exportHTML();
+      this.previewer.innerHTML = this.exportFile(null, 'html');
       this.emit('open');
     }
     return this;
@@ -1632,23 +1634,6 @@ if (typeof module !== 'undefined') {
     return this;
   };
 
-
-  /**
-   * Imports a MD file instead of having to manual inject content via
-   * .get(editor).value = 'the content'
-   * @param   {string} name    The name of the file
-   * @param   {stirng} content The MD to import
-   * @returns {object} EpicEditor will be returned
-   */
-  EpicEditor.prototype.importFile = function (name, content) {
-    var self = this;
-    content = content || '';
-    self.open(name).getElement('editor').value = content;
-    //we reopen the file after saving so that it will preview correctly if in the previewer
-    self.save().open(name);
-    return this;
-  };
-
   /**
    * Renames a file
    * @param   {string} oldName The old file name
@@ -1666,15 +1651,60 @@ if (typeof module !== 'undefined') {
   };
 
   /**
-   * Converts content into HTML from markdown
-   * @returns {string} Returns the HTML that was converted from the markdown
+   * Imports a file and it's contents and opens it
+   * @param   {string} name The name of the file you want to import (will overwrite existing files!)
+   * @param   {string} content Content of the file you want to import
+   * @param   {string} kind The kind of file you want to import (TBI)
+   * @param   {object} meta Meta data you want to save with your file.
+   * @returns {object} EpicEditor will be returned
    */
-  EpicEditor.prototype.exportHTML = function () {
-    return marked(_getText(this.editor));
+  EpicEditor.prototype.importFile = function (name, content, kind, meta) {
+    var self = this;
+    content = content || '';
+    kind = kind || 'md';
+    meta = meta || {};
+    
+    // Set our current file to the new file and update the content
+    self.settings.file.name = name;
+    _setText(self.editor, content);
+
+    // we open the file after saving so that it will preview correctly if in the previewer
+    self.save().open(name);
+    return this;
+  };
+
+  /**
+   * Exports a file as a string in a supported format
+   * @param   {string} name Name of the file you want to export (case sensitive)
+   * @param   {string} kind Kind of file you want the content in (currently supports html and text)
+   * @returns {string|undefined}  The content of the file in the content given or undefined if it doesn't exist
+   */
+  EpicEditor.prototype.exportFile = function (name, kind) {
+    var self = this
+      , content = localStorage[self.settings.localStorageName];
+  
+    name = name || self.settings.file.name;
+    kind = kind || 'text';
+    
+    content = JSON.parse(content).files[name];
+   
+    // If the file doesn't exist just return early with undefined
+    if (content === undefined) {
+      return;
+    }
+    
+    switch (kind) {
+    case 'html':
+      return marked(content);
+    case 'text':
+      return content;
+    default:
+      return content;
+    }
   }
 
-  //EVENTS
-  //TODO: Support for namespacing events like "preview.foo"
+  // EVENTS
+  // TODO: Support for namespacing events like "preview.foo"
   /**
    * Sets up an event handler for a specified event
    * @param  {string} ev The event name
@@ -1701,7 +1731,7 @@ if (typeof module !== 'undefined') {
     if (!this.events[ev]) {
       return;
     }
-    //TODO: Cross browser support!
+    // TODO: Cross browser support!
     function invokeHandler(handler) {
       handler.call(self, data);
     }
@@ -1724,7 +1754,7 @@ if (typeof module !== 'undefined') {
     if (!this.events[ev]) {
       return self;
     }
-    //Otherwise a handler and event exist, so take care of it
+    // Otherwise a handler and event exist, so take care of it
     this._events[ev].splice(this._events[ev].indexOf(handler), 1);
     return self;
   }
