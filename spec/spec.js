@@ -130,9 +130,40 @@ describe('EpicEditor.importFile', function(){
 
   it('check that importFile(\'foo\',\'#bar\') is imported and can be received', function(){
     editor.importFile(testEl,'#bar');
-    expect(editor.exportFile(testEl)).to(be,'#bar');
+    expect(editor.exportFile()).to(be,'#bar');
+  });
+  
+  // TODO: Tests for importFile's kind parameter when implemented
+  // TODO: Tests for importFile's meta parameter when implemented
+
+});
+
+describe('EpicEditor.exportFile', function(){
+  var testEl = _createTestElement()
+    , contents
+    , editor = new EpicEditor({
+        basePath: '/epiceditor/'
+      , file:{
+          defaultContent: '#foo\n\n##bar'
+        }
+      , container: testEl
+    }).load();
+
+
+  it('check that exportFile will work without parameters by outputting the current file as raw text', function(){
+    contents = editor.exportFile();
+    expect(contents).to(be,'#foo\n\n##bar');
   });
 
+  it('check that exportFile will export the current file as HTML with a null parameter as it\'s first', function(){
+    contents = editor.exportFile(null, 'html');
+    expect(contents).to(be,'<h1>foo</h1>\n<h2>bar</h2>\n');
+  });
+
+  it('check that exporting a file that doesn\'t exist returns as undefined', function(){
+    contents = editor.exportFile('poop');
+    expect(contents).to(beUndefined);
+  });
 });
 
 /*
