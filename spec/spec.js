@@ -164,6 +164,31 @@ describe('EpicEditor.exportFile', function(){
     contents = editor.exportFile('poop');
     expect(contents).to(beUndefined);
   });
+
+  it('check that export file can open non-currently open files', function(){
+    editor.importFile('exportFileTest', 'hello world');
+    expect(editor.exportFile('exportFileTest')).to(be,'hello world');
+  });
+});
+
+describe('EpicEditor.rename', function(){
+  var testEl = _createTestElement()
+    , editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+
+  editor.importFile('foo', 'testing...');
+
+  it('check to see if the foo file exists before trying to rename', function(){
+    expect(editor.exportFile('foo')).to(be,'testing...');
+  });
+
+  it('check that renaming a file actually renames the file', function(){
+    editor.rename('foo','bar');
+    expect(editor.exportFile('bar')).to(be,'testing...');
+  });
+
+  it('check that foo no longer exists', function(){
+    expect(editor.exportFile('foo')).to(beUndefined);
+  });
 });
 
 /*
