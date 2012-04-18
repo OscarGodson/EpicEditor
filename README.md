@@ -2,7 +2,7 @@
 
 _Note: this is a developer preview. We're releasing early so we can get other people's input and pull requests. While it works, there are still bugs and missing features. Use at your own risk._
 
-#EpicEditor 
+#EpicEditor
 
 ##An Embeddable JavaScript Markdown Editor
 
@@ -41,9 +41,21 @@ var element = document.getElementById('editor-wrapper');
 var editor = new EpicEditor(element).load();
 ```
 
+#### jQuery Quick Start
+
+```html
+    <div id="wrapper">
+      <div id="example-1" class="markdown"></div>
+      <div id="example-2" class="markdown"></div></div>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+    <script src="epiceditor.js"></script>
+    <script>
+      $('.markdown').each(function(){new EpicEditor($(this).get(0)).load();});
+    </script>
+```
 ####API
 
-**API Notes:**  
+**API Notes:**
 The constructor is first (`EpicEditor()`), but everything after are methods of that constructor. Any parameter inside wrapped in square brackets like `load([callback])` below means the parameter optional.
 
 **Table of Contents:**
