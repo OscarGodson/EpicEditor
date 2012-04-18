@@ -115,7 +115,25 @@ describe('EpicEditor.open', function(){
   var testEl = _createTestElement()
     , editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
 
-   
+
+  editor.importFile('openMeLater', 'open me later').importFile('openMe', 'open this file');
+
+  it('check that the openMe file was created successfully', function(){
+    expect(editor.exportFile('openMe')).to(be,'open this file');
+  });
+
+  it('check that the openMeLater file was created successfully', function(){
+    expect(editor.exportFile('openMeLater')).to(be,'open me later');
+  });
+  
+  it('check that the file is open in the editor', function(){
+    expect(editor.getElement('editor').body.innerHTML).to(be,'open this file');
+  });
+
+  it('check that openMeLater opens into the editor after calling .open', function(){
+    editor.open('openMeLater');
+    expect(editor.getElement('editor').body.innerHTML).to(be,'open me later');
+  });
 
 });
 
@@ -191,6 +209,58 @@ describe('EpicEditor.rename', function(){
   });
 });
 
+
+describe('EpicEditor.remove', function(){
+  var testEl = _createTestElement()
+    , editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+  
+  editor.importFile('removeMe','hello world').importFile('dontRemoveMe','foo bar');
+
+  it('check that the foo file was imported', function(){
+    expect(editor.exportFile('removeMe')).to(be,'hello world');
+  });
+
+  it('check that after removing the file exportFile returns false', function(){
+    editor.remove('removeMe');
+    expect(editor.exportFile('removeMe')).to(beUndefined);
+  });
+
+  it('check that other files weren\'t removed', function(){
+    expect(editor.exportFile('dontRemoveMe')).to(be,'foo bar');
+  });
+});
+
+describe('EpicEditor.load.options', function(){
+
+});
+
+describe('EpicEditor.edit', function(){
+
+});
+
+describe('EpicEditor.preview', function(){
+  
+});
+
+describe('EpicEditor.unload', function(){
+
+});
+
+describe('EpicEditor.save', function(){
+
+});
+
+describe('EpicEditor.on', function(){
+
+});
+
+describe('EpicEditor.emit', function(){
+
+});
+
+describe('EpicEditor.removeListener', function(){
+
+});
 /*
 describe('When the editor is unloaded', function(){
 
