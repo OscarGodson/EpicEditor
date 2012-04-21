@@ -1099,6 +1099,7 @@ if (typeof module !== 'undefined') {
     var self = this
       , _HtmlTemplates
       , iframeElement
+      , baseTag
       , widthDiff
       , heightDiff
       , utilBtns
@@ -1171,6 +1172,12 @@ if (typeof module !== 'undefined') {
     self.previewerIframeDocument = _getIframeInnards(self.previewerIframe);
     self.previewerIframeDocument.open();
     self.previewerIframeDocument.write(_HtmlTemplates.previewer);
+
+    // Base tag is added so that links will open a new tab and not inside of the iframes
+    baseTag = self.previewerIframeDocument.createElement('base');
+    baseTag.target = '_blank';
+    self.previewerIframeDocument.getElementsByTagName('head')[0].appendChild(baseTag);
+
     self.previewerIframeDocument.close();
 
 
