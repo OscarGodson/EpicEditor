@@ -7,7 +7,7 @@
       #wrapper { width:600px;margin:0 auto;font-family:helvetica,arial,sans-serif;line-height:1.4em; }
       #example-1 { height:349px;border:1px solid #000; }
       #epiceditor { margin: 20px 0; }
-      #tryit-unload-btn { display:none; }
+      #try-it { padding:5px; font-size:14px; }
       h1 { border-bottom:2px solid #000; padding:0 0 15px 0; font-size:38px; position:relative; }
       h3,h4,h5,h6 { margin-bottom:0; }
       h3 { font-size:20px; }
@@ -18,7 +18,8 @@
       pre { border:1px solid #000; overflow-x:auto; background:#000; }
       .offline-mode pre { padding:5px; background:#000; color:#fff; }
       p { font-size:13px; margin:5px 0; }
-      a { background:#000;color:#fff;text-decoration:none; }
+      li { font-size:13px; margin:10px 0; }
+      a { text-decoration:underline; color:#000; }
       .example { font-weight:bold; font-size:12px; }
 
     </style>
@@ -26,14 +27,14 @@
   </head>
   <body>
     <div id="wrapper">
-      <h1>EpicEditor <span>beta 0.1.0</span></h1>
+      <h1><img src="images/epiceditor-logo.png"> <span>beta 0.1.0</span></h1>
       <h2>An Embeddable JavaScript Markdown Editor</h2>
       <p>EpicEditor is an embeddable JavaScript <a href="http://daringfireball.net/projects/markdown/">Markdown</a> editor with some minor Markdown enhancements such as automatic link creation and code fencing.</p>
 
       <div id="example-1"></div>
 
       <h3>Why</h3>
-      <p>WYSIWYGs suck and they suck hard. Markdown is quickly becoming the replacement. <a href="http://github.com">GitHub</a>, <a href="http://stackoverflow.com">Stackoverflow</a>, and even blogging apps like <a href="http://posterous.com">Posterous</a> support Markdown now. This allows you to generate a Markdown editor with a preview, fullscreen editing, full CSS theming, and offline support with a simple:</p>
+      <p>WYSIWYGs suck and they suck hard. Markdown is quickly becoming the replacement. <a href="http://github.com">GitHub</a>, <a href="http://stackoverflow.com">Stackoverflow</a>, and even blogging apps like <a href="http://posterous.com">Posterous</a> support Markdown now. This allows you to generate a Markdown editor with a preview, split fullscreen editing, full CSS theming, and offline support with a simple:</p>
       <pre><code class="javascript">var editor = new EpicEditor().load();</code></pre>
       <h3>How</h3>
       <p>EpicEditor allows for all kinds of customization. For simple drop-in-and-go support see the <a href="#quick-start">quick start</a> right below, otherwise checkout the full <a href="#api">API</a>.</p>
@@ -44,20 +45,23 @@
       <h5>Step 1: Clone the repo</h5>
       <pre><code class="bash">$ git clone git@github.com:OscarGodson/EpicEditor</code></pre>
 
-      <h5>Step 2: Position the container and load the script</h5>
-      <pre><code ="html">&lt;div id="epiceditor"&gt;&lt;/div&gt;
-&lt;script src="epiceditor.min.js"&gt;&lt;/script&gt;</code></pre>
+      <h5>Step 2: Create your container element</h5>
+      <pre><code ="html">&lt;div id="epiceditor"&gt;&lt;/div&gt;</code></pre>
 
-      <h5>Step 3: Init EpicEditor</h5>
+      <h5>Step 3: Add the <code>epiceditor.js</code> file</h5>
+      <pre><code>&lt;script src="epiceditor.min.js"&gt;&lt;/script&gt;</code></pre>
+
+      <h5>Step 4: Init EpicEditor</h5>
       <pre><code class="javascript">var editor = new EpicEditor().load();</code></pre>
 
-      <a id="tryit-load-btn" onclick="toggleTryIt(true)">Try it!</a> <a id="tryit-unload-btn" onclick="toggleTryIt(false)">Unload it.</a>
+      <button id="try-it">Try it!</button>
+      
       <div id="epiceditor"></div>
       
       <h4 id="api">API</h4>
       
       <p><strong>API Notes:</strong><br>
-      The constructor is first (<code>EpicEditor()</code>), but everything after are methods of that constructor. Any parameter inside wrapped in square brackets like <code>load([<em>callback</em>])</code> below means the parameter optional.</p>
+      The constructor is first (<code>EpicEditor()</code>), but everything after are methods of that constructor. Any parameter inside wrapped in square brackets like <code>load([<em>callback</em>])</code> below in the API docs means the parameter optional.</p>
 
       <p><strong>Table of Contents:</strong></p>
 
@@ -65,9 +69,10 @@
         <li><a href="#api-epiceditor"><code>EpicEditor</code></a>(<a href="#api-options"><code>[<em>options</em>]</code></a>)</li>
         <li><a href="#api-load"><code>load()</code></a></li>
         <li><a href="#api-unload"><code>unload()</code></a></li>
-        <li><a href="#api-get"><code>get()</code></a></li>
+        <li><a href="#api-getElement"><code>getElement()</code></a></li>
         <li><a href="#api-open"><code>open()</code></a></li>
-        <li><a href="#api-importMarkdown"><code>importMarkdown()</code></a></li>
+        <li><a href="#api-importFile"><code>importFile()</code></a></li>
+        <li><a href="#api-exportFile"><code>exportFile()</code></a></li>
         <li><a href="#api-rename"><code>rename()</code></a></li>
         <li><a href="#api-save"><code>save()</code></a></li>
         <li><a href="#api-remove"><code>remove()</code></a></li>
@@ -76,7 +81,6 @@
         <li><a href="#api-removeListener"><code>removeListener()</code></a></li>
         <li><a href="#api-preview"><code>preview()</code></a></li>
         <li><a href="#api-edit"><code>edit()</code></a></li>
-        <li><a href="#api-exportHTML"><code>exportHTML()</code></a></li>
       </ol>
 
       <h5>Constructor</h5>
@@ -84,8 +88,10 @@
       <h6 id="api-epiceditor">EpicEditor([<em>options</em>])</h6>
       <p>Creates a new EpicEditor instance. Customize the instance by passing the <code>options</code> parameter.</p>
       <p class="example">Example:</p>
-      <pre><code class="javascript">var opts = { /* options */ },
-    editor = new EpicEditor(opts);</code></pre>
+      <pre><code class="javascript">var opts = {
+  container: 'foo'
+}
+var editor = new EpicEditor(opts);</code></pre>
       
       <h6 id="api-options">Options</h6>
       <p>Customize the editor instance. The example below has all the options available currently with their respective defaults.</p>
@@ -152,18 +158,20 @@ var editor = new EpicEditor(opts);</code></pre>
       <p class="example">Example:</p>
       <pre><code class="javascript">editor.unload();</code></pre>
       
-      <h6 id="api-get">get(<em>element</em>)</h6>
+      <h6 id="api-getElement">getElement(<em>element</em>)</h6>
       <p>Will grab an element of the editor for easy DOM manipulation inside of the editor.</p>
       <ul>
-        <li><code>'document'</code>: Returns the iframe element.</li>
-        <li><code>'body'</code>: Returns the iframe's inner &lt;body&gt; element.</li>
-        <li><code>'editor'</code>: Returns the editor which is a &lt;textarea&gt;.</li>
-        <li><code>'previewer'</code>: Returns the previewer element which is a &lt;div&gt;.</li>
-        <li><code>'wrapper'</code>: Returns the wrapping &lt;div&gt; containing everything inside the &lt;iframe&gt;.</li>
+        <li><code>container</code>: The element given at setup in the options.</li>
+        <li><code>wrapper</code>: The wrapping <code>&lt;div&gt;</code> containing the 2 editor and previewer iframes.</li>
+        <li><code>wrapperIframe</code>: The iframe containing the <code>wrapper</code> element.</li>
+        <li><code>editor</code>: The #document of the editor iframe (i.e. you could do <code>ee.getElement('editor').body</code>).</li>
+        <li><code>editorIframe</code>: The iframe containing the <code>editor</code> element.</li>
+        <li><code>previewer</code>: The #document of the previewer iframe (i.e. you could do <code>ee.getElement('previewer').body</code>).</li>
+        <li><code>previewerIframe</code>: The iframe containing the <code>previewer</code> element.</li>
       </ul>
        <p class="example">Example:</p>
       <pre><code class="javascript">someBtn.onclick = function(){
-  console.log(editor.get('editor').value); //Would return the editor's content
+  console.log(editor.getElement('editor').body.innerHTML); //Would return the editor's content
 }</code></pre>
 
       <h6 id="api-open">open(<em>filename</em>)</h6>
@@ -173,11 +181,21 @@ var editor = new EpicEditor(opts);</code></pre>
   editor.open('some-file'); //Open a file when the user clicks this button
 }</code></pre>
 
-      <h6 id="api-importMarkdown">importMarkdown(<em>filename</em>,[<em>content</em>])</h6>
-      <p>Imports a string of markdown into a file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX.</p>
+      <h6 id="api-importFile">importFile(<em>filename</em>,[<em>content</em>])</h6>
+      <p>Imports a string of content into a file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX. Will also run <code>.open()</code> after import automatically.</p>
       <p class="example">Example:</p>
       <pre><code class="javascript">importFileBtn.onclick = function(){
-  editor.importMarkdown('some-file',"#Imported markdown\nFancy, huh?"); //Imports a file when the user clicks this button
+  editor.importFile('some-file',"#Imported markdown\nFancy, huh?"); //Imports a file when the user clicks this button
+}</code></pre>
+
+      <h6 id="api-exportFile">exportFile([<em>filename</em>],[<em>type</em>])</h6>
+      <p>Returns the raw content of the file by default, or given a <code>type</code> will return the content converted into that <code>type</code>. If you leave both parameters <code>null</code> it will return the current document's raw content.</p>
+      <p class="example">Example:</p>
+      <pre><code class="javascript">syncWithServerBtn.onclick = function(){
+  var theContent = editor.exportFile();
+  saveToServerAjaxCall('/save',{data:theContent},function(){
+    console.log('data was saved to a db');
+  });
 }</code></pre>
 
       <h6 id="api-rename">rename(<em>oldName</em>,<em>newName</em>)</h6>
@@ -233,16 +251,6 @@ var editor = new EpicEditor(opts);</code></pre>
   editor.edit();
 }</code></pre>
       
-      <h6 id="api-exportHTML">exportHTML()</h6>
-      <p>Will return the generated HTML from the Markdown that you see in the preview mode. Useful to saving content to a database.</p>
-      <p class="example">Example:</p>
-      <pre><code class="javascript">syncWithServerBtn.onclick = function(){
-  var theHTML = editor.exportHTML();
-  saveToServerAjaxCall('/save',{data:theHTML},function(){
-    console.log('data was saved to a db');
-  });
-}</code></pre>
-
       <h5 id="events">Events</h5>
       
       <h6 id="">load</h6>
@@ -283,7 +291,7 @@ var editor = new EpicEditor(opts);</code></pre>
     </div>
     <a href="https://github.com/OscarGodson/EpicEditor"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/7afbc8b248c68eb468279e8c17986ad46549fb71/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub"></a>
     <script src="http://yandex.st/highlightjs/6.1/highlight.min.js"></script>
-    <script src="epiceditor/js/epiceditor.min.js"></script>
+    <script src="epiceditor/js/epiceditor.js"></script>
     <script>
       
       try{
@@ -303,21 +311,22 @@ var editor = new EpicEditor(opts);</code></pre>
       
         , example = new EpicEditor();
         
-      function toggleTryIt(s) {
-        var loader = document.getElementById('tryit-load-btn')
-          , unloader = document.getElementById('tryit-unload-btn')
 
-        if (s) {
-          example.load();
-          loader.style.display = 'none';
-          unloader.style.display = 'inline';
-        } else {
-          example.unload();
-          loader.style.display = 'inline';
-          unloader.style.display = 'none';
-        }
 
+    var tryItStatus = false
+      , tryItBtn = document.getElementById('try-it');
+    tryItBtn.onclick = function(){
+      if(!tryItStatus){
+        tryItStatus = true;
+        tryItBtn.innerHTML = 'Undo';
+        example.load();
       }
+      else{
+        tryItStatus = false;
+        tryItBtn.innerHTML = 'Try it again';
+        example.unload();
+      }
+    }
     </script>
   </body>
 </html>

@@ -66,7 +66,7 @@ describe('EpicEditor.load', function () {
   });
 });
 
-describe('EpicEditor.get',function(){
+describe('EpicEditor.getElement',function(){
 
   var testEl = _createTestElement()
     , editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load()
