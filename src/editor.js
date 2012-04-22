@@ -349,6 +349,8 @@
       fullscreen: false
     , preview: false
     , edit: true
+    , loaded: false
+    , unloaded: false
     }
 
     // The editor HTML
@@ -703,6 +705,8 @@
     });
 
     self.iframe.close();
+    self.eeState.loaded = true;
+    self.eeState.unloaded = false;
     // The callback and call are the same thing, but different ways to access them
     callback.call(this);
     this.emit('load');
@@ -714,10 +718,18 @@
    * @returns {object} EpicEditor will be returned
    */
   EpicEditor.prototype.unload = function (callback) {
+
+    // Make sure the editor isn't already unloaded.
+    if (this.eeState.unloaded) {
+      throw new Error('Editor isn\'t loaded');
+    }
+
     var self = this
       , editor = window.parent.document.getElementById(self.settings.id);
 
     editor.parentNode.removeChild(editor);
+    self.eeState.loaded = false;
+    self.eeState.unloaded = true;
     callback = callback || function () {};
     
     callback.call(this);
@@ -796,8 +808,10 @@
     , "previewer": this.previewerIframeDocument
     , "previewerIframe": this.previewerIframe
     }
-    
-    if (!available[name]) {
+
+    // Check that the given string is a possible option and verify the editor isn't unloaded
+    // without this, you'd be given a reference to an object that no longer exists in the DOM
+    if (!available[name] || this.eeState.unloaded) {
       return null;
     }
     else {

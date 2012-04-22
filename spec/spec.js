@@ -244,6 +244,39 @@ describe('EpicEditor.preview', function(){
 
 describe('EpicEditor.unload', function(){
 
+  var testEl, editor;
+
+  before(function(){
+    testEl = _createTestElement()
+    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl });
+    editor.load();
+  });
+
+  it('check the editor was actually loaded first of all', function(){
+    expect(document.getElementById(testEl).innerHTML).to(beTruthy);
+  });
+
+  it('check the editor was unloaded properly by checking', function(){
+    editor.unload();
+    expect(document.getElementById(testEl).innerHTML).to(beFalsy);
+  });
+
+  it('check the editor\'s getElement method returns null for selected elements because they no longer exist', function(){
+    editor.unload();
+    expect(editor.getElement('editor')).to(beFalsy);
+  });
+
+  it('check that unload can\'t be run twice', function(){
+    editor.unload();
+    expect(function(){ editor.unload(); }).to(throwError,'Editor isn\'t loaded');
+  });
+
+  it('check that unload and reloading and then requesting getElement doesn\'t return null as if it were unloaded', function(){
+    editor.unload();
+    editor.load();
+    expect(editor.getElement('editor')).to(beTruthy);
+  });
+
 });
 
 describe('EpicEditor.save', function(){
@@ -261,40 +294,3 @@ describe('EpicEditor.emit', function(){
 describe('EpicEditor.removeListener', function(){
 
 });
-/*
-describe('When the editor is unloaded', function(){
-
-  // This shit has to be cleaned up
-  var testDOM = document.createElement('div');
-  testDOM.id = 'unload-test';
-  document.body.appendChild(testDOM);
-
-  var editor = new EpicEditor({ basePath:'/epiceditor/', container:'unload-test' })
-    , editorWrapper = document.getElementById('unload-test')
-    , wasLoaded = false
-    , wasUnloaded = false;
-  
-  editor.on('load',function(){
-    wasLoaded = true;
-  });
-
-  editor.on('unload', function(){
-    wasUnloaded = true;
-  });
-
-  editor.load();
-
-  it('check if it was actually loaded first', function(){
-    expect(wasLoaded).to(beTrue);
-  });    
-
-  editor.unload();
-
-  it('check if the is no longer an iframe inside the wrapper', function(){
-    expect(editorWrapper.getElementsByTagName('iframe').length).to(be,0);    
-  });
-  
-  it('check if the unload event was fired', function(){
-    expect(wasUnloaded).to(beTrue);
-  });
-});*/
