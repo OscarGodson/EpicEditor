@@ -181,7 +181,7 @@ var editor = new EpicEditor(opts);</code></pre>
   editor.open('some-file'); //Open a file when the user clicks this button
 }</code></pre>
 
-      <h6 id="api-importFile">importFile(<em>filename</em>,[<em>content</em>])</h6>
+      <h6 id="api-importFile">importFile([<em>filename</em>],[<em>content</em>])</h6>
       <p>Imports a string of content into a file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX. Will also run <code>.open()</code> after import automatically.</p>
       <p class="example">Example:</p>
       <pre><code class="javascript">importFileBtn.onclick = function(){

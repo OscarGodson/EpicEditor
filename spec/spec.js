@@ -15,6 +15,13 @@ function _createTestElement(){
   return testId;
 }
 
+function _isVisible(el) {
+  return el.offsetWidth > 0 || el.offsetHeight > 0;
+}
+
+// Clean start
+localStorage.clear();
+
 describe('EpicEditor.load', function () {
 
   var testEl = _createTestElement()
@@ -64,6 +71,10 @@ describe('EpicEditor.load', function () {
       expect(editorInnards.getElementsByClassName('epiceditor-utilbar')[0]).toNot(beUndefined);
     });
   });
+});
+
+describe('EpicEditor.load.options', function(){
+
 });
 
 describe('EpicEditor.getElement',function(){
@@ -151,6 +162,7 @@ describe('EpicEditor.importFile', function(){
     expect(editor.exportFile()).to(be,'#bar');
   });
   
+  // TODO: Test that null as the filename works
   // TODO: Tests for importFile's kind parameter when implemented
   // TODO: Tests for importFile's meta parameter when implemented
 
@@ -230,16 +242,39 @@ describe('EpicEditor.remove', function(){
   });
 });
 
-describe('EpicEditor.load.options', function(){
-
-});
-
-describe('EpicEditor.edit', function(){
-
-});
-
-describe('EpicEditor.preview', function(){
+describe('EpicEditor.preview and EpicEditor.edit', function(){
   
+  var testEl, editor;
+
+  before(function(){
+    testEl = _createTestElement();
+    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+  });
+
+  it('check that the editor is currently displayed and not the previewer', function(){
+    expect(editor.getElement('editorIframe').style.display).to(be, '');
+  });
+
+  it('check that the previewer can be tested to be hidden', function(){
+    expect(editor.getElement('previewerIframe').style.display).to(be, 'none');
+  });
+
+  it('check that calling .preview() displays the previewer', function(){
+    editor.preview();
+    expect(editor.getElement('previewerIframe').style.display).to(be, 'block');
+  });
+
+  it('check that switching from preview back to edit makes the editor visible', function(){
+    editor.preview();
+    editor.edit();
+    expect(editor.getElement('editorIframe').style.display).to(be, 'block');
+  });
+
+  it('check that switching from preview back to edit doesn\'t keep the previewer displayed', function(){
+    editor.preview();
+    editor.edit();
+    expect(editor.getElement('previewerIframe').style.display).to(be, 'none');
+  });
 });
 
 describe('EpicEditor.unload', function(){
@@ -280,6 +315,29 @@ describe('EpicEditor.unload', function(){
 });
 
 describe('EpicEditor.save', function(){
+  
+  var testEl, editor;
+  
+  before(function(){
+    testEl = _createTestElement();
+    editor = new EpicEditor({
+      basePath: '/epiceditor/'
+    , container: testEl 
+    , file: {
+        defaultContent: 'foo'
+      }
+    }).load();
+  });
+
+  it('check that foo is the default content in the editor', function(){
+    expect(editor.getElement('editor').body.innerHTML).to(be, 'foo');
+  });
+
+  it('check to make sure new file contents are saved after value is changed in the editor and save is called', function(){
+    editor.getElement('editor').body.innerHTML = 'bar';
+    editor.save();
+    expect(JSON.parse(localStorage['epiceditor']).files[testEl]).to(be, 'bar');
+  });
 
 });
 

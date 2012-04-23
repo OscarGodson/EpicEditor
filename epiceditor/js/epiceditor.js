@@ -1681,6 +1681,8 @@ if (typeof module !== 'undefined') {
    */
   EpicEditor.prototype.importFile = function (name, content, kind, meta) {
     var self = this;
+
+    name = name || self.settings.file.name;
     content = content || '';
     kind = kind || 'md';
     meta = meta || {};
