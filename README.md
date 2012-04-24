@@ -1,4 +1,4 @@
-# ![](images/epiceditor-logo.png)
+# ![](https://github.com/johnmdonahue/EpicEditor/raw/readme-build/images/epiceditor-logo.png)
 
 EpicEditor is an embeddable JavaScript [Markdown](http://daringfireball.net/projects/markdown/) editor with some Markdown enhancements such as automatic link creation and code fencing a la [Github Flavored Markdown](). EpicEditor allows for all kinds of customization. For simple drop-in-and-go support see the quick start below, otherwise checkout the full API.
 
