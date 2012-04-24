@@ -125,7 +125,9 @@ openFileBtn.onclick = function(){
 }
 ```
 
-### importFile(_filename_,[_content_])
+### importFile([_filename_],[_content_])
+
+Imports a string of content into a file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX. Will also run `.open()` after import automatically.
 
 Imports a string of content into a file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX. Will also run .open() after import automatically.
 

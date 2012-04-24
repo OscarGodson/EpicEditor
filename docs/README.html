@@ -101,7 +101,10 @@ var editor = new EpicEditor(opts);</code></pre>
 <pre><code class="lang-javascript">openFileBtn.onclick = function(){
   editor.open(&#39;example.md&#39;); // Opens &quot;example.md&quot; on click
 }</code></pre>
-<h3>importFile(<em>filename</em>,[<em>content</em>])</h3>
+<h3>importFile([<em>filename</em>],[<em>content</em>])</h3>
+<p>Imports a string of content into a file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX. Will also run <code>.open()</code> after import automatically.
+
+</p>
 <p>Imports a string of content into a file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX. Will also run .open() after import automatically.
 
 </p>
