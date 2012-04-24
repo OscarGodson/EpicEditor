@@ -14,7 +14,7 @@ var editor = new EpicEditor().load();
 
 EpicEditor is easy to implement. Add the script and assets to your page, provide a target container and call `load()`.
 
-### Step 1: Download _or_ clone & build from source
+### Step 1: Download
 
 ```bash
 $ git clone git@github.com:OscarGodson/EpicEditor
