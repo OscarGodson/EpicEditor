@@ -342,13 +342,101 @@ describe('EpicEditor.save', function(){
 });
 
 describe('EpicEditor.on', function(){
+  
+  var testEl, editor, hasBeenFired;
+
+  before(function(){
+    testEl = _createTestElement();
+    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+    hasBeenFired = false;
+  });
+
+  after(function(){
+    editor.removeListener('foo');
+  });
+
+  it('check that on fires on an EE event, preview', function(){
+    editor.on('preview', function(){
+      hasBeenFired = true;
+    });
+    editor.preview();
+    expect(hasBeenFired).to(beTrue);
+  });
+
+  it('check that on fires for custom events', function(){
+    editor.on('foo', function(){
+      hasBeenFired = true;
+    });
+    editor.emit('foo');
+    expect(hasBeenFired).to(beTrue);
+  });
 
 });
 
 describe('EpicEditor.emit', function(){
+   
+  var testEl, editor, hasBeenFired;
+
+  before(function(){
+    testEl = _createTestElement();
+    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+    hasBeenFired = false;
+  });
+
+  after(function(){
+    editor.removeListener('foo');
+  });
+
+  // We don't use events in EpicEditor so only custom events need to be checked
+  it('check that emit triggers a callback for a custom event', function(){
+    editor.on('foo', function(){
+      hasBeenFired = true;
+    });
+    editor.emit('foo');
+    expect(hasBeenFired).to(beTrue);
+  });
 
 });
 
 describe('EpicEditor.removeListener', function(){
+
+  var testEl, editor, hasBeenFired, baz, qux, callCount = 0;
+
+  before(function(){
+    testEl = _createTestElement();
+    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+    hasBeenFired = false;
+    editor.on('foo', function(){
+      hasBeenFired = true;
+    });
+
+    baz = function(){
+      callCount++;
+    };
+
+    qux = function(){
+      callCount++;
+    };
+
+    editor.on('bar', baz);
+    editor.on('bar', qux);
+  });
+
+  it('check that the foo event can be fired', function(){
+    editor.emit('foo');
+    expect(hasBeenFired).to(beTrue);
+  });
+
+  it('check that removing the event WITHOUT a handler param, than emitting it doesn\'t trigger the event', function(){
+    editor.removeListener('foo');
+    editor.emit('foo');
+    expect(hasBeenFired).to(beFalse);
+  });
+
+  it('check that removing the event WITH a handler param, than emitting it only triggers one of the two handlers', function(){
+    editor.removeListener('bar', baz);
+    editor.emit('bar');
+    expect(callCount).to(be, 1);
+  });
 
 });
