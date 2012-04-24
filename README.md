@@ -17,8 +17,7 @@ EpicEditor is easy to implement. Add the script and assets to your page, provide
 ### Step 1: Download _or_ clone & build from source
 
 ```bash
-$ git clone git@github.com:OscarGodson/EpicEditor && cd EpicEditor
-$ jake build
+$ git clone git@github.com:OscarGodson/EpicEditor
 ```
 
 ### Step 2: Position the target container and load the script
