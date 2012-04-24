@@ -1,51 +1,4 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>EpicEditor - An embeddable JavaScript Markdown editor</title>
-    <style>
-      body { background:#FEED79; font-family:helvetica,arial,sans-serif; }
-      #wrapper { width:600px;margin-left: 400px;line-height:1.4em; }
-      #example-1 { height:349px;border:1px solid #000; }
-      #epiceditor { margin: 20px 0; }
-      #try-it { padding:5px; font-size:14px; }
-      h1 { border-bottom:2px solid #000; padding:0 0 15px 0; font-size:38px; position:relative; }
-      h3,h4,h5,h6 { margin-bottom:0; }
-      h3 { font-size:20px; }
-      h4 { font-size:18px; }
-      h5 { font-size:16px; }
-      h6 { font-size:14px; padding:10px 0; border-top:1px solid #000; }
-      h1 span { font-weight:normal; font-size:20px; background:#000; color:#fff; padding:0 5px; border-radius:3px; position:absolute; top:0; right:0; }
-      pre { border:1px solid #000; overflow-x:auto; background:#000; }
-      .offline-mode pre { padding:5px; background:#000; color:#fff; }
-      p { font-size:13px; margin:5px 0; }
-      li { font-size:13px; margin:10px 0; }
-      a { text-decoration:underline; color:#000; }
-      .example { font-weight:bold; font-size:12px; }
-      #toc {
-        float: left;
-        width: 360px;
-        padding: 20px;
-        position: fixed;
-      }
-      #toc ul {
-        list-style-type: none;
-        padding: 0;
-      }
-      #toc li {
-        margin: 5px;
-      }
-      #toc li.toc-h3 {
-        margin-left: 10px;
-      }
-    </style>
-    <link rel="stylesheet" href="docs/prettify.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
-  </head>
-  <body>
-    <div id="wrapper">
-      
-      
-      <h1><img src="images/epiceditor-logo.png" alt=""></h1>
+<h1><img src="images/epiceditor-logo.png" alt=""></h1>
 <p>EpicEditor is an embeddable JavaScript <a href="http://daringfireball.net/projects/markdown/">Markdown</a> editor with some Markdown enhancements such as automatic link creation and code fencing a la <a href="">Github Flavored Markdown</a>. EpicEditor allows for all kinds of customization. For simple drop-in-and-go support see the quick start below, otherwise checkout the full API.
 
 </p>
@@ -148,8 +101,10 @@ var editor = new EpicEditor(opts);</code></pre>
 <pre><code class="lang-javascript">openFileBtn.onclick = function(){
   editor.open(&#39;example.md&#39;); // Opens &quot;example.md&quot; on click
 }</code></pre>
-<h3>importFile([<em>filename</em>],[<em>content</em>])</h3>
-<p>Imports a string of content into a file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX. Will also run <code>.open()</code> after import automatically.</p>
+<h3>importFile(<em>filename</em>,[<em>content</em>])</h3>
+<p>Imports a string of content into a file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX. Will also run .open() after import automatically.
+
+</p>
 <pre><code class="lang-javascript">importFileBtn.onclick = function(){
   editor.importMarkdown(&#39;example.md&#39;, &quot;# Imported markdown\nFancy, huh?&quot;); //Imports a file when the user clicks this button
 }</code></pre>
@@ -294,61 +249,3 @@ var editor = new EpicEditor(opts);</code></pre>
 <!-- @TODO: Update links to GFM, Marked etc -->
 
 <p><a href="http://twitter.com/oscargodson">Oscar Godson</a> (me!), created EpicEditor with help from <a href="http://twitter.com/adam_bickford">Adam Bickford</a>. With many thanks to John Fraser (<em>site is no longer up</em>) for his <a href="https://github.com/coreyti/showdown">Showdown.js</a> script and <a href="http://daringfireball.net/">John Gruber</a> for <a href="http://daringfireball.net/projects/markdown/">Markdown</a>. Also, <a href="http://blog.izs.me">Isaac Z. Schlueter</a> for his port of <a href="https://github.com/isaacs/github-flavored-markdown">GitHub Flavored Markdown</a> which I <a href="https://github.com/oscargodson/github-flavored-markdown">forked</a>.</p>
-
-<a href="https://github.com/OscarGodson/EpicEditor"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/7afbc8b248c68eb468279e8c17986ad46549fb71/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub"></a>
-
-<script src="docs/prettify.js"></script>
-<script src="epiceditor/js/epiceditor.js"></script>
-<script>
-
-// Inject example-1, epiceditor, tryit, toc
-$(function () {
-  $('#wrapper').before('<div id="toc"><h4>EpicEditor</h4><ul id="toc-list"></ul></div>');
-  $($('h1')[0]).append('<span>beta 0.1.0</span>');
-  $($('h2')[1]).before('<button id="try-it">Try it!</button><div id="epiceditor"></div>');
-  $($('h2')[0]).before('<div id="example-1"></div>');
-  $($('h1')[0]).after('<h2>An Embeddable JavaScript Markdown Editor</h2>');
-  
-  var opts = {
-      container: 'example-1'
-    , file:{
-        defaultContent:"#EpicEditor\nThis is some default content. Go ahead, _change me_. "
-      }
-      , focusOnLoad:true
-      }
-    , editor = new EpicEditor(opts).load()
-    , example = new EpicEditor()
-    , tryItStatus = false
-    , tryItBtn = document.getElementById('try-it');
-
-  tryItBtn.onclick = function(){
-    if(!tryItStatus){
-      tryItStatus = true;
-      tryItBtn.innerHTML = 'Undo';
-      example.load();
-    }
-    else{
-      tryItStatus = false;
-      tryItBtn.innerHTML = 'Try it again';
-      example.unload();
-    }
-  }
-  
-  $('pre').addClass('prettyprint')
-  prettyPrint()
-  
-  $("h2, h3").each(function (idx, val) {
-    var h = $(this)
-      , title = h.text()
-      , link = title.toLowerCase().split(' ').join('-');
-    
-    if (idx === 0) return
-    
-    h.attr("id", link);
-    $("#toc-list").append('<li class="toc-' + this.nodeName.toLowerCase()+ '"><a id="" href="#' + link + '">' + title + '</a></li>');
-  });
-})
-
-</script>
-</body>
-</html>
