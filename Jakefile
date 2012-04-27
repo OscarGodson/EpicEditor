@@ -44,6 +44,7 @@ task('lint', [], function () {
           if (jshintErrors) {
             console.log(jshintErrors)
             console.log(colorize('Lint failed.', 'red') + '\n')
+            fail();
           } else {
             console.log(colorize('√ Lint success! Giddyup.', 'green'))
           }
@@ -51,6 +52,7 @@ task('lint', [], function () {
         });
         jshint.stderr.on('data', function (data) {
           console.log('ERROR:', new Buffer(data).toString("utf-8"));
+          fail();
           fs.unlink(destPath);
         });
       });
@@ -58,8 +60,28 @@ task('lint', [], function () {
     
 });
 
+desc('Build the index.html file from the README.');
+task('docs', function () {
+  var destDir = path.join(process.cwd() + '/')
+    , srcDir = path.join(process.cwd() + '/docs/')
+    , srcPaths = 
+      [ srcDir + 'header.html'
+      , srcDir + 'README.html'
+      , srcDir + 'footer.html'
+      ]
+    , cmds = 
+      [ 'cat ' + destDir + '/README.md | marked -o ' + srcDir + '/README.html --gfm'
+      , 'cat ' + srcPaths.join(' ') + ' > ' + destDir + 'index.html'
+      ]
+      
+  jake.exec(cmds, function () {
+    fs.unlink(srcPaths[1]); // remove tmp README.html
+    console.log(colorize('√ Build success!', 'green'))
+  }, {stdout: true});
+}, {async: false});
+
 desc('Build epiceditor.js and epiceditor.min.js');
-task('build', [], function () {
+task('build', ['lint'], function () {
   var destDir = path.join(process.cwd() + '/epiceditor/js/')
     , srcDir = path.join(process.cwd() + '/src/')
     , srcPaths = [
@@ -87,6 +109,7 @@ task('build', [], function () {
     fs.writeFile(destPath, buff, function (err) {
       if (err) {
         console.log('ERROR:', err);
+        fail();
       } else {
         // Minify the source
         var uglify = spawn('uglifyjs', [destPath])
@@ -100,6 +123,7 @@ task('build', [], function () {
           fs.writeFile(destPathMin, buffMin, function (err) {
             if (err) {
               console.log(colorize('Build failed.', 'red'), err);
+              fail();
             } else {
               console.log(colorize('√ Build success!', 'green'));
             }
@@ -109,7 +133,7 @@ task('build', [], function () {
     });
   });
 
-}, true);
+}, {async: false});
 
 desc('Tests code against specs');
 task('test', [], function(){

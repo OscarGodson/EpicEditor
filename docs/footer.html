@@ -1,0 +1,57 @@
+
+  <a href="https://github.com/OscarGodson/EpicEditor"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/7afbc8b248c68eb468279e8c17986ad46549fb71/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub"></a>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+  <script src="docs/prettify.js"></script>
+  <script src="epiceditor/js/epiceditor.js"></script>
+
+  <script>
+    // Inject example-1, epiceditor, tryit, toc
+    $(function () {
+      $('#wrapper').before('<div id="toc"><h4>EpicEditor</h4><ul id="toc-list"></ul></div>');
+      $($('h1')[0]).append('<span>beta 0.1.0</span>');
+      $($('h2')[2]).before('<button id="try-it">Try it!</button><div id="epiceditor"></div>');
+      $($('h2')[1]).before('<div id="example-1"></div>');
+  
+      var opts = {
+          container: 'example-1'
+        , file:{
+            defaultContent:"#EpicEditor\nThis is some default content. Go ahead, _change me_. "
+          }
+          , focusOnLoad:true
+          }
+        , editor = new EpicEditor(opts).load()
+        , example = new EpicEditor()
+        , tryItStatus = false
+        , tryItBtn = document.getElementById('try-it');
+
+      tryItBtn.onclick = function(){
+        if(!tryItStatus){
+          tryItStatus = true;
+          tryItBtn.innerHTML = 'Undo';
+          example.load();
+        }
+        else{
+          tryItStatus = false;
+          tryItBtn.innerHTML = 'Try it again';
+          example.unload();
+        }
+      }
+  
+      $('pre').addClass('prettyprint')
+      prettyPrint()
+  
+      $("h2, h3").each(function (idx, val) {
+        var h = $(this)
+          , title = h.text()
+          , link = title.toLowerCase().split(' ').join('-');
+    
+        if (idx === 0) return
+    
+        h.attr("id", link);
+        $("#toc-list").append('<li class="toc-' + this.nodeName.toLowerCase()+ '"><a id="" href="#' + link + '">' + title + '</a></li>');
+      });
+    })
+  </script>
+</body>
+</html>
