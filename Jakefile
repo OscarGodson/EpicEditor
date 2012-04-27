@@ -75,6 +75,7 @@ task('docs', function () {
       ]
       
   jake.exec(cmds, function () {
+    fs.unlink(srcPaths[1]); // remove tmp README.html
     console.log(colorize('√ Build success!', 'green'))
   }, {stdout: true});
 }, {async: false});
