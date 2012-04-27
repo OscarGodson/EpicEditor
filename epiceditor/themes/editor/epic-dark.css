@@ -1,47 +1,13 @@
-.epiceditor-textarea{
-  margin:0; /* needed to get rid of a 1 pixel top-border in firefox*/
-}
+html { padding:10px; }
 
-.epiceditor-wrapper {
-  background:rgb(241,241,241);  
-}
-.epiceditor-utilbar {
-  position:fixed;
-  bottom:10px;
-  right:10px;
-  padding:5px;
-  border-radius:3px;
-  box-shadow:0 0 5px rgba(0,0,0,0.25);
-  background:#000;
-  background:rgba(0,0,0,0.5);
-}
-
-.epiceditor-utilbar img {
-  display:block;
-  float:left;
-}
-
-.epiceditor-utilbar img:first-child {
-  margin:0 3px 0 0;
-}
-
-.epiceditor-utilbar img:hover {
-  cursor:pointer;
-}
-
-.epiceditor-utilbar:hover {
-  display:block !important; /* No, really, important so when hovering the element it wont go away after N secs */
-}
-
-.epiceditor-wrapper textarea {
+body {
   border:0;
-  resize: none;
-  width:100%;
   background:rgb(41,41,41);
   font-family:monospace;
   font-size:14px;
   padding:10px;
   color:#ddd;
+  line-height:1.35em;
+  margin:0;
+  padding:0;
 }
-
-.epiceditor-wrapper textarea:focus { outline:none; }

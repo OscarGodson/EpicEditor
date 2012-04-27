@@ -1,0 +1,66 @@
+body {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 8pt;
+}
+
+.title {
+  padding-bottom: 10px;
+}
+
+.example {
+  margin-bottom: 12px;
+}
+
+.stack {
+  background-color: #FFFFD1;
+  margin-top: 5px;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.failure, .success {
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.failure {
+}
+
+.success {
+}
+
+.example.success {
+  color: #ccc;
+}
+
+.example.pending {
+  background-color: #E6E600;
+  padding: 2px 2px 2px 10px;
+  border-radius: 5px;
+}
+
+.progress-bar {
+  
+  padding: 10px;
+  margin:  10px 0;
+  word-wrap: break-word;
+}
+
+.progress-bar a {
+  text-decoration: none;
+}
+
+.progress-bar .success,
+.progress-bar .failure,
+.progress-bar .pending {
+  font-size: 14px;
+  padding: 0;
+}
+
+.progress-bar .success { color: #339933; }
+.progress-bar .failure { color: #ff0000; }
+.progress-bar .pending { font-weight: bold; color: #E8E819; }
+
+.topnav, .topnav:visited { color: #0000ff; text-decoration: none; }
+.example .topnav { visibility: hidden; }
+.example:hover .topnav { visibility: visible; }
