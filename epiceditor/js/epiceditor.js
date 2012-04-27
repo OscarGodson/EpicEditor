@@ -1778,7 +1778,7 @@ if (typeof module !== 'undefined') {
       return self;
     }
     // Otherwise a handler and event exist, so take care of it
-    this._events[ev].splice(this._events[ev].indexOf(handler), 1);
+    this.events[ev].splice(this.events[ev].indexOf(handler), 1);
     return self;
   }
 

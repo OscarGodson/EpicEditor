@@ -15,8 +15,8 @@ function _createTestElement(){
   return testId;
 }
 
-function _isVisible(el) {
-  return el.offsetWidth > 0 || el.offsetHeight > 0;
+function _randomNum() {
+  return Math.round(Math.random()*10000);
 }
 
 // Clean start
@@ -123,18 +123,22 @@ describe('EpicEditor.getElement',function(){
 
 describe('EpicEditor.open', function(){
 
-  var testEl = _createTestElement()
-    , editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+  var testEl, editor, openMeFile, openMeLaterFile;
 
-
-  editor.importFile('openMeLater', 'open me later').importFile('openMe', 'open this file');
+  before(function(){  
+    testEl = _createTestElement();
+    openMeFile = 'openMe'+_randomNum();
+    openMeLaterFile = 'openMeLater'+_randomNum();
+    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+    editor.importFile(openMeLaterFile,'open me later').importFile(openMeFile,'open this file');
+  });
 
   it('check that the openMe file was created successfully', function(){
-    expect(editor.exportFile('openMe')).to(be,'open this file');
+    expect(editor.exportFile(openMeFile)).to(be,'open this file');
   });
 
   it('check that the openMeLater file was created successfully', function(){
-    expect(editor.exportFile('openMeLater')).to(be,'open me later');
+    expect(editor.exportFile(openMeLaterFile)).to(be,'open me later');
   });
   
   it('check that the file is open in the editor', function(){
@@ -142,7 +146,7 @@ describe('EpicEditor.open', function(){
   });
 
   it('check that openMeLater opens into the editor after calling .open', function(){
-    editor.open('openMeLater');
+    editor.open(openMeLaterFile);
     expect(editor.getElement('editor').body.innerHTML).to(be,'open me later');
   });
 
@@ -150,34 +154,48 @@ describe('EpicEditor.open', function(){
 
 describe('EpicEditor.importFile', function(){
 
-  var testEl = _createTestElement()
-    , editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+  var testEl, editor;
+
+  before(function(){    
+    testEl = _createTestElement();
+    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+  });
 
   it('check that the content is currently blank', function(){
     expect(editor.exportFile()).to(be,'');
   });
 
   it('check that importFile(\'foo\',\'#bar\') is imported and can be received', function(){
-    editor.importFile(testEl,'#bar');
-    expect(editor.exportFile()).to(be,'#bar');
+    var importFileTest = 'importFileTest'+_randomNum();
+    editor.importFile(importFileTest,'#bar');
+    expect(editor.exportFile(importFileTest)).to(be,'#bar');
+  });
+
+  it('check that setting the file name as null imports content into the currently open file', function(){
+    editor.importFile(null,'foo');
+    expect(editor.exportFile(testEl)).to(be,'foo');
   });
   
-  // TODO: Test that null as the filename works
   // TODO: Tests for importFile's kind parameter when implemented
   // TODO: Tests for importFile's meta parameter when implemented
 
 });
 
 describe('EpicEditor.exportFile', function(){
-  var testEl = _createTestElement()
-    , contents
-    , editor = new EpicEditor({
-        basePath: '/epiceditor/'
-      , file:{
+
+  var testEl, contents, editor;
+
+  before(function(){
+    testEl = _createTestElement();
+    
+    editor = new EpicEditor({
+      basePath: '/epiceditor/'
+    , file:{
           defaultContent: '#foo\n\n##bar'
-        }
-      , container: testEl
+      }
+    , container: testEl
     }).load();
+  });
 
 
   it('check that exportFile will work without parameters by outputting the current file as raw text', function(){
@@ -191,54 +209,69 @@ describe('EpicEditor.exportFile', function(){
   });
 
   it('check that exporting a file that doesn\'t exist returns as undefined', function(){
-    contents = editor.exportFile('poop');
+    contents = editor.exportFile('doesntExist'+_randomNum());
     expect(contents).to(beUndefined);
   });
 
   it('check that export file can open non-currently open files', function(){
-    editor.importFile('exportFileTest', 'hello world');
-    expect(editor.exportFile('exportFileTest')).to(be,'hello world');
+    var exportFileTest = 'exportFileTest'+_randomNum();
+    editor.importFile(exportFileTest, 'hello world'); // import and open a file
+    editor.open(testEl); // open the original again
+    expect(editor.exportFile(exportFileTest)).to(be,'hello world');
   });
 });
 
 describe('EpicEditor.rename', function(){
-  var testEl = _createTestElement()
-    , editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
 
-  editor.importFile('foo', 'testing...');
+  var testEl, editor, oldName, newName;
 
-  it('check to see if the foo file exists before trying to rename', function(){
-    expect(editor.exportFile('foo')).to(be,'testing...');
+  before(function(){
+    testEl = _createTestElement()
+    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+    oldName = 'foo'+_randomNum();
+    newName = 'bar'+_randomNum();
+    editor.importFile(oldName, 'testing...');
   });
 
-  it('check that renaming a file actually renames the file', function(){
-    editor.rename('foo','bar');
-    expect(editor.exportFile('bar')).to(be,'testing...');
+  it('check to see if the foo file exists before trying to rename', function(){
+    expect(editor.exportFile(oldName)).to(be,'testing...');
+  });
+
+  it('check that renaming a file actually renames the file by exporting by the new files name', function(){
+    editor.rename(oldName,newName);
+    expect(editor.exportFile(newName)).to(be,'testing...');
   });
 
   it('check that foo no longer exists', function(){
-    expect(editor.exportFile('foo')).to(beUndefined);
+    editor.rename(oldName,newName);
+    expect(editor.exportFile(oldName)).to(beUndefined);
   });
 });
 
 
 describe('EpicEditor.remove', function(){
-  var testEl = _createTestElement()
-    , editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
   
-  editor.importFile('removeMe','hello world').importFile('dontRemoveMe','foo bar');
+  var testEl, editor, removeMeFile, dontRemoveMeFile;
 
+  before(function(){
+    testEl = _createTestElement();
+    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+    removeMeFile = 'removeMe'+_randomNum();
+    dontRemoveMeFile = 'dontRemoveMe'+_randomNum();
+    editor.importFile(removeMeFile,'hello world').importFile(dontRemoveMeFile,'foo bar');
+  });
+  
   it('check that the foo file was imported', function(){
-    expect(editor.exportFile('removeMe')).to(be,'hello world');
+    expect(editor.exportFile(removeMeFile)).to(be,'hello world');
   });
 
   it('check that after removing the file exportFile returns false', function(){
-    editor.remove('removeMe');
-    expect(editor.exportFile('removeMe')).to(beUndefined);
+    editor.remove(removeMeFile);
+    expect(editor.exportFile(removeMeFile)).to(beUndefined);
   });
 
   it('check that other files weren\'t removed', function(){
-    expect(editor.exportFile('dontRemoveMe')).to(be,'foo bar');
+    expect(editor.exportFile(dontRemoveMeFile)).to(be,'foo bar');
   });
 });
 
@@ -342,13 +375,108 @@ describe('EpicEditor.save', function(){
 });
 
 describe('EpicEditor.on', function(){
+  
+  var testEl, editor, hasBeenFired;
+
+  before(function(){
+    testEl = _createTestElement();
+    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+    hasBeenFired = false;
+  });
+
+  after(function(){
+    editor.removeListener('foo');
+  });
+
+  it('check that on fires on an EE event, preview', function(){
+    editor.on('preview', function(){
+      hasBeenFired = true;
+    });
+    editor.preview();
+    expect(hasBeenFired).to(beTrue);
+  });
+
+  it('check that on fires for custom events', function(){
+    editor.on('foo', function(){
+      hasBeenFired = true;
+    });
+    editor.emit('foo');
+    expect(hasBeenFired).to(beTrue);
+  });
 
 });
 
 describe('EpicEditor.emit', function(){
+   
+  var testEl, editor, hasBeenFired;
+
+  before(function(){
+    testEl = _createTestElement();
+    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+    hasBeenFired = false;
+  });
+
+  after(function(){
+    editor.removeListener('foo');
+  });
+
+  // We don't use events in EpicEditor so only custom events need to be checked
+  it('check that emit triggers a callback for a custom event', function(){
+    editor.on('foo', function(){
+      hasBeenFired = true;
+    });
+    editor.emit('foo');
+    expect(hasBeenFired).to(beTrue);
+  });
 
 });
 
 describe('EpicEditor.removeListener', function(){
+
+  var testEl, editor, hasBeenFired, baz, qux, callCount;
+
+  before(function(){
+    testEl = _createTestElement();
+    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+    hasBeenFired = false;
+    callCount = 0;
+    editor.on('foo', function(){
+      hasBeenFired = true;
+    });
+
+    baz = function(){
+      callCount++;
+    };
+
+    qux = function(){
+      callCount++;
+    };
+
+    editor.on('bar', baz);
+    editor.on('bar', qux);
+  });
+
+  it('check that the foo event can be fired', function(){
+    editor.emit('foo');
+    expect(hasBeenFired).to(beTrue);
+  });
+
+  it('check that removing the event WITHOUT a handler param, than emitting it doesn\'t trigger the event', function(){
+    editor.removeListener('foo');
+    editor.emit('foo');
+    expect(hasBeenFired).to(beFalse);
+  });
+
+  it('check that removing the event WITH a handler param, than emitting it only triggers one of the two handlers', function(){
+    editor.removeListener('bar', baz);
+    editor.emit('bar');
+    expect(callCount).to(be, 1);
+  });
+
+  it('check that removing an event WITHOUT the param removes ALL handlers of that event', function(){
+    editor.removeListener('bar');
+    editor.emit('bar');
+    expect(callCount).to(be, 0);
+  });
 
 });
