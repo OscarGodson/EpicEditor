@@ -676,8 +676,7 @@
     // Save the document every 100ms by default
     if (self.settings.file.autoSave) {
       saveTimer = window.setInterval(function () {
-        self.content = this.value;
-        self.save(self.settings.file.name, this.value);
+        self.save();
       }, self.settings.file.autoSave);
     }
 

@@ -1,4 +1,4 @@
-# ![](https://github.com/OscarGodson/EpicEditor/raw/0.1.0-build-refactor/docs/images/epiceditor-logo.png)
+# ![](docs/images/epiceditor-logo.png)
 
 ## An Embeddable JavaScript Markdown Editor
 
@@ -53,7 +53,8 @@ var opts = {
   localStorageName: 'epiceditor',
   file: {
     name: 'epiceditor',
-    defaultContent: ''
+    defaultContent: '',
+    autoSave: 100
   },
   theme: {
     preview:'/themes/preview/preview-dark.css',
@@ -76,6 +77,7 @@ var editor = new EpicEditor(opts);
 * `file`
   * `name`: If no file exists with this name a new one will be made, otherwise the existing will be opened.
   * `defaultContent`: The content to show if no content exists for that file.
+  * `autoSave`: How often to auto save the file in milliseconds. Set to `false` to turn off auto saving.
 * `theme`
   * `editor`: The theme for the editor which is a textarea inside of an iframe.
   * `preview`: The theme for the previewer which is a div of content inside of an iframe.
@@ -112,7 +114,7 @@ Grabs an editor element for easy DOM manipulation. See the Themes section below 
 * `editor`: The #document of the editor iframe (i.e. you could do `editor.getElement('editor').body`).
 * `editorIframe</code>: The iframe containing the `editor`` element.
 * `previewer`: The #document of the previewer iframe (i.e. you could do `editor.getElement('previewer').body`).
-* previewerIframe: The iframe containing the `previewer` element.
+* `previewerIframe`: The iframe containing the `previewer` element.
 
 ```javascript
 someBtn.onclick = function(){
@@ -140,9 +142,9 @@ importFileBtn.onclick = function(){
 }
 ```
 
-### exportFile(_filename_,[_type_])
+### exportFile([_filename_],[_type_])
 
-Returns the raw content of the file by default, or given a type will return the content converted into that type. If you leave both parameters null it will return the current document's raw content.
+Returns the raw content of the file by default, or if given a `type` will return the content converted into that type. If you leave both parameters `null` it will return the current document's raw content.
 
 ```javascript
 syncWithServerBtn.onclick = function(){
@@ -166,7 +168,7 @@ renameFileBtn.onclick = function(){
 
 ### save()
 
-Manually saves a file. EpicEditor will save on keyup by default but if you are inserting content via ajax for example, this is useful.
+Manually saves a file. EpicEditor will save continuously every 100ms by default, but if you set `autoSave` in the options to `false` or to longer intervals it's useful to manually save.
 
 ```javascript
 saveFileBtn.onclick = function(){
@@ -304,4 +306,8 @@ Contributions are greatly encouraged and appreciated. For more on ways to contri
 
 <!-- @TODO: Update links to GFM, Marked etc -->
 
-[Oscar Godson](http://twitter.com/oscargodson) (me!), created EpicEditor with help from [Adam Bickford](http://twitter.com/adam_bickford). With many thanks to John Fraser (_site is no longer up_) for his [Showdown.js](https://github.com/coreyti/showdown) script and [John Gruber](http://daringfireball.net/) for [Markdown](http://daringfireball.net/projects/markdown/). Also, [Isaac Z. Schlueter](http://blog.izs.me) for his port of [GitHub Flavored Markdown](https://github.com/isaacs/github-flavored-markdown) which I [forked](https://github.com/oscargodson/github-flavored-markdown).
+EpicEditor is brought to you in part by [Oscar Godson](http://twitter.com/oscargodson) and [John Donahue](http://twitter.com/johnmdonahue). Special thanks to [Adam Bickford](http://twitter.com/adam_bickford) for the bug fixes and being the QA for pull requests. Lastly, huge thanks to [Seb Nitu](http://twitter.com/sebnitu) for the amazing logo.
+
+<!-- @TODO: Remove from the README, pull these in dynamically from Twitter using _bigger size -->
+
+![Oscar](docs/images/avatars/oscar.jpeg) ![John](docs/images/avatars/john.jpeg) ![Adam](docs/images/avatars/adam.jpeg) ![Seb](docs/images/avatars/seb.jpeg)
