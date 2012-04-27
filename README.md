@@ -1,10 +1,12 @@
-# ![](https://github.com/johnmdonahue/EpicEditor/raw/readme-build/images/epiceditor-logo.png)
+# ![](https://github.com/OscarGodson/EpicEditor/raw/0.1.0-build-refactor/docs/images/epiceditor-logo.png)
+
+## An Embeddable JavaScript Markdown Editor
 
 EpicEditor is an embeddable JavaScript [Markdown](http://daringfireball.net/projects/markdown/) editor with some Markdown enhancements such as automatic link creation and code fencing a la [Github Flavored Markdown](). EpicEditor allows for all kinds of customization. For simple drop-in-and-go support see the quick start below, otherwise checkout the full API.
 
 ## Why
 
-WYSIWYGs suck and they suck hard. Markdown is quickly becoming the replacement. [GitHub](http://github.com), [Stackoverflow](http://stackoverflow.com), and even blogging apps like [Posterous](http://posterous.com) support Markdown. EpicEditor allows you to create a Markdown editor with a preview, fullscreen editing, full CSS theming, and offline support with one simple call:
+WYSIWYGs suck and they suck hard. Markdown is quickly becoming the replacement. [GitHub](http://github.com), [Stackoverflow](http://stackoverflow.com), and even blogging apps like [Posterous](http://posterous.com) support Markdown now. EpicEditor allows you to create a Markdown editor with a preview, split fullscreen editing, full CSS theming, and offline support with one simple call:
 
 ```javascript
 var editor = new EpicEditor().load();
@@ -20,14 +22,19 @@ EpicEditor is easy to implement. Add the script and assets to your page, provide
 $ git clone git@github.com:OscarGodson/EpicEditor
 ```
 
-### Step 2: Position the target container and load the script
+### Step 2: Create your container element
 
 ```html
 <div id="epiceditor"></div>
+```
+
+### Step 3: Add the `epiceditor.js` file
+
+```html
 <script src="epiceditor.min.js"></script>
 ```
 
-### Step 3: Init EpicEditor
+### Step 4: Init EpicEditor
 
 ```javascript
 var editor = new EpicEditor().load();
@@ -95,22 +102,21 @@ Unloads the editor by removing the `iframe`. Keeps any options and file contents
 editor.unload(function () { console.log("Editor unloaded.") });
 ```
 
-### get(_element_)
+### getElement(_element_)
 
 Grabs an editor element for easy DOM manipulation. See the Themes section below for more on the layout of EpicEditor elements.
 
-* `'container'`: The container element where the editor is injected
-* `'wrapper'`: The div containing both the editor and preview iframes
-* `'wrapperIframe'`: The iframe containing the wrapper element
-* `'editor'`: The document object of the editor iframe (e.g. `editor.getElement('editor').body`)
-* `'editorIframe'`: The iframe containing the editor element.
-* `'previewerIframe'`: The iframe containing the previewer element
-* `'previewer'`: The document object of the previewer iframe (e.g. `editor.getElement('previewer').body`)
-
+* `container`: The element given at setup in the options.
+* `wrapper`: The wrapping `<div>` containing the 2 editor and previewer iframes.
+* `wrapperIframe`: The iframe containing the `wrapper` element.
+* `editor`: The #document of the editor iframe (i.e. you could do `editor.getElement('editor').body`).
+* `editorIframe</code>: The iframe containing the `editor`` element.
+* `previewer`: The #document of the previewer iframe (i.e. you could do `editor.getElement('previewer').body`).
+* previewerIframe: The iframe containing the `previewer` element.
 
 ```javascript
 someBtn.onclick = function(){
-  console.log(editor.get('editor').body.innerHTML); // Returns the editor's content
+  console.log(editor.getElement('editor').body.innerHTML); // Returns the editor's content
 }
 ```
 
@@ -120,7 +126,7 @@ Opens a file into the editor.
 
 ```javascript
 openFileBtn.onclick = function(){
-  editor.open('example.md'); // Opens "example.md" on click
+  editor.open('some-file'); // Opens a file when the user clicks this button
 }
 ```
 
@@ -128,11 +134,9 @@ openFileBtn.onclick = function(){
 
 Imports a string of content into a file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX. Will also run `.open()` after import automatically.
 
-Imports a string of content into a file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX. Will also run .open() after import automatically.
-
 ```javascript
 importFileBtn.onclick = function(){
-  editor.importMarkdown('example.md', "# Imported markdown\nFancy, huh?"); //Imports a file when the user clicks this button
+  editor.importFile('some-file',"#Imported markdown\nFancy, huh?"); //Imports a file when the user clicks this button
 }
 ```
 

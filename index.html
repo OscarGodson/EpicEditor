@@ -3,7 +3,7 @@
   <head>
     <title>EpicEditor - An embeddable JavaScript Markdown editor</title>
     <style>
-      body { background:#FEED79; font-family:helvetica,arial,sans-serif; }
+      body { background:#FEED79 url(docs/images/bg.jpg) repeat top left; font-family:helvetica,arial,sans-serif; }
       #wrapper { width:600px;margin-left: 400px;line-height:1.4em; }
       #example-1 { height:349px;border:1px solid #000; }
       #epiceditor { margin: 20px 0; }
@@ -44,12 +44,13 @@
     <div id="wrapper">
       
       
-      <h1><img src="https://github.com/johnmdonahue/EpicEditor/raw/readme-build/images/epiceditor-logo.png" alt=""></h1>
+      <h1><img src="https://github.com/OscarGodson/EpicEditor/raw/0.1.0-build-refactor/docs/images/epiceditor-logo.png" alt=""></h1>
+<h2>An Embeddable JavaScript Markdown Editor</h2>
 <p>EpicEditor is an embeddable JavaScript <a href="http://daringfireball.net/projects/markdown/">Markdown</a> editor with some Markdown enhancements such as automatic link creation and code fencing a la <a href="">Github Flavored Markdown</a>. EpicEditor allows for all kinds of customization. For simple drop-in-and-go support see the quick start below, otherwise checkout the full API.
 
 </p>
 <h2>Why</h2>
-<p>WYSIWYGs suck and they suck hard. Markdown is quickly becoming the replacement. <a href="http://github.com">GitHub</a>, <a href="http://stackoverflow.com">Stackoverflow</a>, and even blogging apps like <a href="http://posterous.com">Posterous</a> support Markdown. EpicEditor allows you to create a Markdown editor with a preview, fullscreen editing, full CSS theming, and offline support with one simple call:
+<p>WYSIWYGs suck and they suck hard. Markdown is quickly becoming the replacement. <a href="http://github.com">GitHub</a>, <a href="http://stackoverflow.com">Stackoverflow</a>, and even blogging apps like <a href="http://posterous.com">Posterous</a> support Markdown now. EpicEditor allows you to create a Markdown editor with a preview, split fullscreen editing, full CSS theming, and offline support with one simple call:
 
 </p>
 <pre><code class="lang-javascript">var editor = new EpicEditor().load();</code></pre>
@@ -59,10 +60,11 @@
 </p>
 <h3>Step 1: Download</h3>
 <pre><code class="lang-bash">$ git clone git@github.com:OscarGodson/EpicEditor</code></pre>
-<h3>Step 2: Position the target container and load the script</h3>
-<pre><code class="lang-html">&lt;div id=&quot;epiceditor&quot;&gt;&lt;/div&gt;
-&lt;script src=&quot;epiceditor.min.js&quot;&gt;&lt;/script&gt;</code></pre>
-<h3>Step 3: Init EpicEditor</h3>
+<h3>Step 2: Create your container element</h3>
+<pre><code class="lang-html">&lt;div id=&quot;epiceditor&quot;&gt;&lt;/div&gt;</code></pre>
+<h3>Step 3: Add the <code>epiceditor.js</code> file</h3>
+<pre><code class="lang-html">&lt;script src=&quot;epiceditor.min.js&quot;&gt;&lt;/script&gt;</code></pre>
+<h3>Step 4: Init EpicEditor</h3>
 <pre><code class="lang-javascript">var editor = new EpicEditor().load();</code></pre>
 <h2>API</h2>
 <h3>EpicEditor([<em>options</em>])</h3>
@@ -123,38 +125,35 @@ var editor = new EpicEditor(opts);</code></pre>
 
 </p>
 <pre><code class="lang-javascript">editor.unload(function () { console.log(&quot;Editor unloaded.&quot;) });</code></pre>
-<h3>get(<em>element</em>)</h3>
+<h3>getElement(<em>element</em>)</h3>
 <p>Grabs an editor element for easy DOM manipulation. See the Themes section below for more on the layout of EpicEditor elements.
 
 </p>
 <ul>
-<li><code>&#39;container&#39;</code>: The container element where the editor is injected</li>
-<li><code>&#39;wrapper&#39;</code>: The div containing both the editor and preview iframes</li>
-<li><code>&#39;wrapperIframe&#39;</code>: The iframe containing the wrapper element</li>
-<li><code>&#39;editor&#39;</code>: The document object of the editor iframe (e.g. <code>editor.getElement(&#39;editor&#39;).body</code>)</li>
-<li><code>&#39;editorIframe&#39;</code>: The iframe containing the editor element.</li>
-<li><code>&#39;previewerIframe&#39;</code>: The iframe containing the previewer element</li>
-<li><code>&#39;previewer&#39;</code>: The document object of the previewer iframe (e.g. <code>editor.getElement(&#39;previewer&#39;).body</code>)</li>
+<li><code>container</code>: The element given at setup in the options.</li>
+<li><code>wrapper</code>: The wrapping <code>&lt;div&gt;</code> containing the 2 editor and previewer iframes.</li>
+<li><code>wrapperIframe</code>: The iframe containing the <code>wrapper</code> element.</li>
+<li><code>editor</code>: The #document of the editor iframe (i.e. you could do <code>editor.getElement(&#39;editor&#39;).body</code>).</li>
+<li><code>editorIframe&lt;/code&gt;: The iframe containing the </code>editor`` element.</li>
+<li><code>previewer</code>: The #document of the previewer iframe (i.e. you could do <code>editor.getElement(&#39;previewer&#39;).body</code>).</li>
+<li>previewerIframe: The iframe containing the <code>previewer</code> element.</li>
 </ul>
 <pre><code class="lang-javascript">someBtn.onclick = function(){
-  console.log(editor.get(&#39;editor&#39;).body.innerHTML); // Returns the editor&#39;s content
+  console.log(editor.getElement(&#39;editor&#39;).body.innerHTML); // Returns the editor&#39;s content
 }</code></pre>
 <h3>open(<em>filename</em>)</h3>
 <p>Opens a file into the editor.
 
 </p>
 <pre><code class="lang-javascript">openFileBtn.onclick = function(){
-  editor.open(&#39;example.md&#39;); // Opens &quot;example.md&quot; on click
+  editor.open(&#39;some-file&#39;); // Opens a file when the user clicks this button
 }</code></pre>
 <h3>importFile([<em>filename</em>],[<em>content</em>])</h3>
 <p>Imports a string of content into a file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX. Will also run <code>.open()</code> after import automatically.
 
 </p>
-<p>Imports a string of content into a file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX. Will also run .open() after import automatically.
-
-</p>
 <pre><code class="lang-javascript">importFileBtn.onclick = function(){
-  editor.importMarkdown(&#39;example.md&#39;, &quot;# Imported markdown\nFancy, huh?&quot;); //Imports a file when the user clicks this button
+  editor.importFile(&#39;some-file&#39;,&quot;#Imported markdown\nFancy, huh?&quot;); //Imports a file when the user clicks this button
 }</code></pre>
 <h3>exportFile(<em>filename</em>,[<em>type</em>])</h3>
 <p>Returns the raw content of the file by default, or given a type will return the content converted into that type. If you leave both parameters null it will return the current document&#39;s raw content.
@@ -309,9 +308,8 @@ var editor = new EpicEditor(opts);</code></pre>
     $(function () {
       $('#wrapper').before('<div id="toc"><h4>EpicEditor</h4><ul id="toc-list"></ul></div>');
       $($('h1')[0]).append('<span>beta 0.1.0</span>');
-      $($('h2')[1]).before('<button id="try-it">Try it!</button><div id="epiceditor"></div>');
-      $($('h2')[0]).before('<div id="example-1"></div>');
-      $($('h1')[0]).after('<h2>An Embeddable JavaScript Markdown Editor</h2>');
+      $($('h2')[2]).before('<button id="try-it">Try it!</button><div id="epiceditor"></div>');
+      $($('h2')[1]).before('<div id="example-1"></div>');
   
       var opts = {
           container: 'example-1'
