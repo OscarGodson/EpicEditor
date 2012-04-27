@@ -3,12 +3,12 @@
   <head>
     <title>EpicEditor - An embeddable JavaScript Markdown editor</title>
     <style>
-      body { background:#FEED79; font-family:helvetica,arial,sans-serif; }
-      #wrapper { width:600px;margin-left: 400px;line-height:1.4em; }
-      #example-1 { height:349px;border:1px solid #000; }
+      body { background:#FEED79; font-family:helvetica,arial,sans-serif; margin:0; }
+      #wrapper { width:600px;margin-left: 400px;line-height:1.4em; padding:20px 0 0 0; }
+      #example-1 { height:349px;border:1px solid #000; box-shadow: rgba(0, 0, 0, 0.75) 0 2px 5px; border-radius: 3px; }
       #epiceditor { margin: 20px 0; }
       #try-it { padding:5px; font-size:14px; }
-      h1 { border-bottom:2px solid #000; padding:0 0 15px 0; font-size:38px; position:relative; }
+      h1 { border-bottom:2px solid #000; padding:0 0 15px 0; font-size:38px; position:relative; margin:0; }
       h3,h4,h5,h6 { margin-bottom:0; }
       h3 { font-size:20px; }
       h4 { font-size:18px; }
@@ -23,9 +23,13 @@
       .example { font-weight:bold; font-size:12px; }
       #toc {
         float: left;
-        width: 360px;
+        width: 250px;
         padding: 20px;
         position: fixed;
+        background:#FCF5C2;
+        overflow:auto;
+        border-right:1px solid #fff;
+        box-shadow:#FAE555 1px 0 1px, rgba(0,0,0,0.25) 1px 0 5px;
       }
       #toc ul {
         list-style-type: none;
@@ -357,7 +361,12 @@ var editor = new EpicEditor(opts);</code></pre>
         h.attr("id", link);
         $("#toc-list").append('<li class="toc-' + this.nodeName.toLowerCase()+ '"><a id="" href="#' + link + '">' + title + '</a></li>');
       });
-    })
+      
+      $(window).resize(function(){
+        $('#toc').height(window.innerHeight+'px');
+      }).trigger('resize');
+    });
+
   </script>
 </body>
 </html>

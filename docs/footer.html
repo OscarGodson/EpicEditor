@@ -50,7 +50,12 @@
         h.attr("id", link);
         $("#toc-list").append('<li class="toc-' + this.nodeName.toLowerCase()+ '"><a id="" href="#' + link + '">' + title + '</a></li>');
       });
-    })
+      
+      $(window).resize(function(){
+        $('#toc').height(window.innerHeight+'px');
+      }).trigger('resize');
+    });
+
   </script>
 </body>
 </html>
