@@ -1,6 +1,6 @@
 html, body, iframe, div { margin:0; padding:0; }
 
-.epiceditor-utilbar {
+#epiceditor-utilbar {
   position:fixed;
   bottom:10px;
   right:10px;
@@ -11,19 +11,19 @@ html, body, iframe, div { margin:0; padding:0; }
   background:rgba(0,0,0,0.5);
 }
 
-.epiceditor-utilbar img {
+#epiceditor-utilbar img {
   display:block;
   float:left;
 }
 
-.epiceditor-utilbar img:first-child {
+#epiceditor-utilbar img:first-child {
   margin:0 3px 0 0;
 }
 
-.epiceditor-utilbar img:hover {
+#epiceditor-utilbar img:hover {
   cursor:pointer;
 }
 
-.epiceditor-utilbar:hover {
+#epiceditor-utilbar:hover {
   display:block !important; /* No, really, important so when hovering the element it wont go away after N secs */
 }

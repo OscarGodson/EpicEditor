@@ -248,9 +248,10 @@ editBtn.onclick = function () {
 
 ## Themes
 
-TODO: This needs to be updated with the 3 new frame layout -->
-
-Theming involves two parts; each are optional. There is an `editor` and `preview` theme for each instance of an editor and these themes reside in `/themes/editor` and `/themes/preview`. The editor involves just a `textarea` and the `#utilbar` (the area containing the preview/edit and fullscreen buttons). The preview is just a `div` with the generated HTML inside. All HTML for each editor is in an `iframe` so there is no need to worry about breaking the page you're embedding on with similar class names or style conflicts.
+Theming is easy in EpicEditor. There are three different `<iframe>`s which means styles wont leak between the "chrome" of,
+the editor, previewer, or editor. Each one is like it's own web page. In the `themes` directory  you'll see `base`, `preview`,  and
+`editor`. The base styles are for the "chrome" of the editor which contains elements such as the utility bar containing the icons.
+The editor is the styles for the contents of editor `<iframe>` and the preview styles are applied to the preview `<iframe>`.
 
 The HTML of a generated editor (excluding contents) looks like this:
 
@@ -264,30 +265,28 @@ The HTML of a generated editor (excluding contents) looks like this:
       <body>
         <div id="epiceditor-wrapper">
           <iframe id="epiceditor-editor-frame">
-            #document
             <html>
               <head>
                 <link type="text/css" rel="stylesheet" href="epiceditor/themes/editor/epic-dark.css" media="screen">
               </head>
               <body contenteditable="true">
-                <!-- markdown content -->
+                <!-- raw content -->
               </body>
             </html>
           </iframe>
           <iframe id="epiceditor-previewer-frame">
-            #document
             <html>
               <head>
                 <link type="text/css" rel="stylesheet" href="epiceditor/themes/preview/github.css" media="screen">
               </head>
               <body>
-                <div class="epiceditor-preview">
+                <div id="epiceditor-preview">
                   <!-- rendered html -->
                 </div>
               </body>
             </html>
           </iframe>
-          <div class="epiceditor-utilbar">
+          <div id="epiceditor-utilbar">
             <img width="16" src="epiceditor/images/preview.png" class="epiceditor-toggle-btn">
             <img width="16" src="epiceditor/images/fullscreen.png" class="epiceditor-fullscreen-btn">
           </div>

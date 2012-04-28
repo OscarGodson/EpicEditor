@@ -68,7 +68,7 @@ describe('EpicEditor.load', function () {
 
     it('check to make sure the utility bar exists', function(){
       // This really needs to be an ID, and when it changes, should check for null and not undefined
-      expect(editorInnards.getElementsByClassName('epiceditor-utilbar')[0]).toNot(beUndefined);
+      expect(editorInnards.getElementById('epiceditor-utilbar')).toNot(beUndefined);
     });
   });
 });

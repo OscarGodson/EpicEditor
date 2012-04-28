@@ -4,7 +4,7 @@
     <title>EpicEditor - An embeddable JavaScript Markdown editor</title>
     <style>
       body { background:#FEED79; font-family:helvetica,arial,sans-serif; margin:0; }
-      #wrapper { width:600px;margin-left: 400px;line-height:1.4em; padding:20px 0 0 0; }
+      #wrapper { width:600px; margin:0 auto; line-height:1.4em; padding:20px 0 0 250px; }
       #example-1 { height:349px;border:1px solid #000; box-shadow: rgba(0, 0, 0, 0.75) 0 2px 5px; border-radius: 3px; }
       #epiceditor { margin: 20px 0; }
       #try-it { padding:5px; font-size:14px; }
@@ -24,7 +24,7 @@
       #toc {
         float: left;
         width: 250px;
-        padding: 20px;
+        padding:17px 20px 20px 20px;
         position: fixed;
         background:#FCF5C2;
         overflow:auto;
@@ -33,14 +33,16 @@
       }
       #toc ul {
         list-style-type: none;
-        padding: 0;
+        padding: 0 0 20px 0;
       }
       #toc li {
-        margin: 5px;
+        margin:0;
+        padding: 7px 5px;
       }
       #toc li.toc-h3 {
         margin-left: 10px;
       }
+      .toc-h2 { font-weight:bold; }
     </style>
     <link rel="stylesheet" href="docs/prettify.css">
   </head>
@@ -245,10 +247,10 @@ var editor = new EpicEditor(opts);</code></pre>
 
 </p>
 <h2>Themes</h2>
-<p>TODO: This needs to be updated with the 3 new frame layout --&gt;
-
-</p>
-<p>Theming involves two parts; each are optional. There is an <code>editor</code> and <code>preview</code> theme for each instance of an editor and these themes reside in <code>/themes/editor</code> and <code>/themes/preview</code>. The editor involves just a <code>textarea</code> and the <code>#utilbar</code> (the area containing the preview/edit and fullscreen buttons). The preview is just a <code>div</code> with the generated HTML inside. All HTML for each editor is in an <code>iframe</code> so there is no need to worry about breaking the page you&#39;re embedding on with similar class names or style conflicts.
+<p>Theming is easy in EpicEditor. There are three different <code>&lt;iframe&gt;</code>s which means styles wont leak between the &quot;chrome&quot; of,
+the editor, previewer, or editor. Each one is like it&#39;s own web page. In the <code>themes</code> directory  you&#39;ll see <code>base</code>, <code>preview</code>,  and
+<code>editor</code>. The base styles are for the &quot;chrome&quot; of the editor which contains elements such as the utility bar containing the icons.
+The editor is the styles for the contents of editor <code>&lt;iframe&gt;</code> and the preview styles are applied to the preview <code>&lt;iframe&gt;</code>.
 
 </p>
 <p>The HTML of a generated editor (excluding contents) looks like this:
@@ -263,30 +265,28 @@ var editor = new EpicEditor(opts);</code></pre>
       &lt;body&gt;
         &lt;div id=&quot;epiceditor-wrapper&quot;&gt;
           &lt;iframe id=&quot;epiceditor-editor-frame&quot;&gt;
-            #document
             &lt;html&gt;
               &lt;head&gt;
                 &lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;epiceditor/themes/editor/epic-dark.css&quot; media=&quot;screen&quot;&gt;
               &lt;/head&gt;
               &lt;body contenteditable=&quot;true&quot;&gt;
-                &lt;!-- markdown content --&gt;
+                &lt;!-- raw content --&gt;
               &lt;/body&gt;
             &lt;/html&gt;
           &lt;/iframe&gt;
           &lt;iframe id=&quot;epiceditor-previewer-frame&quot;&gt;
-            #document
             &lt;html&gt;
               &lt;head&gt;
                 &lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;epiceditor/themes/preview/github.css&quot; media=&quot;screen&quot;&gt;
               &lt;/head&gt;
               &lt;body&gt;
-                &lt;div class=&quot;epiceditor-preview&quot;&gt;
+                &lt;div id=&quot;epiceditor-preview&quot;&gt;
                   &lt;!-- rendered html --&gt;
                 &lt;/div&gt;
               &lt;/body&gt;
             &lt;/html&gt;
           &lt;/iframe&gt;
-          &lt;div class=&quot;epiceditor-utilbar&quot;&gt;
+          &lt;div id=&quot;epiceditor-utilbar&quot;&gt;
             &lt;img width=&quot;16&quot; src=&quot;epiceditor/images/preview.png&quot; class=&quot;epiceditor-toggle-btn&quot;&gt;
             &lt;img width=&quot;16&quot; src=&quot;epiceditor/images/fullscreen.png&quot; class=&quot;epiceditor-fullscreen-btn&quot;&gt;
           &lt;/div&gt;
@@ -311,8 +311,8 @@ var editor = new EpicEditor(opts);</code></pre>
 </p>
   <a href="http://github.com/OscarGodson/EpicEditor"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/camo.github.com/7afbc8b248c68eb468279e8c17986ad46549fb71/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub"></a>
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
-  <script src="docs/prettify.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script src="docs/js/prettify.js"></script>
   <script src="epiceditor/js/epiceditor.js"></script>
 
   <script>

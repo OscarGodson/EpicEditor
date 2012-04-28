@@ -1136,14 +1136,14 @@ if (typeof module !== 'undefined') {
       chrome:   '<div id="epiceditor-wrapper" class="epiceditor-edit-mode">' +
                   '<iframe frameborder="0" id="epiceditor-editor-frame"></iframe>' +
                   '<iframe frameborder="0" id="epiceditor-previewer-frame"></iframe>' +
-                  '<div class="epiceditor-utilbar">' +
+                  '<div id="epiceditor-utilbar">' +
                     '<img width="16" src="' + this.settings.basePath + '/images/preview.png" class="epiceditor-toggle-btn"> ' +
                     '<img width="16" src="' + this.settings.basePath + '/images/fullscreen.png" class="epiceditor-fullscreen-btn">' +
                   '</div>' +
                 '</div>'
     
     // The previewer is just an empty box for the generated HTML to go into
-    , previewer: '<div class="epiceditor-preview"></div>'
+    , previewer: '<div id="epiceditor-preview"></div>'
     };
 
     // Write an iframe and then select it for the editor
@@ -1210,7 +1210,7 @@ if (typeof module !== 'undefined') {
 
     // Now grab the editor and previewer for later use
     self.editor = self.editorIframeDocument.body;
-    self.previewer = self.previewerIframeDocument.body.getElementsByClassName('epiceditor-preview')[0];
+    self.previewer = self.previewerIframeDocument.getElementById('epiceditor-preview');
    
     self.editor.contentEditable = true;
  
@@ -1249,7 +1249,7 @@ if (typeof module !== 'undefined') {
 
     // TODO: Should probably have an ID since we only select one
     // TODO: Should probably have an underscore?
-    utilBtns = self.iframe.getElementsByClassName('epiceditor-utilbar')[0];
+    utilBtns = self.iframe.getElementById('epiceditor-utilbar');
 
     _elementStates = {}
     _isInEdit = self.eeState.edit;
@@ -1367,7 +1367,7 @@ if (typeof module !== 'undefined') {
       }, false);
     }
 
-    utilBar = self.iframe.getElementsByClassName('epiceditor-utilbar')[0]
+    utilBar = self.iframe.getElementById('epiceditor-utilbar');
 
     // Hide it at first until they move their mouse
     utilBar.style.display = 'none';
