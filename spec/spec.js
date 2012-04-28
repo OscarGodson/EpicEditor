@@ -122,7 +122,7 @@ describe('EpicEditor.getElement',function(){
 
 describe('EpicEditor.open', function(){
 
-  var testEl, editor, openMeFile, openMeLaterFile;
+  var testEl, editor, openMeFile, openMeLaterFile, eventWasCalled;
 
   before(function(){  
     testEl = _createTestElement();
@@ -130,6 +130,11 @@ describe('EpicEditor.open', function(){
     openMeLaterFile = 'openMeLater'+_randomNum();
     editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
     editor.importFile(openMeLaterFile,'open me later').importFile(openMeFile,'open this file');
+    
+    eventWasCalled = false;
+    editor.on('open', function(){
+      eventWasCalled = true;
+    });
   });
 
   it('check that the openMe file was created successfully', function(){
@@ -147,6 +152,11 @@ describe('EpicEditor.open', function(){
   it('check that openMeLater opens into the editor after calling .open', function(){
     editor.open(openMeLaterFile);
     expect(editor.getElement('editor').body.innerHTML).to(be,'open me later');
+  });
+
+  it('check that the open event is called when the open method is run', function(){
+    editor.open();
+    expect(eventWasCalled).to(be, true);
   });
 
 });
@@ -276,11 +286,27 @@ describe('EpicEditor.remove', function(){
 
 describe('EpicEditor.preview and EpicEditor.edit', function(){
   
-  var testEl, editor;
+  var testEl, editor, previewEventWasCalled, editEventWasCalled;
 
   before(function(){
     testEl = _createTestElement();
     editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+    
+    previewEventWasCalled = false;
+    editEventWasCalled = false;
+    
+    editor.on('preview', function(){
+      previewEventWasCalled = true;
+    });
+    
+    editor.on('edit', function(){
+      editEventWasCalled = true;
+    });
+  });
+
+  after(function(){
+    editor.removeListener('preview');
+    editor.removeListener('edit');
   });
 
   it('check that the editor is currently displayed and not the previewer', function(){
@@ -296,6 +322,16 @@ describe('EpicEditor.preview and EpicEditor.edit', function(){
     expect(editor.getElement('previewerIframe').style.display).to(be, 'block');
   });
 
+  it('check that the preview event fires when the preview method is called', function(){
+    editor.preview();
+    expect(previewEventWasCalled).to(be, true);
+  });
+
+  it('check that the edit event fires when the edit method is called', function(){
+    editor.edit();
+    expect(editEventWasCalled).to(be, true);
+  });
+  
   it('check that switching from preview back to edit makes the editor visible', function(){
     editor.preview();
     editor.edit();
@@ -311,19 +347,34 @@ describe('EpicEditor.preview and EpicEditor.edit', function(){
 
 describe('EpicEditor.unload', function(){
 
-  var testEl, editor;
+  var testEl, editor, eventWasCalled;
 
   before(function(){
     testEl = _createTestElement()
     editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl });
     editor.load();
+
+    eventWasCalled = false;
+
+    editor.on('unload', function(){
+      eventWasCalled = true;
+    });
+  });
+
+  after(function(){
+    editor.removeListener('unload');
   });
 
   it('check the editor was actually loaded first of all', function(){
     expect(document.getElementById(testEl).innerHTML).to(beTruthy);
   });
 
-  it('check the editor was unloaded properly by checking', function(){
+  it('check that the unload event fires when the editor is unloaded', function(){
+    editor.unload();
+    expect(eventWasCalled).to(be, true);
+  });
+
+  it('check the editor was unloaded properly by checking if the editor HTML is gone from the original element', function(){
     editor.unload();
     expect(document.getElementById(testEl).innerHTML).to(beFalsy);
   });
@@ -348,7 +399,7 @@ describe('EpicEditor.unload', function(){
 
 describe('EpicEditor.save', function(){
   
-  var testEl, editor;
+  var testEl, editor, eventWasCalled;
   
   before(function(){
     testEl = _createTestElement();
@@ -357,8 +408,16 @@ describe('EpicEditor.save', function(){
     , container: testEl 
     , file: {
         defaultContent: 'foo'
+      , autoSave: false
       }
     }).load();
+
+    eventWasCalled = false;
+
+    editor.on('save', function(){
+      eventWasCalled = true;
+    });
+
   });
 
   it('check that foo is the default content in the editor', function(){
@@ -369,6 +428,11 @@ describe('EpicEditor.save', function(){
     editor.getElement('editor').body.innerHTML = 'bar';
     editor.save();
     expect(JSON.parse(localStorage['epiceditor']).files[testEl]).to(be, 'bar');
+  });
+
+  it('check that the save event is called when the save method is run', function(){
+    editor.save();
+    expect(eventWasCalled).to(be, true);
   });
 
 });
