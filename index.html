@@ -31,7 +31,7 @@
 
       <h3>Why</h3>
       <p>WYSIWYGs suck and they suck hard. Markdown is quickly becoming the replacement. <a href="http://github.com">GitHub</a>, <a href="http://stackoverflow.com">Stackoverflow</a>, and even blogging apps like <a href="http://posterous.com">Posterous</a> support Markdown now. This allows you to generate a Markdown editor with a preview, fullscreen editing, full CSS theming, and offline support with a simple:</p>
-      <pre><code class="javascript">var editor = new EpicEditor(element).load();</code></pre>
+      <pre><code class="javascript">var editor = new EpicEditor(options).load();</code></pre>
 
       <h3>How</h3>
       <p>EpicEditor allows for all kinds of customization. For simple drop-in-and-go support see the <a href="#quick-start">quick start</a> right below, otherwise checkout the full <a href="#api">API</a>.</p>
@@ -47,8 +47,8 @@
 
 
       <h5>Step 3: Init EpicEditor</h5>
-      <pre><code class="javascript">var element = document.getElementById('editor-wrapper');
-var editor = new EpicEditor(element).load();</code></pre>
+      <pre><code class="javascript">var options = { element: document.getElementById('editor-wrapper') }
+var editor = new EpicEditor(options).load();</code></pre>
 
       <h4 id="api">API</h4>
       
@@ -61,7 +61,6 @@ var editor = new EpicEditor(element).load();</code></pre>
         <li><a href="#api-epiceditor"><code>EpicEditor()</code></a></li>
         <li><a href="#api-load"><code>load()</code></a></li>
         <li><a href="#api-unload"><code>unload()</code></a></li>
-        <li><a href="#api-options"><code>options()</code></a></li>
         <li><a href="#api-get"><code>get()</code></a></li>
         <li><a href="#api-open"><code>open()</code></a></li>
         <li><a href="#api-import"><code>import()</code></a></li>
@@ -78,10 +77,10 @@ var editor = new EpicEditor(element).load();</code></pre>
 
       <h5>Constructor</h5>
       
-      <h6 id="api-epiceditor">EpicEditor(<em>element</em>)</h6>
-      <p>Creates a new EpicEditor instance. Give it an element you want to insert the editor into.</p>
+      <h6 id="api-epiceditor">EpicEditor(<em>options</em>)</h6>
+      <p>Creates a new EpicEditor instance. Give it the element you want to insert the editor into and any other options `{ element: $('#foo'), basePath: '../epiceditor' }`.</p>
       <p class="example">Example:</p>
-      <pre><code class="javascript">var editor = new EpicEditor(element);</code></pre>
+      <pre><code class="javascript">var editor = new EpicEditor(options);</code></pre>
       <p>Note: all the examples below will continue to use this same constructor.</p>
       
       <h5>Methods</h5>
@@ -96,10 +95,12 @@ var editor = new EpicEditor(element).load();</code></pre>
       <p class="example">Example:</p>
       <pre><code class="javascript">editor.unload();</code></pre>
       
-      <h6 id="api-options">options(<em>options</em>)</h6>
+      <h6 id="api-options">Available constructor options</h6>
       <p>Lets you set options for the editor. The example below has all the options available currently.</p>
       <ul>
+        <li><code>element</code>: The HTML element in which to inject the editor. By default it will look for <code>document.getElementByID('epiceditor')</code>.</li>
         <li><code>basePath</code>: The base path of the directory containing the <code>/themes</code>, <code>/images</code>, etc. It's <code>epiceditor</code> by default. <em>Don't add a trailing slash!</em></li>
+        <li><code>localStorageName</code>: The name to use for the localStorage object. It is set to <code>epiceditor</code> by default.</li>
         <li><code>file.name</code>: If no file exists with this name a new one will be made, otherwise the existing will be opened.</li>
         <li><code>file.defaultContent</code>: The content to show if no content exists for that file.</li>
         <li><code>themes.editor</code>: The theme for the editor which is a textarea inside of an iframe.</li>
@@ -111,7 +112,10 @@ var editor = new EpicEditor(element).load();</code></pre>
         <li><code>shortcuts.edit</code>: The edit mode shortcut key. It's <code>79</code> (<kbd>o</kbd> key) by default.</li>
       </ul>
       <p class="example">Example:</p>
-      <pre><code class="javascript">editor.options({
+      <pre><code class="javascript">var editor = new EpicEditor({
+  element: document.getElementById('somediv')
+  basePath:'../epiceditor',
+  localStorageName:'CustomEpicStore',
   file:{
     name:'example',
     defaultContent:'Write text in here!'
@@ -268,15 +272,14 @@ var editor = new EpicEditor(element).load();</code></pre>
       }
 
       var examples = [document.getElementById('example-1')];
-
-      var ee1 = new EpicEditor(examples[0]);
-      ee1.options({
-        file:{
+      var options = {
+        element: examples[0]
+        , file:{
           defaultContent:"#EpicEditor\nThis is some default content. Go ahead, _change me_. "
         }
         , focusOnLoad:true
-      })
-      .load();
+      };
+      var ee1 = new EpicEditor(options).load();
     </script>
   </body>
 </html>
