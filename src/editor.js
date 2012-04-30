@@ -286,8 +286,7 @@
     this.settings = _mergeObjs(true, defaults, opts);
 
     // Protect the id and overwrite if passed in as an option
-    // TODO: Consider moving this off of the settings object to something like this.instanceId or this.iframeId
-    this.settings.id = 'epiceditor-' + Math.round(Math.random() * 100000);
+    this.instanceId = 'epiceditor-' + Math.round(Math.random() * 100000);
 
     // Setup local storage of files
     if (localStorage) {
@@ -371,8 +370,8 @@
     };
 
     // Write an iframe and then select it for the editor
-    self.element.innerHTML = '<iframe scrolling="no" frameborder="0" id= "' + self.settings.id + '"></iframe>';
-    iframeElement = document.getElementById(self.settings.id);
+    self.element.innerHTML = '<iframe scrolling="no" frameborder="0" id= "' + self.instanceId + '"></iframe>';
+    iframeElement = document.getElementById(self.instanceId);
     
     // Store a reference to the iframeElement itself
     self.iframeElement = iframeElement;
@@ -724,7 +723,7 @@
     }
 
     var self = this
-      , editor = window.parent.document.getElementById(self.settings.id);
+      , editor = window.parent.document.getElementById(self.instanceId);
 
     editor.parentNode.removeChild(editor);
     self.eeState.loaded = false;
