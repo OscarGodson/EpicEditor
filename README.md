@@ -112,7 +112,7 @@ Grabs an editor element for easy DOM manipulation. See the Themes section below 
 * `wrapper`: The wrapping `<div>` containing the 2 editor and previewer iframes.
 * `wrapperIframe`: The iframe containing the `wrapper` element.
 * `editor`: The #document of the editor iframe (i.e. you could do `editor.getElement('editor').body`).
-* `editorIframe</code>: The iframe containing the `editor`` element.
+* `editorIframe`: The iframe containing the `editor` element.
 * `previewer`: The #document of the previewer iframe (i.e. you could do `editor.getElement('previewer').body`).
 * `previewerIframe`: The iframe containing the `previewer` element.
 
