@@ -335,6 +335,9 @@ The editor is the styles for the contents of editor <code>&lt;iframe&gt;</code> 
         , tryItStatus = false
         , tryItBtn = document.getElementById('try-it');
 
+      // So people can play with it in their console
+      window.editor = editor;
+
       tryItBtn.onclick = function(){
         if(!tryItStatus){
           tryItStatus = true;

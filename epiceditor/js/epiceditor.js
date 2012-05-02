@@ -1062,7 +1062,10 @@ if (typeof module !== 'undefined') {
     this.settings = _mergeObjs(true, defaults, opts);
 
     // Protect the id and overwrite if passed in as an option
+    // TODO: Put underscrore to denote that this is private
     this.instanceId = 'epiceditor-' + Math.round(Math.random() * 100000);
+
+    this._canSave = true;
 
     // Setup local storage of files
     if (localStorage) {
@@ -1451,6 +1454,9 @@ if (typeof module !== 'undefined') {
     // Save the document every 100ms by default
     if (self.settings.file.autoSave) {
       saveTimer = window.setInterval(function () {
+        if (!self._canSave) {
+          return;
+        }
         self.save();
       }, self.settings.file.autoSave);
     }
@@ -1607,10 +1613,12 @@ if (typeof module !== 'undefined') {
       fileObj = JSON.parse(localStorage[self.settings.localStorageName]).files;
       if (fileObj[name]) {
         _setText(self.editor, fileObj[name]);
+        self.emit('read');
       }
       else {
         _setText(self.editor, defaultContent);
         self.save(); // ensure a save
+        self.emit('create');
       }
       self.settings.file.name = name;
       this.previewer.innerHTML = this.exportFile(null, 'html');
@@ -1628,6 +1636,11 @@ if (typeof module !== 'undefined') {
   EpicEditor.prototype.save = function (file, content) {
     var self = this
       , s;
+
+    // This could have been false but since we're manually saving
+    // we know it's save to start autoSaving again
+    this._canSave = true;
+
     file = file || self.settings.file.name;
     content = content || _getText(this.editor);
     s = JSON.parse(localStorage[self.settings.localStorageName]);
@@ -1646,6 +1659,12 @@ if (typeof module !== 'undefined') {
     var self = this
       , s;
     name = name || self.settings.file.name;
+
+    // If you're trying to delete a page you have open, block saving
+    if (name == self.settings.file.name) {
+      self._canSave = false;
+    }
+
     s = JSON.parse(localStorage[self.settings.localStorageName]);
     delete s.files[name];
     localStorage[self.settings.localStorageName] = JSON.stringify(s);
@@ -1678,19 +1697,29 @@ if (typeof module !== 'undefined') {
    * @returns {object} EpicEditor will be returned
    */
   EpicEditor.prototype.importFile = function (name, content, kind, meta) {
-    var self = this;
+    var self = this
+      , isNew = false;
 
     name = name || self.settings.file.name;
     content = content || '';
     kind = kind || 'md';
     meta = meta || {};
     
+    if (!JSON.parse(localStorage[self.settings.localStorageName]).files[name]) {
+      isNew = true;
+    }
+
     // Set our current file to the new file and update the content
     self.settings.file.name = name;
     _setText(self.editor, content);
 
     // we open the file after saving so that it will preview correctly if in the previewer
     self.save().open(name);
+
+    if (isNew) {
+      self.emit('create');
+    }
+
     return this;
   };
 
@@ -1748,15 +1777,24 @@ if (typeof module !== 'undefined') {
    * @returns {object} EpicEditor will be returned
    */
   EpicEditor.prototype.emit = function (ev, data) {
-    var self = this;
+    var self = this
+      , x;
+
+    data = data || JSON.parse(localStorage[self.settings.localStorageName]).files[self.settings.file.name];
+
+
     if (!this.events[ev]) {
       return;
     }
-    // TODO: Cross browser support!
+
     function invokeHandler(handler) {
       handler.call(self, data);
     }
-    this.events[ev].forEach(invokeHandler);
+
+    for (x = 0; x < self.events[ev].length; x++) {
+      invokeHandler(self.events[ev][x]);
+    }
+
     return self;
   };
 
