@@ -22,6 +22,7 @@ function _randomNum() {
 // Clean start
 localStorage.clear();
 
+// BEGIN THY TESTS
 describe('EpicEditor.load', function () {
 
   var testEl = _createTestElement()
@@ -122,7 +123,7 @@ describe('EpicEditor.getElement',function(){
 
 describe('EpicEditor.open', function(){
 
-  var testEl, editor, openMeFile, openMeLaterFile, eventWasCalled;
+  var testEl, editor, openMeFile, openMeLaterFile, eventWasFired, createEventWasFired, fooFile;
 
   before(function(){  
     testEl = _createTestElement();
@@ -130,10 +131,13 @@ describe('EpicEditor.open', function(){
     openMeLaterFile = 'openMeLater'+_randomNum();
     editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
     editor.importFile(openMeLaterFile,'open me later').importFile(openMeFile,'open this file');
-    
-    eventWasCalled = false;
+   
+    createEventWasFired = false;
+    fooFile = 'foo'+_randomNum();
+
+    eventWasFired = false;
     editor.on('open', function(){
-      eventWasCalled = true;
+      eventWasFired = true;
     });
   });
 
@@ -156,18 +160,51 @@ describe('EpicEditor.open', function(){
 
   it('check that the open event is called when the open method is run', function(){
     editor.open();
-    expect(eventWasCalled).to(be, true);
+    expect(eventWasFired).to(be, true);
   });
 
+  it('check that the create event fires for a new file created with open()', function(){
+    editor.on('create', function(){
+      createEventWasFired = true;
+    });
+    editor.open(fooFile);
+    expect(createEventWasFired).to(beTrue);
+  });
+
+  it('check that the create event DOES NOT fire for an existing file with open', function(){
+    editor.open(fooFile); // change the file from "testEl"
+
+    editor.on('create', function(){
+      createEventWasFired = true;
+    });
+
+    editor.open(testEl);
+
+    expect(createEventWasFired).to(beFalse);
+  });
+
+  it('check that the read event fires when a file is read with open()', function(){
+    editor.on('read', function(){
+      eventWasFired = true;
+    });
+
+    editor.open(fooFile); // change the file (should fired create)
+    
+    editor.open(testEl); // this one should fire read
+
+    expect(eventWasFired).to(be, true);
+  });
 });
 
 describe('EpicEditor.importFile', function(){
 
-  var testEl, editor;
+  var testEl, editor, fooFile, eventWasFired;
 
   before(function(){    
     testEl = _createTestElement();
     editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+    fooFile = 'foo'+_randomNum();
+    eventWasFired = false;
   });
 
   it('check that the content is currently blank', function(){
@@ -185,6 +222,13 @@ describe('EpicEditor.importFile', function(){
     expect(editor.exportFile(testEl)).to(be,'foo');
   });
   
+  it('check that importFile fires a create an event when importing a new file', function(){
+    editor.on('create', function(){
+      eventWasFired = true;
+    });
+    editor.importFile(fooFile);
+    expect(eventWasFired).to(beTrue); 
+  });
   // TODO: Tests for importFile's kind parameter when implemented
   // TODO: Tests for importFile's meta parameter when implemented
 
@@ -260,7 +304,7 @@ describe('EpicEditor.rename', function(){
 
 describe('EpicEditor.remove', function(){
   
-  var testEl, editor, removeMeFile, dontRemoveMeFile;
+  var testEl, editor, removeMeFile, dontRemoveMeFile, eventWasFired;
 
   before(function(){
     testEl = _createTestElement();
@@ -281,6 +325,17 @@ describe('EpicEditor.remove', function(){
 
   it('check that other files weren\'t removed', function(){
     expect(editor.exportFile(dontRemoveMeFile)).to(be,'foo bar');
+  });
+
+
+  it('check that the remove event fires when a file is deleted', function(){
+    editor.on('remove', function(){
+      eventWasFired = true;
+    });
+
+    editor.open(removeMeFile);
+    editor.remove(removeMeFile);
+    expect(eventWasFired).to(beTrue);
   });
 });
 

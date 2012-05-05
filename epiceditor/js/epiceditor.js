@@ -1327,8 +1327,8 @@ if (typeof module !== 'undefined') {
         document.body.style.overflow = 'hidden';
       }
 
-      self.preview(true);
-      self.editor.addEventListener('keyup', function () { self.preview(true); });
+      self.preview();
+      self.editor.addEventListener('keyup', function () { self.preview(); });
     };
 
     _exitFullscreen = function (el) {
@@ -1522,16 +1522,10 @@ if (typeof module !== 'undefined') {
    * @param {string} theme The path to the theme you want to preview in
    * @returns {object} EpicEditor will be returned
    */
-  EpicEditor.prototype.preview = function (theme, live) {
-    var self = this
-      , themePath = self.settings.basePath + self.settings.theme.preview;
-    if (typeof theme === 'boolean') {
-      live = theme;
-      theme = themePath
-    }
-    else {
-      theme = theme || themePath
-    }
+  EpicEditor.prototype.preview = function (theme) {
+    var self = this;
+    
+    theme = theme || self.settings.basePath + self.settings.theme.preview;
 
     _replaceClass(self.getElement('wrapper'), 'epiceditor-edit-mode', 'epiceditor-preview-mode');
 
@@ -1547,7 +1541,7 @@ if (typeof module !== 'undefined') {
     self.previewer.innerHTML = self.exportFile(null, 'html');
     
     // Hide the editor and display the previewer
-    if (!live) {
+    if (!self.eeState.fullscreen) {
       self.editorIframe.style.display = 'none';
       self.previewerIframe.style.display = 'block';
       self.eeState.preview = true;
@@ -1611,7 +1605,7 @@ if (typeof module !== 'undefined') {
     name = name || self.settings.file.name;
     if (localStorage && localStorage[self.settings.localStorageName]) {
       fileObj = JSON.parse(localStorage[self.settings.localStorageName]).files;
-      if (fileObj[name]) {
+      if (fileObj[name] !== undefined) {
         _setText(self.editor, fileObj[name]);
         self.emit('read');
       }
@@ -1621,8 +1615,8 @@ if (typeof module !== 'undefined') {
         self.emit('create');
       }
       self.settings.file.name = name;
-      this.previewer.innerHTML = this.exportFile(null, 'html');
-      this.emit('open');
+      self.previewer.innerHTML = self.exportFile(null, 'html');
+      self.emit('open');
     }
     return this;
   }
@@ -1704,8 +1698,8 @@ if (typeof module !== 'undefined') {
     content = content || '';
     kind = kind || 'md';
     meta = meta || {};
-    
-    if (!JSON.parse(localStorage[self.settings.localStorageName]).files[name]) {
+  
+    if (JSON.parse(localStorage[self.settings.localStorageName]).files[name] === undefined) {
       isNew = true;
     }
 
@@ -1713,12 +1707,11 @@ if (typeof module !== 'undefined') {
     self.settings.file.name = name;
     _setText(self.editor, content);
 
-    // we open the file after saving so that it will preview correctly if in the previewer
-    self.save().open(name);
-
     if (isNew) {
       self.emit('create');
     }
+
+    self.save().preview();
 
     return this;
   };
