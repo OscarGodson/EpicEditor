@@ -482,7 +482,7 @@ describe('EpicEditor.save', function(){
   it('check to make sure new file contents are saved after value is changed in the editor and save is called', function(){
     editor.getElement('editor').body.innerHTML = 'bar';
     editor.save();
-    expect(JSON.parse(localStorage['epiceditor']).files[testEl]).to(be, 'bar');
+    expect(JSON.parse(localStorage['epiceditor'])[testEl].content).to(be, 'bar');
   });
 
   it('check that the save event is called when the save method is run', function(){
