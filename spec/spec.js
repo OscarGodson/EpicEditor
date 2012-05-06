@@ -229,6 +229,26 @@ describe('EpicEditor.importFile', function(){
     editor.importFile(fooFile);
     expect(eventWasFired).to(beTrue); 
   });
+
+  it('check that importFile fires an update event when modifying an existing file', function(){
+    editor.on('update', function(){
+      eventWasFired = true;
+    });
+
+    editor.importFile(null, 'new text');
+
+    expect(eventWasFired).to(beTrue);
+  });
+
+  it('check that importFile DOES NOT fire an update event when creating a file', function(){
+    editor.on('update', function(){
+      eventWasFired = true;
+    });
+
+    editor.importFile(fooFile);
+
+    expect(eventWasFired).to(beFalse);
+  });
   // TODO: Tests for importFile's kind parameter when implemented
   // TODO: Tests for importFile's meta parameter when implemented
 
@@ -454,7 +474,7 @@ describe('EpicEditor.unload', function(){
 
 describe('EpicEditor.save', function(){
   
-  var testEl, editor, eventWasCalled;
+  var testEl, editor, eventWasFired;
   
   before(function(){
     testEl = _createTestElement();
@@ -467,12 +487,7 @@ describe('EpicEditor.save', function(){
       }
     }).load();
 
-    eventWasCalled = false;
-
-    editor.on('save', function(){
-      eventWasCalled = true;
-    });
-
+    eventWasFired = false;
   });
 
   it('check that foo is the default content in the editor', function(){
@@ -486,8 +501,39 @@ describe('EpicEditor.save', function(){
   });
 
   it('check that the save event is called when the save method is run', function(){
+    editor.on('save', function(){
+      eventWasFired = true;
+    });
     editor.save();
-    expect(eventWasCalled).to(be, true);
+    expect(eventWasFired).to(be, true);
+  });
+
+  it('check that the update event fires when the content changes', function(){
+    editor.on('update', function(){
+      eventWasFired = true;
+    });
+    editor.getElement('editor').body.innerHTML = 'bar';
+    editor.save();
+    expect(eventWasFired).to(beTrue);
+  });
+
+  it('check that the update event DOES NOT fire when the content is the same', function(){
+    editor.on('update', function(){
+      eventWasFired = true;
+    });
+    editor.getElement('editor').body.innerHTML = 'foo';
+    editor.save();
+    expect(eventWasFired).to(beFalse);
+  });
+
+  it('check that the timestamp is updated when the content is modified', function(){
+    var currentModifiedDate = JSON.parse(localStorage['epiceditor'])[testEl].modified;
+    editor.on('update', function(){
+      eventWasFired = true;
+    });
+    editor.getElement('editor').body.innerHTML = 'bar';
+    editor.save();
+    expect(currentModifiedDate).toNot(be, JSON.parse(localStorage['epiceditor'])[testEl].modified);
   });
 
 });
