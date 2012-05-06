@@ -7,10 +7,10 @@
   <script>
     // Inject example-1, epiceditor, tryit, toc
     $(function () {
-      $('#wrapper').before('<div id="toc"><h4>EpicEditor</h4><ul id="toc-list"></ul></div>');
+      $('#wrapper').before('<div id="toc"><h2><a href="#">EpicEditor</a></h2><ul id="toc-list"></ul></div>');
       $($('h1')[0]).append('<span>beta 0.1.0</span>');
-      $($('h2')[2]).before('<button id="try-it">Try it!</button><div id="epiceditor"></div>');
-      $($('h2')[1]).before('<div id="example-1"></div>');
+      $($('h2')[3]).before('<button id="try-it">Try it!</button><div id="epiceditor"></div>');
+      $($('h2')[2]).before('<div id="example-1"></div>');
   
       var opts = {
           container: 'example-1'
@@ -48,7 +48,7 @@
           , title = h.text()
           , link = title.toLowerCase().split(' ').join('-');
     
-        if (idx === 0) return
+        if (idx < 2) return
     
         h.attr("id", link);
         $("#toc-list").append('<li class="toc-' + this.nodeName.toLowerCase()+ '"><a id="" href="#' + link + '">' + title + '</a></li>');
