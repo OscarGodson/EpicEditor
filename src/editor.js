@@ -878,6 +878,11 @@
       storage[file] = self._defaultFileSchema();
     }
     
+    if (content !== storage[file].content) {
+      storage[file].modified = new Date();
+      self.emit('update');
+    }
+    
     storage[file].content = content;
     localStorage[self.settings.localStorageName] = JSON.stringify(storage);
     this.emit('save');
@@ -951,7 +956,11 @@
       self.emit('create');
     }
 
-    self.save().preview();
+    self.save();
+
+    if (self.eeState.fullscreen) {
+      self.preview();
+    }
 
     return this;
   };
