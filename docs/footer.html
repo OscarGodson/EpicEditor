@@ -7,10 +7,10 @@
   <script>
     // Inject example-1, epiceditor, tryit, toc
     $(function () {
-      $('#wrapper').before('<div id="toc"><h4>EpicEditor</h4><ul id="toc-list"></ul></div>');
+      $('#wrapper').before('<div id="toc"><h2><a href="#">EpicEditor</a></h2><ul id="toc-list"></ul></div>');
       $($('h1')[0]).append('<span>beta 0.1.0</span>');
-      $($('h2')[2]).before('<button id="try-it">Try it!</button><div id="epiceditor"></div>');
-      $($('h2')[1]).before('<div id="example-1"></div>');
+      $($('h2')[3]).before('<button id="try-it">Try it!</button><div id="epiceditor"></div>');
+      $($('h2')[2]).before('<div id="example-1"></div>');
   
       var opts = {
           container: 'example-1'
@@ -23,36 +23,39 @@
         , example = new EpicEditor()
         , tryItStatus = false
         , tryItBtn = document.getElementById('try-it');
-
-      tryItBtn.onclick = function(){
+        
+      // So people can play with it in their console
+      window.editor = editor;
+      
+      tryItBtn.onclick = function () {
         if(!tryItStatus){
           tryItStatus = true;
           tryItBtn.innerHTML = 'Undo';
           example.load();
         }
-        else{
+        else {
           tryItStatus = false;
           tryItBtn.innerHTML = 'Try it again';
           example.unload();
         }
       }
-  
+
       $('pre').addClass('prettyprint')
       prettyPrint()
-  
+
       $("h2, h3").each(function (idx, val) {
         var h = $(this)
           , title = h.text()
           , link = title.toLowerCase().split(' ').join('-');
-    
-        if (idx === 0) return
-    
-        h.attr("id", link);
-        $("#toc-list").append('<li class="toc-' + this.nodeName.toLowerCase()+ '"><a id="" href="#' + link + '">' + title + '</a></li>');
+
+        if (idx > 1) {
+          h.attr("id", link);
+          $("#toc-list").append('<li class="toc-' + this.nodeName.toLowerCase()+ '"><a id="" href="#' + link + '">' + title + '</a></li>');
+        }
       });
       
-      $(window).resize(function(){
-        $('#toc').height(window.innerHeight+'px');
+      $(window).resize(function () {
+        $('#toc').height(window.innerHeight + 'px');
       }).trigger('resize');
     });
 
