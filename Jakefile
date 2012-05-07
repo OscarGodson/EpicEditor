@@ -64,16 +64,18 @@ desc('Build the index.html file from the README.');
 task('docs', function () {
   var destDir = path.join(process.cwd() + '/')
     , srcDir = path.join(process.cwd() + '/docs/')
-    , srcPaths = 
+    , srcPaths =
       [ srcDir + 'header.html'
       , srcDir + 'README.html'
       , srcDir + 'footer.html'
       ]
-    , cmds = 
-      [ 'cat ' + destDir + '/README.md | marked -o ' + srcDir + '/README.html --gfm'
+    , cmds =
+      [ 'cat ' + destDir + 'README.md | marked -o ' + srcDir + 'README.html --gfm'
       , 'cat ' + srcPaths.join(' ') + ' > ' + destDir + 'index.html'
       ]
-      
+  
+  console.log(cmds)
+  
   jake.exec(cmds, function () {
     fs.unlink(srcPaths[1]); // remove tmp README.html
     console.log(colorize('√ Build success!', 'green'))
