@@ -3,27 +3,27 @@
   <head>
     <title>EpicEditor - An embeddable JavaScript Markdown editor</title>
     <style>
-      body {background:#FEED79;}
-      #wrapper { width:600px;margin:0 auto;font-family:helvetica,arial,sans-serif;line-height:1.4em; }
-      #example-1 { height:349px;border:1px solid #000; }
-      h1 { border-bottom:2px solid #000; padding:0 0 15px 0; font-size:38px; position:relative; }
+      body { background-color: #e0dbb8;background: url(http://sebnitu.com/EpicEditor/bg-glow.png) repeat-x center top, url(http://sebnitu.com/EpicEditor/bg-texture.jpg) repeat center top;}
+      #wrapper { width:600px;margin:0 auto;font-family:helvetica,arial,sans-serif;line-height:1.4em;padding: 0 0 30px 0 }
+      #example-1 { height:349px;border:1px solid rgba(0,0,0, 0.15); }
+      h1 { border-bottom:1px solid rgba(0,0,0, 0.15); padding:0 0 15px 0; font-size:38px; position:relative; }
       h3,h4,h5,h6 { margin-bottom:0; }
       h3 { font-size:20px; }
       h4 { font-size:18px; }
       h5 { font-size:16px; }
-      h6 { font-size:14px; padding:10px 0; border-top:1px solid #000; }
-      h1 span { opacity:0.25; font-weight:normal; font-size:20px; background:#000; color:#fff; padding:0 5px; border-radius:3px; position:absolute; top:0; right:0; }
-      pre { border:1px solid #000; overflow-x:auto; background:#000; }
-      .offline-mode pre { padding:5px; background:#000; color:#fff; }
+      h6 { font-size:14px; padding:10px 0; border-top:1px solid rgba(0,0,0, 0.15); }
+      h1 span { opacity:0.15; font-weight:normal; font-size:20px; background:rgba(0,0,0, 0.75); color:#fff; padding:5px 15px; border-radius:3px; position:absolute; top:0; right:0; }
+      pre { border:1px solid rgba(0,0,0, 0.15); overflow-x:auto; background:rgba(0,0,0, 0.75); }
+      .offline-mode pre { padding:5px; background:rgba(0,0,0, 0.75); color:#fff; }
       p { font-size:13px; margin:5px 0; }
-      a { background:#000;color:#fff;text-decoration:none; }
+      a { background:rgba(0,0,0, 0.75);color:#fff;text-decoration:none; }
       .example { font-weight:bold; font-size:12px; }
     </style>
     <link rel="stylesheet" href="http://yandex.st/highlightjs/6.1/styles//sunburst.min.css">
   </head>
   <body>
     <div id="wrapper">
-      <h1>EpicEditor <span>alpha 0.0.3</span></h1>
+      <h1><img src="http://sebnitu.com/EpicEditor/logo-epiceditor.png" alt="EpicEditor" width="308" height="73"> <span>alpha 0.0.3</span></h1>
       <h2>An Embeddable JavaScript Markdown Editor</h2>
       <p>EpicEditor is an embeddable JavaScript <a href="http://daringfireball.net/projects/markdown/">Markdown</a> editor with some minor Markdown enhancements such as automatic link creation and code fencing.</p>
 
