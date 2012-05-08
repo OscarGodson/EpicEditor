@@ -3,54 +3,120 @@
   <head>
     <title>EpicEditor - An embeddable JavaScript Markdown editor</title>
     <style>
-      body { background:#FEED79; font-family:helvetica,arial,sans-serif; margin:0; }
-      #wrapper { width:600px; margin:0 auto; line-height:1.4em; padding:20px 0 0 250px; }
-      #example-1 { height:349px;border:1px solid #000; box-shadow: rgba(0, 0, 0, 0.75) 0 2px 5px; border-radius: 3px; }
-      #epiceditor { margin: 20px 0; }
-      #try-it { padding:5px; font-size:14px; }
-      h1 { border-bottom:2px solid #000; padding:0 0 15px 0; font-size:38px; position:relative; margin:0; }
-      h3,h4,h5,h6 { margin-bottom:0; }
-      h3 { font-size:20px; }
-      h4 { font-size:18px; }
-      h5 { font-size:16px; }
-      h6 { font-size:14px; padding:10px 0; border-top:1px solid #000; }
-      h1 span { font-weight:normal; font-size:20px; background:#000; color:#fff; padding:0 5px; border-radius:3px; position:absolute; top:0; right:0; }
-      pre { border:1px solid #000; overflow-x:auto; background:#000; }
-      .offline-mode pre { padding:5px; background:#000; color:#fff; }
-      p { font-size:13px; margin:5px 0; }
-      li { font-size:13px; margin:10px 0; }
-      a { text-decoration:underline; color:#000; }
-      .example { font-weight:bold; font-size:12px; }
+      body { 
+        background: #FEED79;
+        font-family: 'PT Sans', 'Helvetica Neue', helvetica, arial, sans-serif;
+        font-size: 14px;
+        line-height: 24px;
+        color: #222;
+        margin: 0;
+      }
+      #wrapper {
+        width: 700px;
+        margin: 0 150px 0 300px;
+        line-height:1.4em;
+        padding:20px 40px;
+      }
+      #example-1 { 
+        height: 349px;
+        border:1px solid #000;
+        box-shadow: rgba(0, 0, 0, 0.75) 0 2px 5px;
+        border-radius: 3px;
+      }
+      #epiceditor { 
+        margin: 20px 0;
+      }
+      #try-it {
+        padding: 5px;
+      }
+      h1, h2, h3, h4, h5, h6, .toc-h2 {
+        font-family: 'Arvo', courier, serif;
+        font-weight: normal;
+      }
+      h1 {
+        border-bottom:2px solid #555;
+        padding:0 0 15px 0;
+        position:relative; margin:0;
+      }
+      #wrapper h2 {
+        padding-top: 30px;
+      }
+      #wrapper h3{
+        padding-top: 20px;
+      }
+      h3,h4,h5,h6 {
+        margin-bottom:0;
+      }
+      h1 span {
+        font-weight:normal;
+        font-size:20px;
+        border: 1px solid #000;
+        text-shadow: 1px 1px 2px #000;
+        background:#333; color:#fff;
+        padding:0 5px;
+        border-radius:3px;
+        position:absolute;
+        top:0;
+        right:0;
+      }
+      pre {
+        border:1px solid #000;
+        overflow-x:auto;
+        background:#222;
+        color: #fff;
+      }
+      p {
+        margin:5px 0;
+      }
+      li {
+        margin:10px 0;
+      }
+      a {
+        text-decoration:underline;
+        color: #222;
+      }
+      .example {
+        font-weight:bold;
+        font-size:12px;
+      }
       #toc {
         float: left;
         width: 250px;
-        padding:17px 20px 20px 20px;
+        padding: 17px 20px 20px 20px;
         position: fixed;
-        background:#FCF5C2;
+        background: rgba(0,0,0,.05);
         overflow:auto;
-        border-right:1px solid #fff;
-        box-shadow:#FAE555 1px 0 1px, rgba(0,0,0,0.25) 1px 0 5px;
+        border-right: 1px solid #fff;
+        box-shadow: #FAE555 1px 0 1px, rgba(0,0,0,0.5) 1px 0 5px;
       }
       #toc ul {
         list-style-type: none;
-        padding: 0 0 20px 0;
+        padding: 0 0 10px 0;
       }
       #toc li {
         margin:0;
-        padding: 7px 5px;
+        padding: 0;
       }
       #toc li.toc-h3 {
         margin-left: 10px;
       }
-      .toc-h2 { font-weight:bold; }
+      #toc a {
+        text-decoration: none;
+        display: block;
+        padding: 3px 8px;
+      }
+      #toc a:hover, #toc a:focus, #toc a:active {
+        background-color: rgba(0, 0, 0, .05);
+      }
+    </style>
+    <link rel="stylesheet" href="docs/prettify.css">
+    <link href='http://fonts.googleapis.com/css?family=Arvo:400,400italic|PT+Sans:400,400italic' rel='stylesheet' type='text/css'>
     </style>
     <link rel="stylesheet" href="docs/prettify.css">
   </head>
   <body>
     <div id="wrapper">
-      
-      
-      
+
 <h1><img src="docs/images/epiceditor-logo.png" alt=""></h1>
 <h2>An Embeddable JavaScript Markdown Editor</h2>
 <p>EpicEditor is an embeddable JavaScript <a href="http://daringfireball.net/projects/markdown/">Markdown</a> editor with some Markdown enhancements such as automatic link creation and code fencing a la <a href="">Github Flavored Markdown</a>. EpicEditor allows for all kinds of customization. For simple drop-in-and-go support see the quick start below, otherwise checkout the full API.
@@ -228,6 +294,22 @@ var editor = new EpicEditor(opts);</code></pre>
   editor.edit();
 }</code></pre>
 <h2>Events</h2>
+<p>You can hook into specific events in EpicEditor with <a href="#on(event,-handler)"><code>on()</code></a> such as when a file is
+created, removed, or updated. Below is a complete list of currently supported events and their description.
+
+</p>
+<p><strong>create</strong> - Fires whenever a new file is created.
+
+</p>
+<p><strong>read</strong> - Fires whenever a file is read.
+
+</p>
+<p><strong>update</strong> - Fires whenever a file is updated.
+
+</p>
+<p><strong>remove</strong> - Fires whenever a file is deleted.
+
+</p>
 <p><strong>load</strong> - Fires when the editor is loaded via <code>.load()</code>.
 
 </p>
@@ -247,8 +329,8 @@ var editor = new EpicEditor(opts);</code></pre>
 
 </p>
 <h2>Themes</h2>
-<p>Theming is easy in EpicEditor. There are three different <code>&lt;iframe&gt;</code>s which means styles wont leak between the &quot;chrome&quot; of,
-the editor, previewer, or editor. Each one is like it&#39;s own web page. In the <code>themes</code> directory  you&#39;ll see <code>base</code>, <code>preview</code>,  and
+<p>Theming is easy in EpicEditor. There are three different <code>&lt;iframe&gt;</code>s which means styles wont leak between the &quot;chrome&quot; of
+EpicEditor, previewer, or editor. Each one is like it&#39;s own web page. In the <code>themes</code> directory  you&#39;ll see <code>base</code>, <code>preview</code>,  and
 <code>editor</code>. The base styles are for the &quot;chrome&quot; of the editor which contains elements such as the utility bar containing the icons.
 The editor is the styles for the contents of editor <code>&lt;iframe&gt;</code> and the preview styles are applied to the preview <code>&lt;iframe&gt;</code>.
 
@@ -309,6 +391,7 @@ The editor is the styles for the contents of editor <code>&lt;iframe&gt;</code> 
 
 <p><img src="docs/images/avatars/oscar.jpeg" alt="Oscar"> <img src="docs/images/avatars/john.jpeg" alt="John"> <img src="docs/images/avatars/adam.jpeg" alt="Adam"> <img src="docs/images/avatars/seb.jpeg" alt="Seb">
 </p>
+
   <a href="http://github.com/OscarGodson/EpicEditor"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/camo.github.com/7afbc8b248c68eb468279e8c17986ad46549fb71/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub"></a>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -318,10 +401,10 @@ The editor is the styles for the contents of editor <code>&lt;iframe&gt;</code> 
   <script>
     // Inject example-1, epiceditor, tryit, toc
     $(function () {
-      $('#wrapper').before('<div id="toc"><h4>EpicEditor</h4><ul id="toc-list"></ul></div>');
+      $('#wrapper').before('<div id="toc"><h2><a href="#">EpicEditor</a></h2><ul id="toc-list"></ul></div>');
       $($('h1')[0]).append('<span>beta 0.1.0</span>');
-      $($('h2')[2]).before('<button id="try-it">Try it!</button><div id="epiceditor"></div>');
-      $($('h2')[1]).before('<div id="example-1"></div>');
+      $($('h2')[3]).before('<button id="try-it">Try it!</button><div id="epiceditor"></div>');
+      $($('h2')[2]).before('<div id="example-1"></div>');
   
       var opts = {
           container: 'example-1'
@@ -338,35 +421,35 @@ The editor is the styles for the contents of editor <code>&lt;iframe&gt;</code> 
       // So people can play with it in their console
       window.editor = editor;
       
-      tryItBtn.onclick = function(){
+      tryItBtn.onclick = function () {
         if(!tryItStatus){
           tryItStatus = true;
           tryItBtn.innerHTML = 'Undo';
           example.load();
         }
-        else{
+        else {
           tryItStatus = false;
           tryItBtn.innerHTML = 'Try it again';
           example.unload();
         }
       }
-  
+
       $('pre').addClass('prettyprint')
       prettyPrint()
-  
+
       $("h2, h3").each(function (idx, val) {
         var h = $(this)
           , title = h.text()
-          , link = title.toLowerCase().split(' ').join('-');
-    
-        if (idx === 0) return
-    
-        h.attr("id", link);
-        $("#toc-list").append('<li class="toc-' + this.nodeName.toLowerCase()+ '"><a id="" href="#' + link + '">' + title + '</a></li>');
+          , link = title.toLowerCase().replace(/(\(.+\))/gi,'');
+
+        if (idx > 1) {
+          h.attr("id", link);
+          $("#toc-list").append('<li class="toc-' + this.nodeName.toLowerCase()+ '"><a id="" href="#' + link + '">' + title + '</a></li>');
+        }
       });
       
-      $(window).resize(function(){
-        $('#toc').height(window.innerHeight+'px');
+      $(window).resize(function () {
+        $('#toc').height(window.innerHeight + 'px');
       }).trigger('resize');
     });
 

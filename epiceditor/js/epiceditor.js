@@ -3,7 +3,8 @@
  * Copyright (c) 2011-2012, Oscar Godson. (MIT Licensed)
  */
 
-(function (window, undefined) {/**
+(function (window, undefined) {
+/**
  * marked - A markdown parser (https://github.com/chjj/marked)
  * Copyright (c) 2011-2012, Christopher Jeffrey. (MIT Licensed)
  */
@@ -774,6 +775,7 @@ if (typeof module !== 'undefined') {
 }
 
 }).call(this);
+
 
   /**
    * Applies attributes to a DOM object
