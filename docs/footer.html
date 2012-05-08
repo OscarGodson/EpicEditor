@@ -23,7 +23,10 @@
         , example = new EpicEditor()
         , tryItStatus = false
         , tryItBtn = document.getElementById('try-it');
-
+        
+      // So people can play with it in their console
+      window.editor = editor;
+      
       tryItBtn.onclick = function(){
         if(!tryItStatus){
           tryItStatus = true;

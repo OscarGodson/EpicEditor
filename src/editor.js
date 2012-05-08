@@ -262,7 +262,10 @@
    */
   function EpicEditor(options) {
     // Default settings will be overwritten/extended by options arg
-    var opts = options || {}
+    var self = this
+      , opts = options || {}
+      , _defaultFileSchema
+      , _defaultFile
       , defaults = { container: 'epiceditor'
         , basePath: 'epiceditor'
         , localStorageName: 'epiceditor'
@@ -283,32 +286,45 @@
         }
       , defaultStorage;
 
-    this.settings = _mergeObjs(true, defaults, opts);
+    self.settings = _mergeObjs(true, defaults, opts);
 
     // Protect the id and overwrite if passed in as an option
-    this.instanceId = 'epiceditor-' + Math.round(Math.random() * 100000);
+    // TODO: Put underscrore to denote that this is private
+    self.instanceId = 'epiceditor-' + Math.round(Math.random() * 100000);
+
+    self._canSave = true;
 
     // Setup local storage of files
-    if (localStorage) {
-      if (!localStorage[this.settings.localStorageName]) {
-        // TODO: Needs a dynamic file name!
-        defaultStorage = {files: {}};
-        defaultStorage.files[this.settings.file.name] = this.settings.file.defaultContent;
-        defaultStorage = JSON.stringify(defaultStorage);
-        localStorage[this.settings.localStorageName] = defaultStorage;
+    self._defaultFileSchema = function () {
+      return {
+        content: self.settings.file.defaultContent
+      , created: new Date()
+      , modified: new Date()
       }
-      else if (!JSON.parse(localStorage[this.settings.localStorageName]).files[this.settings.file.name]) {
-        JSON.parse(localStorage[this.settings.localStorageName]).files[this.settings.file.name] = this.settings.file.defaultContent;
+    }
+
+    if (localStorage) {
+      if (!localStorage[self.settings.localStorageName]) {
+        // TODO: Needs a dynamic file name!
+        defaultStorage = {};
+        defaultStorage[self.settings.file.name] = self._defaultFileSchema();
+        defaultStorage = JSON.stringify(defaultStorage);
+        localStorage[self.settings.localStorageName] = defaultStorage;
+      }
+      else if (JSON.parse(localStorage[self.settings.localStorageName])[self.settings.file.name] === undefined) {
+        _defaultFile = JSON.parse(localStorage[self.settings.localStorageName])[self.settings.file.name];
+        _defaultFile = self._defaultFileSchema();
+        _defaultFile.content = self.settings.file.defaultContent;
       }
       else {
-        this.content = this.settings.file.defaultContent;
+        self.content = self.settings.file.defaultContent;
       }
     }
     // Now that it exists, allow binding of events if it doesn't exist yet
-    if (!this.events) {
-      this.events = {};
+    if (!self.events) {
+      self.events = {};
     }
-    this.element = document.getElementById(this.settings.container);
+    self.element = document.getElementById(self.settings.container);
     return this;
   }
 
@@ -548,8 +564,8 @@
         document.body.style.overflow = 'hidden';
       }
 
-      self.preview(true);
-      self.editor.addEventListener('keyup', function () { self.preview(true); });
+      self.preview();
+      self.editor.addEventListener('keyup', function () { self.preview(); });
     };
 
     _exitFullscreen = function (el) {
@@ -675,6 +691,9 @@
     // Save the document every 100ms by default
     if (self.settings.file.autoSave) {
       saveTimer = window.setInterval(function () {
+        if (!self._canSave) {
+          return;
+        }
         self.save();
       }, self.settings.file.autoSave);
     }
@@ -740,16 +759,10 @@
    * @param {string} theme The path to the theme you want to preview in
    * @returns {object} EpicEditor will be returned
    */
-  EpicEditor.prototype.preview = function (theme, live) {
-    var self = this
-      , themePath = self.settings.basePath + self.settings.theme.preview;
-    if (typeof theme === 'boolean') {
-      live = theme;
-      theme = themePath
-    }
-    else {
-      theme = theme || themePath
-    }
+  EpicEditor.prototype.preview = function (theme) {
+    var self = this;
+    
+    theme = theme || self.settings.basePath + self.settings.theme.preview;
 
     _replaceClass(self.getElement('wrapper'), 'epiceditor-edit-mode', 'epiceditor-preview-mode');
 
@@ -765,7 +778,7 @@
     self.previewer.innerHTML = self.exportFile(null, 'html');
     
     // Hide the editor and display the previewer
-    if (!live) {
+    if (!self.eeState.fullscreen) {
       self.editorIframe.style.display = 'none';
       self.previewerIframe.style.display = 'block';
       self.eeState.preview = true;
@@ -827,36 +840,51 @@
       , defaultContent = self.settings.file.defaultContent
       , fileObj;
     name = name || self.settings.file.name;
+    self.settings.file.name = name;
     if (localStorage && localStorage[self.settings.localStorageName]) {
-      fileObj = JSON.parse(localStorage[self.settings.localStorageName]).files;
-      if (fileObj[name]) {
-        _setText(self.editor, fileObj[name]);
+      fileObj = JSON.parse(localStorage[self.settings.localStorageName]);
+      if (fileObj[name] !== undefined) {
+        _setText(self.editor, fileObj[name].content);
+        self.emit('read');
       }
       else {
         _setText(self.editor, defaultContent);
         self.save(); // ensure a save
+        self.emit('create');
       }
-      self.settings.file.name = name;
-      this.previewer.innerHTML = this.exportFile(null, 'html');
-      this.emit('open');
+      self.previewer.innerHTML = self.exportFile(null, 'html');
+      self.emit('open');
     }
     return this;
   }
 
   /**
    * Saves content for offline use
-   * @param  {string} file A filename for the content to be saved to
-   * @param  {string} content The content you want saved
    * @returns {object} EpicEditor will be returned
    */
-  EpicEditor.prototype.save = function (file, content) {
+  EpicEditor.prototype.save = function () {
     var self = this
-      , s;
-    file = file || self.settings.file.name;
-    content = content || _getText(this.editor);
-    s = JSON.parse(localStorage[self.settings.localStorageName]);
-    s.files[file] = content;
-    localStorage[self.settings.localStorageName] = JSON.stringify(s);
+      , storage
+      , file = self.settings.file.name
+      , content = _getText(this.editor);
+
+    // This could have been false but since we're manually saving
+    // we know it's save to start autoSaving again
+    this._canSave = true;
+    
+    storage = JSON.parse(localStorage[self.settings.localStorageName]);
+    
+    if (storage[file] === undefined) {
+      storage[file] = self._defaultFileSchema();
+    }
+    
+    if (content !== storage[file].content) {
+      storage[file].modified = new Date();
+      self.emit('update');
+    }
+    
+    storage[file].content = content;
+    localStorage[self.settings.localStorageName] = JSON.stringify(storage);
     this.emit('save');
     return this;
   }
@@ -870,8 +898,14 @@
     var self = this
       , s;
     name = name || self.settings.file.name;
+
+    // If you're trying to delete a page you have open, block saving
+    if (name == self.settings.file.name) {
+      self._canSave = false;
+    }
+
     s = JSON.parse(localStorage[self.settings.localStorageName]);
-    delete s.files[name];
+    delete s[name];
     localStorage[self.settings.localStorageName] = JSON.stringify(s);
     this.emit('remove');
     return this;
@@ -886,8 +920,8 @@
   EpicEditor.prototype.rename = function (oldName, newName) {
     var self = this
       , s = JSON.parse(localStorage[self.settings.localStorageName]);
-    s.files[newName] = s.files[oldName];
-    delete s.files[oldName];
+    s[newName] = s[oldName];
+    delete s[oldName];
     localStorage[self.settings.localStorageName] = JSON.stringify(s);
     self.open(newName);
     return this;
@@ -902,19 +936,32 @@
    * @returns {object} EpicEditor will be returned
    */
   EpicEditor.prototype.importFile = function (name, content, kind, meta) {
-    var self = this;
+    var self = this
+      , isNew = false;
 
     name = name || self.settings.file.name;
     content = content || '';
     kind = kind || 'md';
     meta = meta || {};
-    
+  
+    if (JSON.parse(localStorage[self.settings.localStorageName])[name] === undefined) {
+      isNew = true;
+    }
+
     // Set our current file to the new file and update the content
     self.settings.file.name = name;
     _setText(self.editor, content);
 
-    // we open the file after saving so that it will preview correctly if in the previewer
-    self.save().open(name);
+    if (isNew) {
+      self.emit('create');
+    }
+
+    self.save();
+
+    if (self.eeState.fullscreen) {
+      self.preview();
+    }
+
     return this;
   };
 
@@ -926,17 +973,21 @@
    */
   EpicEditor.prototype.exportFile = function (name, kind) {
     var self = this
-      , content = localStorage[self.settings.localStorageName];
-  
+      , file
+      , content;
+
     name = name || self.settings.file.name;
     kind = kind || 'text';
-    
-    content = JSON.parse(content).files[name];
    
+    file = JSON.parse(localStorage[self.settings.localStorageName])[name]
+    
     // If the file doesn't exist just return early with undefined
-    if (content === undefined) {
+    if (file === undefined) {
       return;
     }
+
+    content = file.content;
+   
     
     switch (kind) {
     case 'html':
@@ -972,15 +1023,23 @@
    * @returns {object} EpicEditor will be returned
    */
   EpicEditor.prototype.emit = function (ev, data) {
-    var self = this;
+    var self = this
+      , x;
+
+    data = data || JSON.parse(localStorage[self.settings.localStorageName])[self.settings.file.name];
+
     if (!this.events[ev]) {
       return;
     }
-    // TODO: Cross browser support!
+
     function invokeHandler(handler) {
       handler.call(self, data);
     }
-    this.events[ev].forEach(invokeHandler);
+
+    for (x = 0; x < self.events[ev].length; x++) {
+      invokeHandler(self.events[ev][x]);
+    }
+
     return self;
   };
 
