@@ -1651,12 +1651,15 @@ if (typeof module !== 'undefined') {
     this._canSave = true;
     
     storage = JSON.parse(localStorage[self.settings.localStorageName]);
-    
+   
+    // If the file doesn't exist we need to create it
     if (storage[file] === undefined) {
       storage[file] = self._defaultFileSchema();
     }
-    
-    if (content !== storage[file].content) {
+
+    // If it does, we need to check if the content is different and
+    // if it is, send the update event and update the timestamp
+    else if (content !== storage[file].content) {
       storage[file].modified = new Date();
       self.emit('update');
     }
