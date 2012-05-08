@@ -1,0 +1,105 @@
+body { 
+  background: #FEED79;
+  font-family: 'PT Sans', 'Helvetica Neue', helvetica, arial, sans-serif;
+  font-size: 14px;
+  line-height: 24px;
+  color: #222;
+  margin: 0;
+}
+#wrapper {
+  width: 700px;
+  margin: 0 150px 0 300px;
+  line-height:1.4em;
+  padding:20px 40px;
+}
+#example-1 { 
+  height: 349px;
+  border:1px solid #000;
+  box-shadow: rgba(0, 0, 0, 0.75) 0 2px 5px;
+  border-radius: 3px;
+}
+#epiceditor { 
+  margin: 20px 0;
+}
+#try-it {
+  padding: 5px;
+}
+h1, h2, h3, h4, h5, h6, .toc-h2 {
+  font-family: 'Arvo', courier, serif;
+  font-weight: normal;
+}
+h1 {
+  border-bottom:2px solid #555;
+  padding:0 0 15px 0;
+  position:relative; margin:0;
+}
+#wrapper h2 {
+  padding-top: 30px;
+}
+#wrapper h3{
+  padding-top: 20px;
+}
+h3,h4,h5,h6 {
+  margin-bottom:0;
+}
+h1 span {
+  font-weight:normal;
+  font-size:20px;
+  border: 1px solid #000;
+  text-shadow: 1px 1px 2px #000;
+  background:#333; color:#fff;
+  padding:0 5px;
+  border-radius:3px;
+  position:absolute;
+  top:0;
+  right:0;
+}
+pre {
+  border:1px solid #000;
+  overflow-x:auto;
+  background:#222;
+  color: #fff;
+}
+p {
+  margin:5px 0;
+}
+li {
+  margin:10px 0;
+}
+a {
+  text-decoration:underline;
+  color: #222;
+}
+.example {
+  font-weight:bold;
+  font-size:12px;
+}
+#toc {
+  float: left;
+  width: 250px;
+  padding: 17px 20px 20px 20px;
+  position: fixed;
+  background: rgba(0,0,0,.05);
+  overflow:auto;
+  border-right: 1px solid #fff;
+  box-shadow: #FAE555 1px 0 1px, rgba(0,0,0,0.5) 1px 0 5px;
+}
+#toc ul {
+  list-style-type: none;
+  padding: 0 0 10px 0;
+}
+#toc li {
+  margin:0;
+  padding: 0;
+}
+#toc li.toc-h3 {
+  margin-left: 10px;
+}
+#toc a {
+  text-decoration: none;
+  display: block;
+  padding: 3px 8px;
+}
+#toc a:hover, #toc a:focus, #toc a:active {
+  background-color: rgba(0, 0, 0, .05);
+}

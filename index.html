@@ -2,117 +2,9 @@
 <html>
   <head>
     <title>EpicEditor - An embeddable JavaScript Markdown editor</title>
-    <style>
-      body { 
-        background: #FEED79;
-        font-family: 'PT Sans', 'Helvetica Neue', helvetica, arial, sans-serif;
-        font-size: 14px;
-        line-height: 24px;
-        color: #222;
-        margin: 0;
-      }
-      #wrapper {
-        width: 700px;
-        margin: 0 150px 0 300px;
-        line-height:1.4em;
-        padding:20px 40px;
-      }
-      #example-1 { 
-        height: 349px;
-        border:1px solid #000;
-        box-shadow: rgba(0, 0, 0, 0.75) 0 2px 5px;
-        border-radius: 3px;
-      }
-      #epiceditor { 
-        margin: 20px 0;
-      }
-      #try-it {
-        padding: 5px;
-      }
-      h1, h2, h3, h4, h5, h6, .toc-h2 {
-        font-family: 'Arvo', courier, serif;
-        font-weight: normal;
-      }
-      h1 {
-        border-bottom:2px solid #555;
-        padding:0 0 15px 0;
-        position:relative; margin:0;
-      }
-      #wrapper h2 {
-        padding-top: 30px;
-      }
-      #wrapper h3{
-        padding-top: 20px;
-      }
-      h3,h4,h5,h6 {
-        margin-bottom:0;
-      }
-      h1 span {
-        font-weight:normal;
-        font-size:20px;
-        border: 1px solid #000;
-        text-shadow: 1px 1px 2px #000;
-        background:#333; color:#fff;
-        padding:0 5px;
-        border-radius:3px;
-        position:absolute;
-        top:0;
-        right:0;
-      }
-      pre {
-        border:1px solid #000;
-        overflow-x:auto;
-        background:#222;
-        color: #fff;
-      }
-      p {
-        margin:5px 0;
-      }
-      li {
-        margin:10px 0;
-      }
-      a {
-        text-decoration:underline;
-        color: #222;
-      }
-      .example {
-        font-weight:bold;
-        font-size:12px;
-      }
-      #toc {
-        float: left;
-        width: 250px;
-        padding: 17px 20px 20px 20px;
-        position: fixed;
-        background: rgba(0,0,0,.05);
-        overflow:auto;
-        border-right: 1px solid #fff;
-        box-shadow: #FAE555 1px 0 1px, rgba(0,0,0,0.5) 1px 0 5px;
-      }
-      #toc ul {
-        list-style-type: none;
-        padding: 0 0 10px 0;
-      }
-      #toc li {
-        margin:0;
-        padding: 0;
-      }
-      #toc li.toc-h3 {
-        margin-left: 10px;
-      }
-      #toc a {
-        text-decoration: none;
-        display: block;
-        padding: 3px 8px;
-      }
-      #toc a:hover, #toc a:focus, #toc a:active {
-        background-color: rgba(0, 0, 0, .05);
-      }
-    </style>
-    <link rel="stylesheet" href="docs/prettify.css">
     <link href='http://fonts.googleapis.com/css?family=Arvo:400,400italic|PT+Sans:400,400italic' rel='stylesheet' type='text/css'>
-    </style>
-    <link rel="stylesheet" href="docs/prettify.css">
+    <link rel="stylesheet" href="docs/css/main.css">
+    <link rel="stylesheet" href="docs/css/prettify.css">
   </head>
   <body>
     <div id="wrapper">
@@ -294,7 +186,7 @@ var editor = new EpicEditor(opts);</code></pre>
   editor.edit();
 }</code></pre>
 <h2>Events</h2>
-<p>You can hook into specific events in EpicEditor with <a href="#on(event,-handler)"><code>on()</code></a> such as when a file is
+<p>You can hook into specific events in EpicEditor with <a href="#onevent-handler"><code>on()</code></a> such as when a file is
 created, removed, or updated. Below is a complete list of currently supported events and their description.
 
 </p>
@@ -396,63 +288,8 @@ The editor is the styles for the contents of editor <code>&lt;iframe&gt;</code> 
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
   <script src="docs/js/prettify.js"></script>
+  <script src="docs/js/main.js"></script>
   <script src="epiceditor/js/epiceditor.js"></script>
 
-  <script>
-    // Inject example-1, epiceditor, tryit, toc
-    $(function () {
-      $('#wrapper').before('<div id="toc"><h2><a href="#">EpicEditor</a></h2><ul id="toc-list"></ul></div>');
-      $($('h1')[0]).append('<span>beta 0.1.0</span>');
-      $($('h2')[3]).before('<button id="try-it">Try it!</button><div id="epiceditor"></div>');
-      $($('h2')[2]).before('<div id="example-1"></div>');
-  
-      var opts = {
-          container: 'example-1'
-        , file:{
-            defaultContent:"#EpicEditor\nThis is some default content. Go ahead, _change me_. "
-          }
-          , focusOnLoad:true
-          }
-        , editor = new EpicEditor(opts).load()
-        , example = new EpicEditor()
-        , tryItStatus = false
-        , tryItBtn = document.getElementById('try-it');
-        
-      // So people can play with it in their console
-      window.editor = editor;
-      
-      tryItBtn.onclick = function () {
-        if(!tryItStatus){
-          tryItStatus = true;
-          tryItBtn.innerHTML = 'Undo';
-          example.load();
-        }
-        else {
-          tryItStatus = false;
-          tryItBtn.innerHTML = 'Try it again';
-          example.unload();
-        }
-      }
-
-      $('pre').addClass('prettyprint')
-      prettyPrint()
-
-      $("h2, h3").each(function (idx, val) {
-        var h = $(this)
-          , title = h.text()
-          , link = title.toLowerCase().replace(/(\(.+\))/gi,'');
-
-        if (idx > 1) {
-          h.attr("id", link);
-          $("#toc-list").append('<li class="toc-' + this.nodeName.toLowerCase()+ '"><a id="" href="#' + link + '">' + title + '</a></li>');
-        }
-      });
-      
-      $(window).resize(function () {
-        $('#toc').height(window.innerHeight + 'px');
-      }).trigger('resize');
-    });
-
-  </script>
 </body>
 </html>

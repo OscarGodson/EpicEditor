@@ -234,7 +234,7 @@ editBtn.onclick = function () {
 
 ## Events
 
-You can hook into specific events in EpicEditor with <a href="#on(event,-handler)"><code>on()</code></a> such as when a file is
+You can hook into specific events in EpicEditor with <a href="#onevent-handler"><code>on()</code></a> such as when a file is
 created, removed, or updated. Below is a complete list of currently supported events and their description.
 
 **create** - Fires whenever a new file is created.
