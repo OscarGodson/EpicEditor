@@ -662,10 +662,18 @@
         }
       }
 
-      // Check for ctrl/cmnd + s (since a lot of people do it out of habit) and make it do nothing
+      // Check for ctrl + s (since a lot of people do it out of habit) and make it do nothing
       if (isCtrl === true && e.keyCode == 83) {
+        self.save();
         e.preventDefault();
       }
+
+      // Do the same for Mac now (metaKey == cmd).
+      if (e.metaKey && e.keyCode == 83) {
+        self.save();
+        e.preventDefault();
+      }
+
     }
     
     function shortcutUpHandler(e) {
@@ -681,7 +689,7 @@
         utilBarHandler(e);
       });
       eventableIframes[i].addEventListener('keyup', function (e) {
-        shortcutUpHandler(e)
+        shortcutUpHandler(e);
       });
       eventableIframes[i].addEventListener('keydown', function (e) {
         shortcutHandler(e);
