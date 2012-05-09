@@ -2,153 +2,106 @@ var fs = require('fs')
   , path = require('path')
   , spawn = require('child_process').spawn
 
+function concat(fileList, destPath) {
+  var out = fileList.map(function (filePath) {
+    return fs.readFileSync(filePath)
+  })
+  fs.writeFileSync(destPath, out.join('\n'))
+}
+
 function colorize(str, color) {
-  var colors = {
-      'blue': '34m'
+  var colors = 
+    { 'blue': '34m'
     , 'cyan': '36m'
-    , 'green': '32m'
+    , 'green': '01;32m'
     , 'magenta': '35m'
     , 'red': '31m'
     , 'yellow': '33m'
     }
 
-  return colors[color] ? '\033[' + colors[color] + str + '\033[39m' : str;
+  return colors[color] ? '\033[' + colors[color] + str + '\033[39m' : str
 }
 
-console.log(colorize('\nEpicEditor - An Embeddable JavaScript Markdown Editor', 'yellow'))
-
-desc('Build tmp from core code and run through JSHint');
+desc('Builds a temporary build of core code and runs against JSHint');
 task('lint', [], function () {
-  var srcPaths = ['src/intro.js', 'src/editor.js']
-    , destPath = 'src/editor.tmp.js'
-    , tmpStr = ''
-    , cat
-    , jshint
-    , jshintErrors = ''
-    , buff = ''
-
-    console.log(colorize('--> Running JSHint', 'magenta'));
-    // This is hacky as hell, needs to be optimized:
-    // Create the tmp source from core code
-    cat = spawn('cat', srcPaths)
-    cat.stdout.on("data", function (data) {
-      buff += data;
-    });
-    cat.stdout.on("end", function () {
-      fs.writeFile(destPath, buff, function (err) {
-        jshint = spawn('jshint', [destPath, '--config', '.jshintrc']);
-        jshint.stdout.on('data', function (data) {
-          jshintErrors += new Buffer(data).toString("utf-8")
-        });
-        jshint.stdout.on('end', function () {
-          if (jshintErrors) {
-            console.log(jshintErrors)
-            console.log(colorize('Lint failed.', 'red') + '\n')
-            fail();
-          } else {
-            console.log(colorize('√ Lint success! Giddyup.', 'green'))
-          }
-          fs.unlink(destPath);
-        });
-        jshint.stderr.on('data', function (data) {
-          console.log('ERROR:', new Buffer(data).toString("utf-8"));
-          fail();
-          fs.unlink(destPath);
-        });
-      });
-    });
-    
-});
-
-desc('Build the index.html file from the README.');
-task('docs', function () {
-  var destDir = path.join(process.cwd() + '/')
-    , srcDir = path.join(process.cwd() + '/docs/')
+  var srcDir = path.join(process.cwd() + '/src/')
     , srcPaths = 
-      [ srcDir + 'header.html'
-      , srcDir + 'README.html'
-      , srcDir + 'footer.html'
+      [ srcDir + 'intro.js'
+      , srcDir + 'editor.js'
       ]
-    , cmds = 
-      [ 'cat ' + destDir + '/README.md | marked -o ' + srcDir + '/README.html --gfm'
-      , 'cat ' + srcPaths.join(' ') + ' > ' + destDir + 'index.html'
-      ]
-      
+    , tempPath = srcDir + 'editor.tmp.js'
+    , cmds = ['jshint ' + tempPath + ' --config .jshintrc']
+
+  concat(srcPaths, tempPath)
+  
   jake.exec(cmds, function () {
-    fs.unlink(srcPaths[1]); // remove tmp README.html
-    console.log(colorize('√ Build success!', 'green'))
+    // remove temporary core EE build
+    fs.unlink(tempPath)
+    console.log(colorize('√ Lint success! Giddyup.', 'green'))
   }, {stdout: true});
 }, {async: false});
 
-desc('Build epiceditor.js and epiceditor.min.js');
-task('build', ['lint'], function () {
+
+desc('Builds the index.html file from the README');
+task('docs', [], function () {
+  var destDir = path.join(process.cwd() + '/')
+    , srcDir = path.join(process.cwd() + '/docs/')
+    , readmePath = destDir + 'README.md'
+    , tempPath = srcDir + 'README.html'
+    , destPath = destDir + 'index.html'
+    , srcPaths = 
+      [ srcDir + 'header.html'
+      , tempPath
+      , srcDir + 'footer.html'
+      ]
+    , cmds = ['marked -o ' + tempPath + ' -i ' + readmePath + ' --gfm']
+
+  jake.exec(cmds, function () {
+    concat(srcPaths, destPath)
+    // remove temporary README.html
+    fs.unlink(tempPath)
+    console.log(colorize('√ Docs build success!', 'green'))
+  }, {stdout: true});
+}, {async: false});
+
+
+desc('Builds epiceditor.js and minified epiceditor.min.js');
+task('build', [], function () {
+  // First check for nolint flag for development builds
+  // e.g. jake build[arg1,nolint,arg3]
+  if (!!(Array.prototype.slice.call(arguments).indexOf('nolint'))) {
+   jake.Task['lint'].invoke(); 
+  }
+
   var destDir = path.join(process.cwd() + '/epiceditor/js/')
     , srcDir = path.join(process.cwd() + '/src/')
-    , srcPaths = [
-      , srcDir + 'intro.js'
+    , srcPaths = 
+      [ srcDir + 'intro.js'
       , srcDir + 'marked/lib/marked.js'
       , srcDir + 'editor.js'
       ]
     , destPath = destDir + 'epiceditor.js'
     , destPathMin = destDir + 'epiceditor.min.js'
-    , cat
-    , buff = ''
+    , cmds = ['uglifyjs ' + destPath + ' > ' + destPathMin]
 
-  // If the destination directory ./epiceditor/js/ does not exist, create it
-  if (!path.existsSync(destDir)) {
-    fs.mkdirSync(destDir)
-  }
-  
-  // Create the unminified source file first
-  cat = spawn('cat', srcPaths)
-  cat.stdout.on("data", function (data) {
-    buff += data;
-  });
-  cat.stdout.on("end", function () {
-    console.log(colorize('--> Building source', 'magenta'));
-    fs.writeFile(destPath, buff, function (err) {
-      if (err) {
-        console.log('ERROR:', err);
-        fail();
-      } else {
-        // Minify the source
-        var uglify = spawn('uglifyjs', [destPath])
-          , buffMin = ''
-          
-        uglify.stdout.on("data", function(data) {
-          buffMin += data;
-        });
-        uglify.stdout.on("end", function () {
-          console.log(colorize('--> Minifying', 'magenta'));
-          fs.writeFile(destPathMin, buffMin, function (err) {
-            if (err) {
-              console.log(colorize('Build failed.', 'red'), err);
-              fail();
-            } else {
-              console.log(colorize('√ Build success!', 'green'));
-            }
-          });
-        });
-      }
-    });
-  });
+  // If the destination directory does not exist, create it
+  jake.mkdirP('epiceditor/js');
 
+  concat(srcPaths, destPath)
+
+  jake.exec(cmds, function () {
+    console.log(colorize('√ EpicEditor build success!', 'green'))
+  }, {stdout: true});
 }, {async: false});
 
-desc('Tests code against specs');
-task('test', [], function(){
-  console.log(colorize('--> Test suite server is booting up','magenta'));
-  
-  var testTask = spawn('foounit',['serve']);
 
-  testTask.stdout.on('data', function(data){
-    console.log(colorize(data.toString('utf8'),'yellow'));
-  });
-  //Doesnt run?
-  testTask.stdout.on('end', function(data){
-    console.log(colorize("Test suite server connection has closed\n"+data,'magenta'));
-  });
+desc('Tests code against specs');
+task('test', [], function () {
+  console.log(colorize('--> Test suite is now running (CTRL+C to quit) ','magenta'))
+  console.log('--> http://localhost:5057/spec/runner.html');
+  jake.exec(['foounit serve'], function () {}, {stdout: false});
 });
+
 
 desc('Kick out some ascii')
 task('ascii', [], function () {
@@ -167,4 +120,5 @@ task('ascii', [], function () {
       " EE   Ee'                  EE          EE  \n" +
       " EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE  \n"
   console.log(colorize(epicAscii, 'yellow'));
+  console.log(colorize('EpicEditor - An Embeddable JavaScript Markdown Editor', 'yellow'))
 })

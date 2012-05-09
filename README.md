@@ -234,6 +234,17 @@ editBtn.onclick = function () {
 
 ## Events
 
+You can hook into specific events in EpicEditor with <a href="#onevent-handler"><code>on()</code></a> such as when a file is
+created, removed, or updated. Below is a complete list of currently supported events and their description.
+
+**create** - Fires whenever a new file is created.
+
+**read** - Fires whenever a file is read.
+
+**update** - Fires whenever a file is updated.
+
+**remove** - Fires whenever a file is deleted.
+
 **load** - Fires when the editor is loaded via `.load()`.
 
 **unload** - Fires when the editor is unloaded via `.unload()`.
@@ -248,8 +259,8 @@ editBtn.onclick = function () {
 
 ## Themes
 
-Theming is easy in EpicEditor. There are three different `<iframe>`s which means styles wont leak between the "chrome" of,
-the editor, previewer, or editor. Each one is like it's own web page. In the `themes` directory  you'll see `base`, `preview`,  and
+Theming is easy in EpicEditor. There are three different `<iframe>`s which means styles wont leak between the "chrome" of
+EpicEditor, previewer, or editor. Each one is like it's own web page. In the `themes` directory  you'll see `base`, `preview`,  and
 `editor`. The base styles are for the "chrome" of the editor which contains elements such as the utility bar containing the icons.
 The editor is the styles for the contents of editor `<iframe>` and the preview styles are applied to the preview `<iframe>`.
 
