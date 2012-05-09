@@ -316,8 +316,8 @@ Contributions are greatly encouraged and appreciated. For more on ways to contri
 
 <!-- @TODO: Update links to GFM, Marked etc -->
 
-EpicEditor is brought to you in part by [Oscar Godson](http://twitter.com/oscargodson) and [John Donahue](http://twitter.com/johnmdonahue). Special thanks to [Adam Bickford](http://twitter.com/adam_bickford) for the bug fixes and being the QA for pull requests. Lastly, huge thanks to [Seb Nitu](http://twitter.com/sebnitu) for the amazing logo.
+EpicEditor is brought to you in part by [Oscar Godson](http://twitter.com/oscargodson) and [John Donahue](http://twitter.com/johnmdonahue). Special thanks to [Adam Bickford](http://twitter.com/adam_bickford) for the bug fixes and being the QA for pull requests. Lastly, huge thanks to [Sebastian Nitu](http://twitter.com/sebnitu) for the amazing logo.
 
 <!-- @TODO: Remove from the README, pull these in dynamically from Twitter using _bigger size -->
 
-![Oscar](docs/images/avatars/oscar.jpeg) ![John](docs/images/avatars/john.jpeg) ![Adam](docs/images/avatars/adam.jpeg) ![Seb](docs/images/avatars/seb.jpeg)
+![Oscar](docs/images/avatars/oscar.jpeg) ![John](docs/images/avatars/john.jpeg) ![Adam](docs/images/avatars/adam.jpeg) ![Sebastian](docs/images/avatars/seb.jpeg)
