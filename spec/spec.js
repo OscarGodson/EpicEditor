@@ -74,7 +74,29 @@ describe('EpicEditor.load', function () {
 });
 
 describe('EpicEditor.load.options', function(){
+  var testEl, editor;
 
+  before(function(){
+    testEl = _createTestElement();
+  });
+
+  it('check that the container option can be a string of an ID of an element', function(){
+    editor = new EpicEditor({
+      basePath: '/epiceditor/'
+    , container: testEl 
+    }).load();
+    
+    expect(document.getElementById(testEl).getElementsByTagName('iframe').length).to(be, 1);
+  });
+
+  it('check that the container option can be a DOM object an element', function(){
+    editor = new EpicEditor({
+      basePath: '/epiceditor/'
+    , container: document.getElementById(testEl)
+    }).load();
+   
+   expect(document.getElementById(testEl).getElementsByTagName('iframe').length).to(be, 1);
+  });
 });
 
 describe('EpicEditor.getElement',function(){

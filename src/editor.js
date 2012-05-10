@@ -324,7 +324,14 @@
     if (!self.events) {
       self.events = {};
     }
-    self.element = document.getElementById(self.settings.container);
+
+    if (typeof self.settings.container == 'string') {
+      self.element = document.getElementById(self.settings.container);
+    }
+    else if (typeof self.settings.container == 'object') {
+      self.element = self.settings.container;
+    }
+
     return this;
   }
 
