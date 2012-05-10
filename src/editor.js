@@ -565,7 +565,6 @@
       }
 
       self.preview();
-      self.editor.addEventListener('keyup', function () { self.preview(); });
     };
 
     _exitFullscreen = function (el) {
@@ -591,6 +590,13 @@
       }
     };
 
+    // This setups up live previews by triggering preview() IF in fullscreen on keyup
+    self.editor.addEventListener('keypress', function () {
+      if (self.eeState.fullscreen) {
+        self.preview();
+      }
+    });
+    
     fsElement = self.iframeElement;
 
     self.iframe.getElementsByClassName('epiceditor-fullscreen-btn')[0].addEventListener('click', function () {
