@@ -1324,6 +1324,7 @@ if (typeof module !== 'undefined') {
       , 'z-index': '9999' // Most browsers
       , 'zIndex': '9999' // Firefox
       , 'border': 'none'
+      , 'margin': '0'
       // Should use the base styles background!
       , 'background': _getStyle(self.editor, 'background-color') // Try to hide the site below
       , 'height': windowInnerHeight + 'px'
