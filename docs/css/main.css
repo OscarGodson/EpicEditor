@@ -5,7 +5,7 @@ body {
   font-size: 14px;
   line-height: 20px;
 	color: rgba(0,0,0, 0.6);
-	text-shadow: 0 1px 0 rgba(255,255,255, 0.1);
+	text-shadow: 0 1px 0 rgba(255,255,255, 0.3);
   margin: 0;
 }
 #wrapper {
@@ -125,4 +125,23 @@ a:hover {
 }
 #toc h2 a:hover {
 	background: none;
+}
+table {
+  margin:20px 0;
+  border-left: 1px solid #C9C6A3;
+  box-shadow: rgba(0,0,0,0.1) 0 2px 5px;
+}
+th,td {
+  padding:7px;
+  border-right: 1px solid #C9C6A3;
+  border-bottom: 1px solid #C9C6A3;
+}
+th {
+  background: #C9C6A3;
+}
+tr.even {
+  background:rgba(250,250,250,0.2);
+}
+.event-table th:first-child {
+  min-width:150px;
 }

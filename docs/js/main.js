@@ -3,7 +3,7 @@ $(function () {
   $($('h1')[0]).append('<span>beta 0.1.0</span>');
   $($('h2')[3]).before('<button id="try-it">Try it!</button><div id="epiceditor"></div>');
   $($('h2')[2]).before('<div id="example-1"></div>');
-
+  $('tr:even').addClass('even');
   var opts = {
       container: 'example-1'
     , file:{

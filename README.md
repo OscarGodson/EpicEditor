@@ -57,6 +57,7 @@ var opts = {
     autoSave: 100
   },
   theme: {
+    base:'/themes/base/epiceditor.css',
     preview:'/themes/preview/preview-dark.css',
     editor:'/themes/editor/epic-dark.css'
   },
@@ -71,22 +72,84 @@ var opts = {
 var editor = new EpicEditor(opts);
 ```
 
-* `container`: The ID of the target container element. By default it will look for an element with ID `epiceditor`.
-* `basePath`: The base path of the directory containing the `/themes`, `/images`, etc. It's `epiceditor` by default. _Don't add a trailing slash!_
-* `localStorageName`: The name to use for the localStorage object, set to `epiceditor` by default.
-* `file`
-  * `name`: If no file exists with this name a new one will be made, otherwise the existing will be opened.
-  * `defaultContent`: The content to show if no content exists for that file.
-  * `autoSave`: How often to auto save the file in milliseconds. Set to `false` to turn off auto saving.
-* `theme`
-  * `editor`: The theme for the editor which is a textarea inside of an iframe.
-  * `preview`: The theme for the previewer which is a div of content inside of an iframe.
-* `focusOnLoad`: Will focus on the editor on load. It's `false` by default.
-* `shortcut`
-  * `modifier`: The modifying key for shortcuts. It's `18` (the `alt` key) by default, to reduce default browser shortcut conflicts.
-  * `fullscreen`: The fullscreen shortcut key. It's `70` (`f` key) by default.
-  * `preview`: The preview shortcut key. It's `80` (`p` key) by default.
-  * `edit`: The edit mode shortcut key. It's `79` (`o` key) by default.
+### Options
+<table cellspacing="0">
+  <tr>
+    <th>Option</th>
+    <th>Description</th>
+    <th>Default</th>
+  </tr>
+  <tr>
+    <td>`container`</td>
+    <td>The ID (string) or element (object) of the target container in which you want the editor to appear.</td>
+    <td>`epiceditor`</td>
+  </tr>
+  <tr>
+    <td>`basePath`</td>
+    <td>The base path of the directory containing the `/themes`, `/images`, etc.</td>
+    <td>`epiceditor`</td>
+  </tr>
+  <tr>
+    <td>`localStorageName`</td>
+    <td>The name to use for the localStorage object.</td>
+    <td>`epiceditor`</td>
+  </tr>
+  <tr>
+    <td>`focusOnLoad`</td>
+    <td>If `true`, editor will focus on load.</td>
+    <td>`false`</td>
+  </tr>
+  <tr>
+    <td>`file.name`</td>
+    <td>If no file exists with this name a new one will be made, otherwise the existing will be opened.</td>
+    <td>container ID</td>
+  </tr>
+  <tr>
+    <td>`file.defaultContent`</td>
+    <td>The content to show if no content exists for a file.</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>`file.autoSave`</td>
+    <td>How often to auto save the file in milliseconds. Set to `false` to turn it off.</td>
+    <td>`100`</td>
+  </tr>
+  <tr>
+    <td>`theme.base`</td>
+    <td>The base styles such as the utility bar with the buttons.</td>
+    <td>`themes/base/epiceditor.css`</td>
+  </tr>
+  <tr>
+    <td>`theme.editor`</td>
+    <td>The theme for the editor which is the area you type into.</td>
+    <td>`themes/editor/epic-dark.css`</td>
+  </tr>
+  <tr>
+    <td>`theme.preview`</td>
+    <td>The theme for the previewer.</td>
+    <td>`themes/preview/github.css`</td>
+  </tr>
+  <tr>
+    <td>`shortcut.modifier`</td>
+    <td>The key to hold while holding the other shortcut keys to trigger a key combo.</td>
+    <td>`18` (`alt` key)</td>
+  </tr>
+  <tr>
+    <td>`shortcut.fullscreen`</td>
+    <td>The shortcut to open fullscreen.</td>
+    <td>`70` (`f` key)</td>
+  </tr>
+  <tr>
+    <td>`shortcut.preview`</td>
+    <td>The shortcut to open the previewer.</td>
+    <td>`80` (`p` key)</td>
+  </tr>
+  <tr>
+    <td>`shortcut.edit`</td>
+    <td>The shortcut to open the editor.</td>
+    <td>`79` (`o` key)</td>
+  </tr>
+</table>
 
 ### load([_callback_])
 
@@ -237,25 +300,52 @@ editBtn.onclick = function () {
 You can hook into specific events in EpicEditor with <a href="#onevent-handler"><code>on()</code></a> such as when a file is
 created, removed, or updated. Below is a complete list of currently supported events and their description.
 
-**create** - Fires whenever a new file is created.
-
-**read** - Fires whenever a file is read.
-
-**update** - Fires whenever a file is updated.
-
-**remove** - Fires whenever a file is deleted.
-
-**load** - Fires when the editor is loaded via `.load()`.
-
-**unload** - Fires when the editor is unloaded via `.unload()`.
-
-**preview** - Fires when the user clicks the preview button, or when `.preview()` is called.
-
-**edit** - Fires when the user clicks the edit button, or when `.edit()` is called.
-
-**save** - Fires when the file is saved automatically by EpicEditor, or when `.save()` is called.
-
-**open** - Fires when the file is opened on load automatically by EpicEditor, or when `.open()` is called.
+<table cellspacing="0" class="event-table">
+  <tr>
+    <th>Event Name</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>`create`</td>
+    <td>Fires whenever a new file is created.</td>
+  </tr>
+  <tr>
+    <td>`read`</td>
+    <td>Fires whenever a file is read.</td>
+  </tr>
+  <tr>
+    <td>`update`</td>
+    <td>Fires whenever a file is updated.</td>
+  </tr>
+  <tr>
+    <td>`remove`</td>
+    <td>Fires whenever a file is deleted.</td>
+  </tr>
+  <tr>
+    <td>`load`</td>
+    <td>Fires when the editor loads via `load()`.</td>
+  </tr>
+  <tr>
+    <td>`unload`</td>
+    <td>Fires whenever the editor is unloaded via `unload()`</td>
+  </tr>
+  <tr>
+    <td>`preview`</td>
+    <td>Fires whenever the previewer is opened (excluding fullscreen) via `preview()` or the preview button.</td>
+  </tr>
+  <tr>
+    <td>`edit`</td>
+    <td>Fires whenever the editor is opened (excluding fullscreen) via `edit()` or the edit button.</td>
+  </tr>
+  <tr>
+    <td>`save`</td>
+    <td>Fires whenever the file is saved whether by EpicEditor automatically or when `save()` is called.</td>
+  </tr>
+  <tr>
+    <td>`open`</td>
+    <td>Fires whenever a file is opened or loads automatically by EpicEditor or when `open()` is called.</td>
+  </tr>
+</table>
 
 ## Themes
 
