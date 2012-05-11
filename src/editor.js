@@ -477,8 +477,11 @@
     // If there is a file to be opened with that filename and it has content...
     this.open(self.settings.file.name);
 
-    if (this.settings.focusOnLoad) {
-      this.editor.focus();
+    if (self.settings.focusOnLoad) {
+      // This will work for IE and Firefox
+      self.editorIframeDocument.body.focus();
+
+      //Chrome :cry:
     }
 
     // Sets up the onclick event on the previewer/editor toggle button
