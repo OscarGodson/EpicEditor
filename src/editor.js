@@ -576,6 +576,8 @@
       }
 
       self.preview();
+
+      self.editorIframeDocument.body.focus();
     };
 
     _exitFullscreen = function (el) {

@@ -1354,6 +1354,8 @@ if (typeof module !== 'undefined') {
       }
 
       self.preview();
+
+      self.editorIframeDocument.body.focus();
     };
 
     _exitFullscreen = function (el) {
