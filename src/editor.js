@@ -383,8 +383,8 @@
                   '<iframe frameborder="0" id="epiceditor-editor-frame"></iframe>' +
                   '<iframe frameborder="0" id="epiceditor-previewer-frame"></iframe>' +
                   '<div id="epiceditor-utilbar">' +
-                    '<img width="16" src="' + this.settings.basePath + '/images/preview.png" class="epiceditor-toggle-btn"> ' +
-                    '<img width="16" src="' + this.settings.basePath + '/images/fullscreen.png" class="epiceditor-fullscreen-btn">' +
+                    '<img width="16" src="' + this.settings.basePath + '/images/preview.png" title="Toggle Edit/Preview" class="epiceditor-toggle-btn"> ' +
+                    '<img width="16" src="' + this.settings.basePath + '/images/fullscreen.png" title="Enter Fullscreen" class="epiceditor-fullscreen-btn">' +
                   '</div>' +
                 '</div>'
     
