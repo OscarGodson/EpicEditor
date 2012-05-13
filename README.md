@@ -1,14 +1,17 @@
-**alpha 0.0.3**
+# EpicEditor (alpha 0.0.3)
 
-_Note: this is a developer preview. We're releasing early so we can get other people's input and pull requests. While it works, there are still bugs and missing features. Use at your own risk._
-
-#EpicEditor 
-
-##An Embeddable JavaScript Markdown Editor
+## An Embeddable JavaScript Markdown Editor
 
 EpicEditor is an embeddable JavaScript [Markdown](http://daringfireball.net/projects/markdown/) editor with some minor Markdown enhancements such as automatic link creation and code fencing.
 
-###Why
+## NOTICE:
+
+We're getting super close to the 0.1.0 beta release! If you're interested in contributing please check out the [Contributing Guide](https://github.com/OscarGodson/EpicEditor/wiki/Contributing). We are currently working on the [0.1.0-build-refactor](https://github.com/OscarGodson/EpicEditor/tree/0.1.0-build-refactor) branch.
+
+This version is a developer preview. We're releasing early so we can get other people's input and pull requests. While it works, there are still bugs and missing features. Use at your own risk.
+
+### Why
+
 WYSIWYGs suck and they suck hard. Markdown is quickly becoming the replacement. [GitHub](http://github.com), [Stackoverflow](http://stackoverflow.com), and even blogging apps like [Posterous](http://posterous.com) support Markdown now. This allows you to generate a Markdown editor with a preview, fullscreen editing, full CSS theming, and offline support with a simple:
 
 ```javascript
