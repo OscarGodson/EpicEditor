@@ -1,6 +1,6 @@
 $(function () {
   $('#wrapper').before('<div id="toc"><h2><a href="#">EpicEditor</a></h2><ul id="toc-list"></ul></div>');
-  $($('h1')[0]).append('<span>beta 0.1.0</span>');
+  $($('h1')[0]).append('<span>beta '+EpicEditor.version+'</span>');
   $($('h2')[3]).before('<button id="try-it">Try it!</button><div id="epiceditor"></div>');
   $($('h2')[2]).before('<div id="example-1"></div>');
   $('tr:even').addClass('even');
