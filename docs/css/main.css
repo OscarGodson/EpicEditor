@@ -43,7 +43,7 @@ h1 {
   padding-top: 20px;
 }
 h3,h4,h5,h6 {
-  margin-bottom:0;
+  margin-bottom:10px;
 }
 h1 span {
   font-weight:normal;
@@ -57,6 +57,10 @@ h1 span {
   top:0;
   right:0;
 	box-shadow: rgba(255,255,255, 0.75) 0 1px 0, rgba(0,0,0, 0.15) 0 1px 3px inset;
+}
+#download {
+  margin-top: 10px;
+  float: right;
 }
 pre {
   border:1px solid #000;
