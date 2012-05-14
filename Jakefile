@@ -105,12 +105,19 @@ task('docs', [], function () {
 
 desc('Tests code against specs')
 task('test', [], function () {
-  console.log(colorize('--> Test suite is now running (CTRL+C to quit) ','magenta'))
-  console.log('--> http://localhost:5057/spec/runner.html')
+  console.log(colorize('--> Test suite is now running (CTRL+C to quit)', 'magenta'))
+  console.log(colorize('--> http://localhost:5057/spec/runner.html', 'yellow'))
   jake.exec(['foounit serve'], function () {
     complete()
   }, {stdout: false})
 }, {async: true})
+
+new jake.PackageTask('EpicEditor', 'v' + VERSION, function () {
+  var fileList = [ 'epiceditor']
+  this.packageDir = "docs/downloads"
+  this.packageFiles.include(fileList);
+  this.needZip = true;
+})
 
 desc('Kicks out some ascii')
 task('ascii', [], function () {
