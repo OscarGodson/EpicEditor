@@ -61,9 +61,7 @@ task('build', ['lint'], function () {
 
   // If the destination directory does not exist, create it
   jake.mkdirP('epiceditor/js')
-  
-  
-  
+
   concat(srcPaths, destPath)
   
   // Minify
