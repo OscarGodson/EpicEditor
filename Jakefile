@@ -1,6 +1,6 @@
 var fs = require('fs')
   , path = require('path')
-  , VERSION = fs.readFileSync('VERSION', 'utf-8')
+  , VERSION = fs.readFileSync(path.join(process.cwd() + '/VERSION'), 'utf-8')
 
 function concat(fileList, destPath) {
   var out = fileList.map(function (filePath) {
