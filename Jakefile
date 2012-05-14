@@ -1,9 +1,12 @@
 var fs = require('fs')
   , path = require('path')
+  , VERSION = fs.readFileSync('VERSION', 'utf-8')
 
 function concat(fileList, destPath) {
   var out = fileList.map(function (filePath) {
-    return fs.readFileSync(filePath)
+    var file = fs.readFileSync(filePath, 'utf-8')
+    file = file.replace(/@VERSION/g, VERSION)
+    return file
   })
   fs.writeFileSync(destPath, out.join('\n'))
 }
@@ -58,7 +61,9 @@ task('build', ['lint'], function () {
 
   // If the destination directory does not exist, create it
   jake.mkdirP('epiceditor/js')
-
+  
+  
+  
   concat(srcPaths, destPath)
   
   // Minify

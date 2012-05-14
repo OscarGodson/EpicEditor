@@ -1875,9 +1875,6 @@ if (typeof module !== 'undefined') {
     return self;
   }
 
-  // TODO: change to: EpicEditor.version = "@VERSION"; and
-  //       dynamically change the version number
-  // The version of EpicEditor
   EpicEditor.version = '0.1.0';
 
   window.EpicEditor = EpicEditor;
