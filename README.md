@@ -2,7 +2,7 @@
 
 ## An Embeddable JavaScript Markdown Editor
 
-EpicEditor is an embeddable JavaScript [Markdown](http://daringfireball.net/projects/markdown/) editor with some Markdown enhancements such as automatic link creation and code fencing a la [Github Flavored Markdown](). EpicEditor allows for all kinds of customization. For simple drop-in-and-go support see the quick start below, otherwise checkout the full API.
+EpicEditor is an embeddable JavaScript [Markdown](http://daringfireball.net/projects/markdown/) editor with some Markdown enhancements such as automatic link creation and code fencing a la [Github Flavored Markdown](http://github.github.com/github-flavored-markdown/). EpicEditor allows for all kinds of customization. For simple drop-in-and-go support see the quick start below, otherwise checkout the full API.
 
 ## Why
 
@@ -404,10 +404,5 @@ Contributions are greatly encouraged and appreciated. For more on ways to contri
 
 ## Credits
 
-<!-- @TODO: Update links to GFM, Marked etc -->
+EpicEditor relies on [Marked](https://github.com/chjj/marked) to parse markdown and is brought to you in part by [Oscar Godson](http://twitter.com/oscargodson) and [John Donahue](http://twitter.com/johnmdonahue). Special thanks to [Adam Bickford](http://twitter.com/adam_bickford) for the bug fixes and being the QA for pull requests. Lastly, huge thanks to [Sebastian Nitu](http://twitter.com/sebnitu) for the amazing logo and doc styles.
 
-EpicEditor is brought to you in part by [Oscar Godson](http://twitter.com/oscargodson) and [John Donahue](http://twitter.com/johnmdonahue). Special thanks to [Adam Bickford](http://twitter.com/adam_bickford) for the bug fixes and being the QA for pull requests. Lastly, huge thanks to [Sebastian Nitu](http://twitter.com/sebnitu) for the amazing logo.
-
-<!-- @TODO: Remove from the README, pull these in dynamically from Twitter using _bigger size -->
-
-![Oscar](docs/images/avatars/oscar.jpeg) ![John](docs/images/avatars/john.jpeg) ![Adam](docs/images/avatars/adam.jpeg) ![Sebastian](docs/images/avatars/seb.jpeg)

@@ -42,9 +42,17 @@ $(function () {
 
     if (idx > 1) {
       h.attr("id", link);
-      $("#toc-list").append('<li class="toc-' + this.nodeName.toLowerCase()+ '"><a id="" href="#' + link + '">' + title + '</a></li>');
+      $("#toc-list").append('<li class="toc-' + this.nodeName.toLowerCase() + '"><a id="" href="#' + link + '">' + title + '</a></li>');
+      $(this).html('<a href="#' + link + '">' + title + '</a>');
     }
   });
+  
+  $(['OscarGodson', 'johnmdonahue', 'adam_bickford', 'sebnitu']).each(function (idx, val) {
+    var twimg = 'http://twitter.com/api/users/profile_image?screen_name=' + val
+      , twlink = 'http://twitter.com/' + val
+      
+    $('#avatars').append('<a href="' + twlink + '"><img class="avatar" src="' + twimg + '">')
+  })
   
   $(window).resize(function () {
     $('#toc').height(window.innerHeight + 'px');

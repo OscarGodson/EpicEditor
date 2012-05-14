@@ -70,6 +70,9 @@ p {
 li {
   margin:10px 0;
 }
+h2 a, h3 a {
+  color: #303030;
+}
 a {
   text-decoration: none;
 	border-bottom: 1px solid rgba(0,0,0, 0.1);
@@ -144,4 +147,19 @@ tr.even {
 }
 .event-table th:first-child {
   min-width:150px;
+}
+#avatars {
+  margin: 20px 0;
+}
+.avatar {
+  box-shadow: rgba(0,0,0,0.1) 0 2px 5px;
+  border: 2px solid rgba(0,0,0, 0.15);
+  margin-right: 10px;
+  opacity: .8;
+}
+.avatar:hover, .avatar:focus {
+  opacity: 1;
+}
+#avatars a {
+  border-bottom: none;
 }
