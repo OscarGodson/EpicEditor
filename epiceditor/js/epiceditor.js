@@ -1382,7 +1382,9 @@ if (typeof module !== 'undefined') {
     };
 
     // This setups up live previews by triggering preview() IF in fullscreen on keyup
-    self.editor.addEventListener('keypress', function () {
+    self.editor.addEventListener('keyup', function () {
+      // TODO: We need to add a timer on this so if you type fast it's not trying
+      //       to registering 3+ keyups and dedrawing the DOM a second
       if (self.eeState.fullscreen) {
         self.preview();
       }
