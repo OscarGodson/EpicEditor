@@ -58,10 +58,12 @@ h1 span {
   right:0;
 	box-shadow: rgba(255,255,255, 0.75) 0 1px 0, rgba(0,0,0, 0.15) 0 1px 3px inset;
 }
+/*
 #download {
   margin-top: 10px;
   float: right;
 }
+*/
 pre {
   border:1px solid #000;
   overflow-x:auto;
@@ -166,4 +168,38 @@ tr.even {
 }
 #avatars a {
   border-bottom: none;
+}
+#download + p {
+  -moz-box-shadow: inset 0px 1px 0px 0px #CCC, rgba(0, 0, 0, 0.1) 0 2px 5px;
+  -webkit-box-shadow: inset 0px 1px 0px 0px #CCC, rgba(0, 0, 0, 0.1) 0 2px 5px;
+  box-shadow: inset 0px 1px 0px 0px #CCC, rgba(0, 0, 0, 0.1) 0 2px 5px;
+  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #616161), color-stop(1, #313131) );
+  background:-moz-linear-gradient( center top, #616161 5%, #313131 100% );
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#616161', endColorstr='#313131');
+  background-color:#616161;
+  -moz-border-radius:6px;
+  -webkit-border-radius:6px;
+  border-radius:6px;
+  border:1px solid #333;
+  display:inline-block;
+  color:#777777;
+  font-family:arial;
+  font-size:15px;
+  font-weight:bold;
+  padding:12px 14px 6px;
+  text-decoration:none;
+  text-shadow:1px 1px 0px #ffffff;
+}
+#download + p:active {
+  box-shadow:none;
+}
+#download + p a {
+  display: block;
+  min-height: 32px;
+  border: none;
+  padding: 6px 0 0 37px;
+  font-size:16px;
+  background: url(../images/zip.png) no-repeat;
+  color: #fff;
+  text-shadow: #000 0 -1px 0;
 }

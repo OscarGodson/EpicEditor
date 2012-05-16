@@ -1,14 +1,32 @@
 $(function () {
   var zipUrl = 'docs/downloads/EpicEditor-v' + EpicEditor.version + '.zip';
   
+  // TODO: Now that we have automatic ID creation, use element IDs instead of counting DOM elements
   $('#wrapper').before('<div id="toc"><h2><a href="#">EpicEditor</a></h2><ul id="toc-list"></ul></div>');
-  $($('h1')[0]).append('<span>beta ' + EpicEditor.version + '</span>');
-  $($('h1')[0]).after('<div id="download"><a href="' + zipUrl + '">Download the .zip</a></div>');
-  $($('h3')[0]).next().html('<a href="' + zipUrl + '">Download the .zip</a> or clone the repo:');
-  $($('h2')[3]).before('<button id="try-it">Try it!</button><div id="epiceditor"></div>');
-  $($('h2')[2]).before('<div id="example-1"></div>');
-  $('tr:even').addClass('even');
   
+  $("h2, h3").each(function (idx, val) {
+    var h = $(this)
+      , title = h.text()
+      , link = title.toLowerCase().replace(/(\,|\(|\)|\[|\]|\:|\.)/g, '').replace(/\s/g, '-')
+
+    if (idx > -1) {
+      // Give them all IDs so there's something to hook into
+      h.attr("id", link);
+      
+      // But only make some links
+      if (idx > 1) {
+        h.html('<a href="#' + link + '">' + title + '</a>');
+        $("#toc-list").append('<li class="toc-' + this.nodeName.toLowerCase() + '"><a id="" href="#' + link + '">' + title + '</a></li>');
+      }
+    }
+  });
+
+  $('#wrapper h1').append('<span>beta ' + EpicEditor.version + '</span>');
+  $('#quick-start').before('<button id="try-it">Try it!</button><div id="epiceditor"></div>');
+  $('#an-embeddable-javascript-markdown-editor + p').after('<div id="example-1"></div>');
+  $('#step-1-download + p').html('<a href="#download">Download the .zip</a> or clone the repo:');
+  $('tr:even').addClass('even');
+ 
   var opts = {
       container: 'example-1'
     , file:{
@@ -40,18 +58,6 @@ $(function () {
   $('pre').addClass('prettyprint')
   prettyPrint()
 
-  $("h2, h3").each(function (idx, val) {
-    var h = $(this)
-      , title = h.text()
-      , link = title.toLowerCase().replace(/(\,|\(|\)|\[|\]|\:|\.)/g, '').replace(/\s/g, '-')
-
-    if (idx > 1) {
-      h.attr("id", link);
-      h.html('<a href="#' + link + '">' + title + '</a>');
-      $("#toc-list").append('<li class="toc-' + this.nodeName.toLowerCase() + '"><a id="" href="#' + link + '">' + title + '</a></li>');
-    }
-  });
-  
   $(['OscarGodson', 'johnmdonahue', 'adam_bickford', 'sebnitu']).each(function (idx, val) {
     var twimg = 'http://twitter.com/api/users/profile_image?screen_name=' + val
       , twlink = 'http://twitter.com/' + val
