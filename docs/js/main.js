@@ -9,22 +9,22 @@ $(function () {
       , title = h.text()
       , link = title.toLowerCase().replace(/(\,|\(|\)|\[|\]|\:|\.)/g, '').replace(/\s/g, '-')
 
-    if (idx > -1) {
-      // Give them all IDs so there's something to hook into
+    // The first h2 is always the EpicEditor TOC header injected above
+    // Give them all IDs so there's something to hook into
+    if (idx > 0) {
       h.attr("id", link);
-      
-      // But only make some links
-      if (idx > 1) {
-        h.html('<a href="#' + link + '">' + title + '</a>');
-        $("#toc-list").append('<li class="toc-' + this.nodeName.toLowerCase() + '"><a id="" href="#' + link + '">' + title + '</a></li>');
-      }
+    }
+    if (idx > 1) {
+      h.html('<a href="#' + link + '">' + title + '</a>');
+      $("#toc-list").append('<li class="toc-' + this.nodeName.toLowerCase() + '"><a id="" href="#' + link + '">' + title + '</a></li>');
     }
   });
 
   $('#wrapper h1').append('<span>beta ' + EpicEditor.version + '</span>');
-  $('#quick-start').before('<button id="try-it">Try it!</button><div id="epiceditor"></div>');
-  $('#an-embeddable-javascript-markdown-editor + p').after('<div id="example-1"></div>');
-  $('#step-1-download + p').html('<a href="#download">Download the .zip</a> or clone the repo:');
+  $('#why').before('<h2 id="download">Download</h2><p class="btn"><a class="zip" href="' + zipUrl + '">EpicEditor v' + EpicEditor.version + '</a></p>')
+  $('#quick-start').before('<p class="btn btn-small"><a id="try-it">Try it!</a></p><div id="epiceditor"></div>');
+  $('#an-embeddable-javascript-markdown-editor + p').after('<div class="epiceditors" id="example-1"></div>');
+  $('#step-1-download + p').html('<a href="#download">Download the latest release (' + EpicEditor.version + ')</a> or clone the repo:');
   $('tr:even').addClass('even');
  
   var opts = {
@@ -41,16 +41,19 @@ $(function () {
     
   // So people can play with it in their console
   window.editor = editor;
+  window.example = example;
   
   tryItBtn.onclick = function () {
     if(!tryItStatus){
       tryItStatus = true;
-      tryItBtn.innerHTML = 'Undo';
+      tryItBtn.innerHTML = 'Unload';
+      $('#epiceditor').addClass('epiceditors')
       example.load();
     }
     else {
       tryItStatus = false;
-      tryItBtn.innerHTML = 'Try it again';
+      tryItBtn.innerHTML = 'Try it!';
+      $('#epiceditor').removeClass('epiceditors')
       example.unload();
     }
   }
