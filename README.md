@@ -18,7 +18,7 @@ EpicEditor is easy to implement. Add the script and assets to your page, provide
 
 ### Step 1: Download
 
-Grab the .zip in `docs/downloads` or clone the repo:
+[Download the latest release](http://epiceditor.com) or clone the repo:
 
 ```bash
 $ git clone git@github.com:OscarGodson/EpicEditor
