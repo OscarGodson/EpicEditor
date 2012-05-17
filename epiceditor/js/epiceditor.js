@@ -1491,6 +1491,9 @@ if (typeof module !== 'undefined') {
       eventableIframes[i].addEventListener('mousemove', function (e) {
         utilBarHandler(e);
       });
+      eventableIframes[i].addEventListener('scroll', function (e) {
+        utilBarHandler(e);
+      });
       eventableIframes[i].addEventListener('keyup', function (e) {
         shortcutUpHandler(e);
       });
