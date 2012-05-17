@@ -16,7 +16,7 @@ pre .atv, code .atv { color: #65B042; } /* html/xml attribute value - green */
 pre .dec, code .dec { color: #3387CC; } /* decimal - blue */
 
 pre.prettyprint, code.prettyprint {
-        background-color: #000;
+        background-color: #222;
 }
 
 pre.prettyprint {

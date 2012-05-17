@@ -1,6 +1,6 @@
 body {
   background-color: #e1dcb8;
-  background: url(../images/bg-glow.png) repeat-x center top fixed, url(../images/bg-texture.jpg) repeat center top;
+  background: url(../images/bg-glow.png) repeat-x center top fixed, url(../images/bg-texture.jpg) repeat center top fixed;
   font-family: 'PT Sans', 'Helvetica Neue', helvetica, arial, sans-serif;
   font-size: 14px;
   line-height: 20px;
@@ -58,7 +58,7 @@ h1 span {
 pre {
   border:1px solid #000;
   overflow-x:auto;
-  background:#222;
+  background: #222;
   color: #fff;
 }
 p {
