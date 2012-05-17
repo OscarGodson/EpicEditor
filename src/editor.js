@@ -501,12 +501,13 @@
     utilBtns = self.iframe.getElementById('epiceditor-utilbar');
 
     _elementStates = {}
-    _isInEdit = self.eeState.edit;
     _goFullscreen = function (el) {
       
       if (nativeFs) {
         el.webkitRequestFullScreen();
       }
+
+      _isInEdit = self.eeState.edit;
 
       // Set the state of EE in fullscreen
       // We set edit and preview to true also because they're visible
