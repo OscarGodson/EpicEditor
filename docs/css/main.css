@@ -60,6 +60,7 @@ pre {
   overflow-x:auto;
   background: #222;
   color: #fff;
+  text-shadow: none;
 }
 p {
   margin:5px 0;
