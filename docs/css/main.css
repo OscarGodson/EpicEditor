@@ -183,6 +183,7 @@ p.btn {
   padding:12px 14px 6px;
   text-decoration:none;
   text-shadow:1px 1px 0px #ffffff;
+  cursor: pointer;
 }
 p.btn:active {
   box-shadow:none;
