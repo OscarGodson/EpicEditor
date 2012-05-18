@@ -1411,6 +1411,12 @@ if (typeof module !== 'undefined') {
     // Hide it at first until they move their mouse
     utilBar.style.display = 'none';
 
+    utilBar.addEventListener('mouseover', function () {
+      if (utilBarTimer) {
+        clearTimeout(utilBarTimer);
+      }
+    });
+
     function utilBarHandler(e) {
       // Here we check if the mouse has moves more than 5px in any direction before triggering the mousemove code
       // we do this for 2 reasons:
