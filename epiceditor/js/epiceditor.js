@@ -923,7 +923,13 @@ if (typeof module !== 'undefined') {
       theText = el.innerText;
     }
     else {
+      // First replace <br>s before replacing the rest of the HTML
       theText = el.innerHTML.replace(/<br>/gi, "\n");
+      // Now we can clean the HTML
+      theText = theText.replace(/<(?:.|\n)*?>/gm, '');
+      // Now fix HTML entities
+      theText = theText.replace(/&lt;/gi, '<');
+      theText = theText.replace(/&gt;/gi, '>');
     }
     return theText;
   }
