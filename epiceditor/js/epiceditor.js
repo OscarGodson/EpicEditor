@@ -1279,12 +1279,13 @@ if (typeof module !== 'undefined') {
     utilBtns = self.iframe.getElementById('epiceditor-utilbar');
 
     _elementStates = {}
-    _isInEdit = self.eeState.edit;
     _goFullscreen = function (el) {
       
       if (nativeFs) {
         el.webkitRequestFullScreen();
       }
+
+      _isInEdit = self.eeState.edit;
 
       // Set the state of EE in fullscreen
       // We set edit and preview to true also because they're visible
@@ -1382,7 +1383,9 @@ if (typeof module !== 'undefined') {
     };
 
     // This setups up live previews by triggering preview() IF in fullscreen on keyup
-    self.editor.addEventListener('keypress', function () {
+    self.editor.addEventListener('keyup', function () {
+      // TODO: We need to add a timer on this so if you type fast it's not trying
+      //       to registering 3+ keyups and dedrawing the DOM a second
       if (self.eeState.fullscreen) {
         self.preview();
       }
@@ -1407,6 +1410,12 @@ if (typeof module !== 'undefined') {
 
     // Hide it at first until they move their mouse
     utilBar.style.display = 'none';
+
+    utilBar.addEventListener('mouseover', function () {
+      if (utilBarTimer) {
+        clearTimeout(utilBarTimer);
+      }
+    });
 
     function utilBarHandler(e) {
       // Here we check if the mouse has moves more than 5px in any direction before triggering the mousemove code
@@ -1487,6 +1496,9 @@ if (typeof module !== 'undefined') {
     
     for (i = 0; i < eventableIframes.length; i++) {
       eventableIframes[i].addEventListener('mousemove', function (e) {
+        utilBarHandler(e);
+      });
+      eventableIframes[i].addEventListener('scroll', function (e) {
         utilBarHandler(e);
       });
       eventableIframes[i].addEventListener('keyup', function (e) {
@@ -1875,6 +1887,7 @@ if (typeof module !== 'undefined') {
     return self;
   }
 
+  EpicEditor.version = '0.1.0';
 
   window.EpicEditor = EpicEditor;
 })(window);
