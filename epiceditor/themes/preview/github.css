@@ -26,8 +26,6 @@ body {
 	margin-bottom:0!important;
 }
 
-
-
 #epiceditor-preview a{
 	color:#4183C4;
 	text-decoration:none;
@@ -101,6 +99,10 @@ body {
 #epiceditor-preview table,
 #epiceditor-preview pre{
 	margin:15px 0;
+}
+
+#epiceditor-preview li > a {
+	display:block;
 }
 
 #epiceditor-preview hr{
@@ -203,6 +205,10 @@ body {
 
 #epiceditor-preview table{
 	padding:0;
+	border-collapse: collapse;
+	border-spacing: 0;
+	font-size: 100%;
+	font: inherit;
 }
 
 #epiceditor-preview table tr{
