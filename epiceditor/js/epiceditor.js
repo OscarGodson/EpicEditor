@@ -1810,7 +1810,7 @@ if (typeof module !== 'undefined') {
     kind = kind || 'text';
    
     file = JSON.parse(localStorage[self.settings.localStorageName])[name]
-    
+
     // If the file doesn't exist just return early with undefined
     if (file === undefined) {
       return;
@@ -1818,9 +1818,12 @@ if (typeof module !== 'undefined') {
 
     content = file.content;
    
-    
     switch (kind) {
     case 'html':
+      // Get this, 2 spaces in a content editable actually converts to:
+      // 0020 00a0, meaning, "space no-break space". So, manually convert
+      // no-break spaces to spaces again before handing to marked.
+      content = content.replace(/\u00a0/g, ' ');
       return marked(content);
     case 'text':
       return content;
