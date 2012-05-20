@@ -19,19 +19,26 @@ var block = {
   newline: /^\n+/,
   code: /^( {4}[^\n]+\n*)+/,
   fences: noop,
-  hr: /^( *[\-*_]){3,} *(?:\n+|$)/,
+  hr: /^( *[-*_]){3,} *(?:\n+|$)/,
   heading: /^ *(#{1,6}) *([^\n]+?) *#* *(?:\n+|$)/,
   lheading: /^([^\n]+)\n *(=|-){3,} *\n*/,
   blockquote: /^( *>[^\n]+(\n[^\n]+)*\n*)+/,
-  list: /^( *)([*+-]|\d+\.) [^\0]+?(?:\n{2,}(?! )(?!\1bullet)\n*|\s*$)/,
+  list: /^( *)(bull) [^\0]+?(?:hr|\n{2,}(?! )(?!\1bull )\n*|\s*$)/,
   html: /^ *(?:comment|closed|closing) *(?:\n{2,}|\s*$)/,
   def: /^ *\[([^\]]+)\]: *([^\s]+)(?: +["(]([^\n]+)[")])? *(?:\n+|$)/,
   paragraph: /^([^\n]+\n?(?!body))+\n*/,
   text: /^[^\n]+/
 };
 
+block.bullet = /(?:[*+-]|\d+\.)/;
+block.item = /^( *)(bull) [^\n]*(?:\n(?!\1bull )[^\n]*)*/;
+block.item = replace(block.item, 'gm')
+  (/bull/g, block.bullet)
+  ();
+
 block.list = replace(block.list)
-  ('bullet', /(?:[*+-](?!(?: *[-*]){2,})|\d+\.)/)
+  (/bull/g, block.bullet)
+  ('hr', /\n+(?=(?: *[-*_]){3,} *(?:\n+|$))/)
   ();
 
 block.html = replace(block.html)
@@ -199,9 +206,7 @@ block.token = function(src, tokens, top) {
       });
 
       // Get each top-level item.
-      cap = cap[0].match(
-        /^( *)([*+-]|\d+\.) [^\n]*(?:\n(?!\1(?:[*+-]|\d+\.) )[^\n]*)*/gm
-      );
+      cap = cap[0].match(block.item);
 
       next = false;
       l = cap.length;
@@ -480,7 +485,7 @@ inline.lexer = function(src) {
   return out;
 };
 
-var outputLink = function(cap, link) {
+function outputLink(cap, link) {
   if (cap[0][0] !== '!') {
     return '<a href="'
       + escape(link.href)
@@ -506,7 +511,7 @@ var outputLink = function(cap, link) {
       : '')
       + '>';
   }
-};
+}
 
 /**
  * Parsing
@@ -515,11 +520,11 @@ var outputLink = function(cap, link) {
 var tokens
   , token;
 
-var next = function() {
+function next() {
   return token = tokens.pop();
-};
+}
 
-var tok = function() {
+function tok() {
   switch (token.type) {
     case 'space': {
       return '';
@@ -537,16 +542,26 @@ var tok = function() {
         + '>\n';
     }
     case 'code': {
+      if (options.highlight) {
+        token.code = options.highlight(token.text, token.lang);
+        if (token.code != null && token.code !== token.text) {
+          token.escaped = true;
+          token.text = token.code;
+        }
+      }
+
+      if (!token.escaped) {
+        token.text = escape(token.text, true);
+      }
+
       return '<pre><code'
         + (token.lang
-        ? ' class="'
+        ? ' class="lang-'
         + token.lang
         + '"'
         : '')
         + '>'
-        + (token.escaped
-        ? token.text
-        : escape(token.text, true))
+        + token.text
         + '</code></pre>\n';
     }
     case 'blockquote_start': {
@@ -619,9 +634,9 @@ var tok = function() {
         + '</p>\n';
     }
   }
-};
+}
 
-var parseText = function() {
+function parseText() {
   var body = token.text
     , top;
 
@@ -631,9 +646,9 @@ var parseText = function() {
   }
 
   return inline.lexer(body);
-};
+}
 
-var parse = function(src) {
+function parse(src) {
   tokens = src.reverse();
 
   var out = '';
@@ -645,22 +660,22 @@ var parse = function(src) {
   token = null;
 
   return out;
-};
+}
 
 /**
  * Helpers
  */
 
-var escape = function(html, encode) {
+function escape(html, encode) {
   return html
     .replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
-};
+}
 
-var mangle = function(text) {
+function mangle(text) {
   var out = ''
     , l = text.length
     , i = 0
@@ -675,7 +690,7 @@ var mangle = function(text) {
   }
 
   return out;
-};
+}
 
 function tag() {
   var tag = '(?!(?:'
@@ -686,10 +701,11 @@ function tag() {
   return tag;
 }
 
-function replace(regex) {
+function replace(regex, opt) {
   regex = regex.source;
+  opt = opt || '';
   return function self(name, val) {
-    if (!name) return new RegExp(regex);
+    if (!name) return new RegExp(regex, opt);
     regex = regex.replace(name, val.source || val);
     return self;
   };
@@ -702,10 +718,10 @@ noop.exec = noop;
  * Marked
  */
 
-var marked = function(src, opt) {
+function marked(src, opt) {
   setOptions(opt);
   return parse(block.lexer(src));
-};
+}
 
 /**
  * Options
@@ -714,7 +730,7 @@ var marked = function(src, opt) {
 var options
   , defaults;
 
-var setOptions = function(opt) {
+function setOptions(opt) {
   if (!opt) opt = defaults;
   if (options === opt) return;
   options = opt;
@@ -738,18 +754,20 @@ var setOptions = function(opt) {
     inline.em = inline.normal.em;
     inline.strong = inline.normal.strong;
   }
-};
+}
 
 marked.options =
 marked.setOptions = function(opt) {
   defaults = opt;
   setOptions(opt);
+  return marked;
 };
 
-marked.options({
+marked.setOptions({
   gfm: true,
   pedantic: false,
-  sanitize: false
+  sanitize: false,
+  highlight: null
 });
 
 /**
@@ -774,7 +792,9 @@ if (typeof module !== 'undefined') {
   this.marked = marked;
 }
 
-}).call(this);
+}).call(function() {
+  return this || (typeof window !== 'undefined' ? window : global);
+}());
 
 
   /**
