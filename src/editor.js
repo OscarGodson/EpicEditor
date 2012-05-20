@@ -1045,7 +1045,8 @@
       // Get this, 2 spaces in a content editable actually converts to:
       // 0020 00a0, meaning, "space no-break space". So, manually convert
       // no-break spaces to spaces again before handing to marked.
-      content = content.replace(/\u00a0/g, ' ');
+      // Also, WebKit converts no-break to unicode equivalent and FF HTML.
+      content = content.replace(/\u00a0/g, ' ').replace(/&nbsp;/g, ' ');
       return marked(content);
     case 'text':
       return content;
