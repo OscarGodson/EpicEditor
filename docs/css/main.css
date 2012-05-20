@@ -1,7 +1,7 @@
 body {
   background-color: #e1dcb8;
   background: url(../images/bg-glow.png) repeat-x center top fixed, url(../images/bg-texture.jpg) repeat center top fixed;
-  font-family: 'PT Sans', 'Helvetica Neue', helvetica, arial, sans-serif;
+  font-family: 'Lato', 'Helvetica Neue', helvetica, arial, sans-serif;
   font-size: 14px;
   line-height: 20px;
   color: rgba(0,0,0, 0.6);
@@ -94,7 +94,7 @@ a:hover {
   box-shadow: rgba(0,0,0,0.15) -1px 0 8px inset;
 }
 #toc ul {
-  font-family: 'PT Sans', 'Helvetica Neue', helvetica, arial, sans-serif;
+  font-family: 'Lato', 'Helvetica Neue', helvetica, arial, sans-serif;
   list-style-type: none;
   padding: 0; margin: 0 0 30px 0;
   border-bottom: 1px solid rgba(0,0,0, 0.15);
