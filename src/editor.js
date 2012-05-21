@@ -1,4 +1,9 @@
+/**
+ * EpicEditor - An Embeddable JavaScript Markdown Editor (https://github.com/OscarGodson/EpicEditor)
+ * Copyright (c) 2011-2012, Oscar Godson. (MIT Licensed)
+ */
 
+(function (window, undefined) {
   /**
    * Applies attributes to a DOM object
    * @param  {object} context The DOM obj you want to apply the attributes to
@@ -289,10 +294,17 @@
           , preview: 80 // p keycode
           , edit: 79 // o keycode
           }
+        , parser: typeof marked == 'function' ? marked : null
         }
       , defaultStorage;
 
     self.settings = _mergeObjs(true, defaults, opts);
+
+    if (!(typeof self.settings.parser == 'function' && typeof self.settings.parser('TEST') == 'string')) {
+      self.settings.parser = function (str) {
+        return "<h3 style=\"color:red;\">Error: The provided parser is unavailable or not a function.</h3><pre>" + str + "</pre>";
+      }
+    }
 
     // Protect the id and overwrite if passed in as an option
     // TODO: Put underscrore to denote that this is private
@@ -1047,7 +1059,7 @@
       // no-break spaces to spaces again before handing to marked.
       // Also, WebKit converts no-break to unicode equivalent and FF HTML.
       content = content.replace(/\u00a0/g, ' ').replace(/&nbsp;/g, ' ');
-      return marked(content);
+      return self.settings.parser(content);
     case 'text':
       return content;
     default:
