@@ -44,6 +44,7 @@
   container: &#39;epiceditor&#39;,
   basePath: &#39;epiceditor&#39;,
   localStorageName: &#39;epiceditor&#39;,
+  parser: marked,
   file: {
     name: &#39;epiceditor&#39;,
     defaultContent: &#39;&#39;,
@@ -84,6 +85,11 @@ var editor = new EpicEditor(opts);</code></pre>
     <td><code>localStorageName</code></td>
     <td>The name to use for the localStorage object.</td>
     <td><code>epiceditor</code></td>
+  </tr>
+  <tr>
+    <td><code>parser</code></td>
+    <td><a href="https://github.com/chjj/marked">Marked</a> is the only parser built into EpicEditor, but you can customize or toggle this by passing a parsing function to this option. For example:<br><code>parser: MyCustomParser.parse</code></td>
+    <td><code>marked</code></td>
   </tr>
   <tr>
     <td><code>focusOnLoad</code></td>
