@@ -1,4 +1,4 @@
-/*global $:false, prettyPrint:false, Showdown:false */
+/*global $:false, prettyPrint:false */
 
 $(function () {
   var zipUrl = 'docs/downloads/EpicEditor-v' + EpicEditor.version + '.zip';
