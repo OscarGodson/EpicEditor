@@ -95,7 +95,7 @@ namespace('lint', function () {
 })
 
 desc('Build epiceditor.js and minify to epiceditor.min.js')
-task('build', ['lint:editor'], function () {
+task('build', ['build:init', 'lint:editor'], function () {
   console.log(colorize('--> Building', 'yellow'))
   var destDir = path.join(process.cwd() + '/epiceditor/js/')
     , srcDir = path.join(process.cwd() + '/src/')
@@ -106,7 +106,7 @@ task('build', ['lint:editor'], function () {
       ]
     , destPath = destDir + 'epiceditor.js'
     , destPathMin = destDir + 'epiceditor.min.js'
-    , cmds = ['git submodule update --init', 'uglifyjs ' + destPath + ' > ' + destPathMin]
+    , cmds = ['uglifyjs ' + destPath + ' > ' + destPathMin]
 
   // If the destination directory does not exist, create it
   jake.mkdirP('epiceditor/js')
@@ -130,6 +130,12 @@ namespace('build', function () {
     console.log(colorize('--> Warning: Force build skips build pre-reqs. This build should not be commited.', 'magenta'))
     jake.Task['build'].execute()
   })
+  
+  task('init', [], function () {
+    jake.exec(['git submodule update --init'], function () {
+      complete();
+    }, {stdout: true})
+  }, {async: true})
 })
 
 desc('Build index.html from the README')
