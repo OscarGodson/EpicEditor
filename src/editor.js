@@ -302,7 +302,7 @@
 
     if (!(typeof self.settings.parser == 'function' && typeof self.settings.parser('TEST') == 'string')) {
       self.settings.parser = function (str) {
-        return "<h3 style=\"color:red;\">Error: The provided parser is unavailable or not a function.</h3><pre>" + str + "</pre>";
+        return str;
       }
     }
 
