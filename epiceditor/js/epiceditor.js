@@ -503,21 +503,6 @@
       //Chrome :cry:
     }
 
-    // Sets up the onclick event on the previewer toggle button
-    self.iframe.getElementsByClassName('epiceditor-toggle-preview-btn')[0].addEventListener('click', function () {
-      // If it was in edit mode...
-      if (self.eeState.edit) {
-        self.preview();
-      }
-    });
-    // Sets up the onclick event on the editor toggle button
-    self.iframe.getElementsByClassName('epiceditor-toggle-edit-btn')[0].addEventListener('click', function () {
-      // If it was in preview mode...
-      if (self.eeState.preview) {
-        self.edit();
-      }
-    });
-
     // TODO: Should probably have an ID since we only select one
     // TODO: Should probably have an underscore?
     utilBtns = self.iframe.getElementById('epiceditor-utilbar');
@@ -637,8 +622,18 @@
     
     fsElement = self.iframeElement;
 
-    self.iframe.getElementsByClassName('epiceditor-fullscreen-btn')[0].addEventListener('click', function () {
-      _goFullscreen(fsElement);
+    // Sets up the onclick event on utility buttons
+    utilBtns.addEventListener('click', function (e) {
+      var targetClass = e.target.className;
+      if (targetClass.indexOf('epiceditor-toggle-preview-btn') > -1) {
+        self.preview();
+      }
+      else if (targetClass.indexOf('epiceditor-toggle-edit-btn') > -1) {
+        self.edit();
+      }
+      else if (targetClass.indexOf('epiceditor-fullscreen-btn') > -1) {
+        _goFullscreen(fsElement);
+      }
     });
 
     // Sets up the NATIVE fullscreen editor/previewer for WebKit
