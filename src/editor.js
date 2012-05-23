@@ -300,18 +300,12 @@
 
     self.settings = _mergeObjs(true, defaults, opts);
 
-    if (!(typeof self.settings.parser == 'function' && typeof self.settings.parser('TEST') == 'string')) {
-      self.settings.parser = function (str) {
-        return "<h3 style=\"color:red;\">Error: The provided parser is unavailable or not a function.</h3><pre>" + str + "</pre>";
-      }
-    }
-
     // Protect the id and overwrite if passed in as an option
     // TODO: Put underscrore to denote that this is private
     self.instanceId = 'epiceditor-' + Math.round(Math.random() * 100000);
 
     self._canSave = true;
-
+     
     // Setup local storage of files
     self._defaultFileSchema = function () {
       return {
@@ -338,7 +332,8 @@
         self.content = self.settings.file.defaultContent;
       }
     }
-    // Now that it exists, allow binding of events if it doesn't exist yet
+
+    // Allow binding of events
     if (!self.events) {
       self.events = {};
     }
@@ -391,6 +386,15 @@
     , edit: true
     , loaded: false
     , unloaded: false
+    }
+
+    // Emit errors with parser before doing anything else
+    if (typeof self.settings.parser !== 'function') {
+      self.emit('error', {type: 'invalid_parser', message: 'Parser must be a function'});
+      self.settings.parser = function (text) { return text; };
+    }
+    else if (typeof self.settings.parser('TEST') !== 'string') {
+      self.emit('error', {type: 'invalid_parser', message: 'Parser must return a string'});
     }
 
     // The editor HTML
@@ -799,7 +803,8 @@
 
     // Make sure the editor isn't already unloaded.
     if (this.eeState.unloaded) {
-      throw new Error('Editor isn\'t loaded');
+      this.emit('error', {type: 'not_loaded', message: 'Editor isn\'t loaded'});
+      return;
     }
 
     var self = this
