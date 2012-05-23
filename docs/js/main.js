@@ -1,3 +1,5 @@
+/*global $:false, prettyPrint:false */
+
 $(function () {
   var zipUrl = 'docs/downloads/EpicEditor-v' + EpicEditor.version + '.zip';
   
@@ -27,12 +29,10 @@ $(function () {
   $('#step-1-download + p').html('<a href="#download">Download the latest release (' + EpicEditor.version + ')</a> or clone the repo:');
   $('tr:even').addClass('even');
  
-  var opts = {
-      container: 'example-1'
-    , file:{
-        defaultContent:"#EpicEditor\nThis is some default content. Go ahead, _change me_. "
-      }
-      , focusOnLoad:true
+  var opts =
+      { container: 'example-1'
+      , file: { defaultContent: "#EpicEditor\nThis is some default content. Go ahead, _change me_. " }
+      , focusOnLoad: true
       }
     , editor = new EpicEditor(opts).load()
     , example = new EpicEditor()
@@ -44,7 +44,7 @@ $(function () {
   window.example = example;
   
   tryItBtn.onclick = function () {
-    if(!tryItStatus){
+    if (!tryItStatus) {
       tryItStatus = true;
       tryItBtn.innerHTML = 'Unload';
       $('#epiceditor').addClass('epiceditors')

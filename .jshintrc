@@ -8,7 +8,7 @@
   , "debug"           : false     // if debugger statements should be allowed
   , "devel"           : false     // if logging globals should be predefined (console, alert, etc.)
   , "dojo"            : false     // if Dojo Toolkit globals should be predefined
-  , "eqeqeq"          : false      // if === should be required
+  , "eqeqeq"          : false     // if === should be required
   , "eqnull"          : true      // if == null comparisons should be tolerated
   , "es5"             : false     // if ES5 syntax should be allowed
   , "esnext"          : false     // if es.next specific syntax should be allowed
@@ -24,7 +24,7 @@
   , "latedef"         : true      // if the use before definition should not be tolerated
   , "laxbreak"        : false     // if line breaks should not be checked
   , "laxcomma"        : true      // if line breaks should not be checked around commas
-  , "loopfunc"        : true     // if functions should be allowed to be defined within loops
+  , "loopfunc"        : true      // if functions should be allowed to be defined within loops
   , "mootools"        : false     // if MooTools globals should be predefined
   , "multistr"        : false     // allow multiline strings
   , "newcap"          : true      // if constructor names must be capitalized
@@ -35,7 +35,7 @@
   , "nonstandard"     : true      // if non-standard (but widely adopted) globals should be predefined
   , "nomen"           : false     // if names should be checked
   , "onecase"         : true      // if one case switch statements should be allowed
-  , "onevar"          : true      // if only one var statement per function should be allowed
+  , "onevar"          : false     // if only one var statement per function should be allowed
   , "passfail"        : false     // if the scan should stop on first error
   , "plusplus"        : false     // if increment/decrement should not be allowed
   , "proto"           : false     // if the `__proto__` property should be allowed
@@ -56,14 +56,30 @@
   , "wsh"             : false     // if the Windows Scripting Host environment globals should be predefined
 
   , "indent"          : 2
-  , "predef"          : [
-        "EpicEditor"
+  , "predef"          :
+      [ "EpicEditor"
       , "marked"
+      // Jake
+      , "jake"
+      , "desc"
+      , "task"
+      , "complete"
+      , "fail"
+      , "namespace"
+      // Foounit
       , "foounit"
       , "describe"
       , "expect"
       , "before"
       , "it"
       , "be"
-    ]
+      , "beNull"
+      , "beTrue"
+      , "beFalse"
+      , "beUndefined"
+      , "after"
+      , "beTruthy"
+      , "beFalsy"
+      , "throwError"
+      ]
 }
