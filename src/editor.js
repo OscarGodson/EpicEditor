@@ -604,10 +604,10 @@
       self.eeState.fullscreen = false;
       
       if (_isInEdit) {
-        self.eeState.preview = false;
+        self.edit();
       }
       else {
-        self.eeState.edit = false;
+        self.preview();
       }
     };
 
