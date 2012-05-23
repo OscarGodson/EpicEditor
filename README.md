@@ -306,7 +306,8 @@ editBtn.onclick = function () {
 ## Events
 
 You can hook into specific events in EpicEditor with <a href="#onevent-handler"><code>on()</code></a> such as when a file is
-created, removed, or updated. Below is a complete list of currently supported events and their description.
+created, removed, or updated. Every event returns EpicEditor as `this` and the file currently open unless otherwise noted.
+Below is a complete list of currently supported events and their description.
 
 <table cellspacing="0" class="event-table">
   <tr>
@@ -353,7 +354,45 @@ created, removed, or updated. Below is a complete list of currently supported ev
     <td>`open`</td>
     <td>Fires whenever a file is opened or loads automatically by EpicEditor or when `open()` is called.</td>
   </tr>
+  <tr>
+    <td>`error`</td>
+    <td>Fires whenever an error occurs. Returns an error object with `type` and `message` properties.</td>
+  </tr>
 </table>
+
+### Examples
+
+#### Handling a basic event
+
+```javascript
+editor.on('remove', function (file) {
+  $.post('/' + id + '/delete', function () {
+    console.log('File created on ' + file.created + 'has been deleted');
+  });
+});
+```
+
+#### Handling error events
+
+```javascript
+var editor = new EpicEditor();
+
+editor.on('error', function (err) {
+  if (err.type == 'invalid_parser') {
+    if (confirm('The parser appears to be broken. Would you still like to continue editing without markdown support?')) {
+      editor.settings.parser = function (text) {
+        return text;
+      }
+    }
+    else {
+      editor.unload();
+    }
+  }
+});
+
+// Make sure you setup any error handling before you load!
+editor.load();
+```
 
 ## Themes
 

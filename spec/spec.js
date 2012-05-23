@@ -446,12 +446,14 @@ describe('EpicEditor.preview and EpicEditor.edit', function () {
 
 describe('EpicEditor.unload', function () {
 
-  var testEl, editor, eventWasCalled;
+  var testEl, editor, eventWasCalled, errorEventWasCalled;
 
   before(function () {
     testEl = _createTestElement()
     editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl });
     editor.load();
+
+    errorEventWasCalled = false;
 
     eventWasCalled = false;
 
@@ -484,8 +486,15 @@ describe('EpicEditor.unload', function () {
   });
 
   it('check that unload can\'t be run twice', function () {
+    editor.on('error', function (err) {
+      if (err.type == 'not_loaded') {
+        errorEventWasCalled = true;
+      }
+    });
+    
     editor.unload();
-    expect(function () { editor.unload(); }).to(throwError, 'Editor isn\'t loaded');
+    editor.unload();
+    expect(errorEventWasCalled).to(beTrue);
   });
 
   it('check that unload and reloading and then requesting getElement doesn\'t return null as if it were unloaded', function () {

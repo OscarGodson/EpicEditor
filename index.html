@@ -253,7 +253,8 @@ var editor = new EpicEditor(opts);</code></pre>
 }</code></pre>
 <h2>Events</h2>
 <p>You can hook into specific events in EpicEditor with <a href="#onevent-handler"><code>on()</code></a> such as when a file is
-created, removed, or updated. Below is a complete list of currently supported events and their description.
+created, removed, or updated. Every event returns EpicEditor as <code>this</code> and the file currently open unless otherwise noted.
+Below is a complete list of currently supported events and their description.
 
 </p>
 <table cellspacing="0" class="event-table">
@@ -301,8 +302,37 @@ created, removed, or updated. Below is a complete list of currently supported ev
     <td><code>open</code></td>
     <td>Fires whenever a file is opened or loads automatically by EpicEditor or when <code>open()</code> is called.</td>
   </tr>
+  <tr>
+    <td><code>error</code></td>
+    <td>Fires whenever an error occurs. Returns an error object with <code>type</code> and <code>message</code> properties.</td>
+  </tr>
 </table>
 
+<h3>Examples</h3>
+<h4>Handling a basic event</h4>
+<pre><code class="lang-javascript">editor.on(&#39;remove&#39;, function (file) {
+  $.post(&#39;/&#39; + id + &#39;/delete&#39;, function () {
+    console.log(&#39;File created on &#39; + file.created + &#39;has been deleted&#39;);
+  });
+});</code></pre>
+<h4>Handling error events</h4>
+<pre><code class="lang-javascript">var editor = new EpicEditor();
+
+editor.on(&#39;error&#39;, function (err) {
+  if (err.type == &#39;invalid_parser&#39;) {
+    if (confirm(&#39;The parser appears to be broken. Would you still like to continue editing without markdown support?&#39;)) {
+      editor.settings.parser = function (text) {
+        return text;
+      }
+    }
+    else {
+      editor.unload();
+    }
+  }
+});
+
+// Make sure you setup any error handling before you load!
+editor.load();</code></pre>
 <h2>Themes</h2>
 <p>Theming is easy in EpicEditor. There are three different <code>&lt;iframe&gt;</code>s which means styles wont leak between the &quot;chrome&quot; of
 EpicEditor, previewer, or editor. Each one is like it&#39;s own web page. In the <code>themes</code> directory  you&#39;ll see <code>base</code>, <code>preview</code>,  and
