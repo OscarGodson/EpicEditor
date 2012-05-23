@@ -23,7 +23,3 @@ html, body, iframe, div { margin:0; padding:0; }
 #epiceditor-utilbar img:hover {
   cursor:pointer;
 }
-
-#epiceditor-utilbar:hover {
-  display:block !important; /* No, really, important so when hovering the element it wont go away after N secs */
-}
