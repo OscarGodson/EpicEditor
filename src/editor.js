@@ -447,7 +447,6 @@
 
     self.previewerIframeDocument.close();
 
-
     // Set the default styles for the iframe
     widthDiff = _outerWidth(self.element) - self.element.offsetWidth;
     heightDiff = _outerHeight(self.element) - self.element.offsetHeight;
@@ -497,10 +496,13 @@
     this.open(self.settings.file.name);
 
     if (self.settings.focusOnLoad) {
-      // This will work for IE and Firefox
-      self.editorIframeDocument.body.focus();
-
-      //Chrome :cry:
+      // We need to wait until all three iframes are done loading by waiting until the parent
+      // iframe's ready state == complete, then we can focus on the contenteditable
+      self.iframe.addEventListener('readystatechange', function () {
+        if (self.iframe.readyState == 'complete') {
+          self.editorIframeDocument.body.focus();
+        }
+      });
     }
 
     // TODO: Should probably have an ID since we only select one
