@@ -512,6 +512,7 @@
       
       if (self.eeState.fullscreen) {
         _exitFullscreen(el);
+        return;
       }
 
       if (nativeFs) {
