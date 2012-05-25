@@ -791,6 +791,12 @@
       }
     });
 
+    self.editorIframeDocument.addEventListener('paste', function (e) {
+      setTimeout(function () {
+        _setText(self.editor, _getText(self.editor));
+      }, 1);
+    });
+
     self.iframe.close();
     self.eeState.loaded = true;
     self.eeState.unloaded = false;
