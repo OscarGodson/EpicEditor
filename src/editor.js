@@ -510,6 +510,10 @@
     _elementStates = {}
     _goFullscreen = function (el) {
       
+      if (self.eeState.fullscreen) {
+        _exitFullscreen(el);
+      }
+
       if (nativeFs) {
         el.webkitRequestFullScreen();
       }
@@ -598,6 +602,9 @@
       
       if (!nativeFs) {
         document.body.style.overflow = 'auto';
+      }
+      else {
+        document.webkitCancelFullScreen();
       }
       // Put the editor back in the right state
       // TODO: This is ugly... how do we make this nicer?
