@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
   <title>EpicEditor Test Suite</title>
@@ -14,16 +15,26 @@
 <body>
 
   <script type="text/javascript">
-    foounit.globalize();
+    var tid = setInterval( function () {
+      if (document.readyState !== 'complete') {
+        return;
+      }
+      clearInterval(tid);
+      run();
+    }, 100 );
 
-    // This sets up the foounit loader
-    foounit.browser.setLoaderStrategy(new foounit.browser.XhrLoaderStrategy());
+    function run () {
+      foounit.globalize();
 
-    // Require your test files here
-    foounit.require('spec');
+      // This sets up the foounit loader
+      foounit.browser.setLoaderStrategy(new foounit.browser.XhrLoaderStrategy());
 
-    // This runs the tests
-    foounit.run();
+      // Require your test files here
+      foounit.require('spec');
+
+      // This runs the tests
+      foounit.run();
+    }
   </script>
 </body>
 </html>

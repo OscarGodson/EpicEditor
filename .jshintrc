@@ -81,5 +81,6 @@
       , "beTruthy"
       , "beFalsy"
       , "throwError"
+      , "match"
       ]
 }

@@ -297,7 +297,7 @@ describe('EpicEditor.exportFile', function () {
 
   it('check that exportFile will work without parameters by outputting the current file as raw text', function () {
     contents = editor.exportFile();
-    expect(contents).to(be, '#foo\n\n##bar');
+    expect(contents).to(match, /#foo\r?\n\r?\n##bar/);
   });
 
   it('check that exportFile will export the current file as HTML with a null parameter as it\'s first', function () {
