@@ -101,10 +101,6 @@ body {
 	margin:15px 0;
 }
 
-#epiceditor-preview li > a {
-	display:block;
-}
-
 #epiceditor-preview hr{
 	background:transparent url('../../images/modules/pulls/dirty-shade.png') repeat-x 0 0;
 	border:0 none;
