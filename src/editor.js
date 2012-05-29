@@ -125,7 +125,7 @@
       type: 'text/css'
     , id: id
     , rel: 'stylesheet'
-    , href: path + '?' + new Date().getTime()
+    , href: path
     , name: path
     , media: 'screen'
     });
@@ -379,7 +379,6 @@
       , isMod = false
       , isCtrl = false
       , eventableIframes
-      , saveTimer
       , i; // i is reused for loops
 
     callback = callback || function () {};
@@ -760,7 +759,7 @@
 
     // Save the document every 100ms by default
     if (self.settings.file.autoSave) {
-      saveTimer = window.setInterval(function () {
+      self.saveInterval = window.setInterval(function () {
         if (!self._canSave) {
           return;
         }
@@ -818,6 +817,10 @@
     self.eeState.loaded = false;
     self.eeState.unloaded = true;
     callback = callback || function () {};
+    
+    if (self.saveInterval) {
+      window.clearInterval(self.saveInterval);
+    }
     
     callback.call(this);
     self.emit('unload');
