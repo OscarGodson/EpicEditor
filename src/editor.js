@@ -369,6 +369,7 @@
       , utilBtns
       , utilBar
       , utilBarTimer
+      , keypressTimer
       , mousePos = { y: -1, x: -1 }
       , _elementStates
       , _isInEdit
@@ -622,11 +623,14 @@
 
     // This setups up live previews by triggering preview() IF in fullscreen on keyup
     self.editor.addEventListener('keyup', function () {
-      // TODO: We need to add a timer on this so if you type fast it's not trying
-      //       to registering 3+ keyups and dedrawing the DOM a second
-      if (self.eeState.fullscreen) {
-        self.preview();
+      if (keypressTimer) {
+        window.clearTimeout(keypressTimer);
       }
+      keypressTimer = window.setTimeout(function () {
+        if (self.eeState.fullscreen) {
+          self.preview();
+        }
+      }, 250);
     });
     
     fsElement = self.iframeElement;
