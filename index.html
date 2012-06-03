@@ -365,6 +365,16 @@ The editor is the styles for the contents of editor <code>&lt;iframe&gt;</code> 
     &lt;/html&gt;
   &lt;/iframe&gt;
 &lt;/div&gt;</code></pre>
+<h2>Custom Parsers</h2>
+<p>EpicEditor is set up to allow you to use <em>any</em> parser that accepts and returns a string. This means you can use any flavor of Markdown, process Textile, or even create a simple HTML editor/previewer (<code>parser: false</code>). The possibilities are endless. Just make the parser available and pass its parsing function to the EpicEditor setting and you should be all set.
+
+</p>
+<p>For even more customization/optimization you can replace the default built-in processor on build. Running <code>jake build parser=path/to/parser.js</code> will override the default Marked build and replace it with your custom script.
+
+</p>
+<p>See the <a href="https://github.com/OscarGodson/EpicEditor/wiki/Using-A-Custom-Parser">custom parsers wiki page</a> for more.
+
+</p>
 <h2>Contributing</h2>
 <p>Contributions are greatly encouraged and appreciated. For more on ways to contribute please check the wiki: <a href="https://github.com/OscarGodson/EpicEditor/wiki/Contributing">Contributing Guide</a>.
 

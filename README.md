@@ -406,6 +406,14 @@ The HTML of a generated editor (excluding contents) looks like this:
 </div>
 ```
 
+## Custom Parsers
+
+EpicEditor is set up to allow you to use _any_ parser that accepts and returns a string. This means you can use any flavor of Markdown, process Textile, or even create a simple HTML editor/previewer (`parser: false`). The possibilities are endless. Just make the parser available and pass its parsing function to the EpicEditor setting and you should be all set.
+
+For even more customization/optimization you can replace the default built-in processor on build. Running `jake build parser=path/to/parser.js` will override the default Marked build and replace it with your custom script.
+
+See the [custom parsers wiki page](https://github.com/OscarGodson/EpicEditor/wiki/Using-A-Custom-Parser) for more.
+
 ## Contributing
 
 Contributions are greatly encouraged and appreciated. For more on ways to contribute please check the wiki: [Contributing Guide](https://github.com/OscarGodson/EpicEditor/wiki/Contributing).
