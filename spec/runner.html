@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>EpicEditor Test Suite</title>
+  <style type="text/css">
+    @import url(foounit/suite.css);
+    /*body {background:#FEED79;font-family:helvetica,arial;}
+    .progress-bar { font-family:monospace; }*/
+    [id^="epiceditor-"] { display:none; }
+  </style>
+
+  <script type="text/javascript" src="foounit/foounit.js"></script>
+  <script type="text/javascript" src="foounit/foounit-browser.js"></script>
+</head>
+<body>
+
+  <script type="text/javascript">
+    var tid = setInterval( function () {
+      if (document.readyState !== 'complete') {
+        return;
+      }
+      clearInterval(tid);
+      run();
+    }, 100 );
+
+    function run () {
+      foounit.globalize();
+
+      // This sets up the foounit loader
+      foounit.browser.setLoaderStrategy(new foounit.browser.XhrLoaderStrategy());
+
+      // Require your test files here
+      foounit.require('spec');
+
+      // This runs the tests
+      foounit.run();
+    }
+  </script>
+</body>
+</html>

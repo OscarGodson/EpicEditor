@@ -1,0 +1,208 @@
+body {
+  background-color: #e1dcb8;
+  background: url(../images/bg-glow.png) repeat-x center top fixed, url(../images/bg-texture.jpg) repeat center top fixed;
+  font-family: 'Lato', 'Helvetica Neue', helvetica, arial, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  color: rgba(0,0,0, 0.6);
+  text-shadow: 0 1px 0 rgba(255,255,255, 0.3);
+  margin: 0;
+}
+#wrapper {
+  width: 700px;
+  margin: 0 150px 0 300px;
+  padding:20px 40px;
+}
+.epiceditors { 
+  height: 349px;
+  border:1px solid #000;
+  box-shadow: rgba(0, 0, 0, 0.75) 0 2px 5px;
+  border-radius: 3px;
+  margin-top: 20px;
+}
+#try-it {
+  padding: 5px;
+}
+h1, h2, h3, h4, h5, h6, .toc-h2 {
+  font-family: 'Arvo', courier, serif;
+  font-weight: normal;
+  color: #303030;
+}
+h1 {
+  border-bottom: 1px solid rgba(0,0,0, 0.15);
+  padding:0 0 15px 0;
+  position:relative; margin:0;
+}
+#wrapper h2 {
+  padding-top: 30px;
+}
+#wrapper h3{
+  padding-top: 20px;
+}
+h3,h4,h5,h6 {
+  margin-bottom:10px;
+}
+h1 span {
+  font-weight:normal;
+  font-size: 16px;
+  background: rgba(0,0,0, 0.2);
+  color: #fff;
+  text-shadow: 0 1px 0 rgba(0,0,0, 0.15);
+  padding:5px 15px;
+  border-radius:3px;
+  position:absolute;
+  top:0;
+  right:0;
+  box-shadow: rgba(255,255,255, 0.75) 0 1px 0, rgba(0,0,0, 0.15) 0 1px 3px inset;
+}
+pre {
+  border:1px solid #000;
+  overflow-x:auto;
+  background: #222;
+  color: #fff;
+  text-shadow: none;
+}
+p {
+  margin:5px 0;
+}
+li {
+  margin:10px 0;
+}
+h2 a, h3 a {
+  color: #303030;
+}
+a {
+  text-decoration: none;
+  border-bottom: 1px solid rgba(0,0,0, 0.1);
+  color: #2570a8;
+}
+a:hover {
+  border-color: rgba(0,0,0, 0.25);
+  color: #af813a;
+}
+.example {
+  font-weight:bold;
+  font-size:12px;
+}
+#toc {
+  float: left;
+  width: 250px;
+  padding: 0 20px 0 20px;
+  position: fixed;
+  overflow:auto;
+  background: rgba(0,0,0, 0.08);
+  box-shadow: rgba(0,0,0,0.15) -1px 0 8px inset;
+}
+#toc ul {
+  font-family: 'Lato', 'Helvetica Neue', helvetica, arial, sans-serif;
+  list-style-type: none;
+  padding: 0; margin: 0 0 30px 0;
+  border-bottom: 1px solid rgba(0,0,0, 0.15);
+}
+#toc li {
+  margin:0;
+  padding: 0;
+}
+#toc li.toc-h2 {
+  border-top: 1px solid rgba(0,0,0, 0.15);
+}
+#toc li.toc-h3 {
+  margin-left: 10px;
+}
+#toc a {
+  color: rgba(0,0,0, 0.6);
+  text-decoration: none;
+  display: block;
+  padding: 5px 10px;
+  border: 0 none;
+}
+#toc a:hover, #toc a:focus, #toc a:active {
+  background-color: rgba(0, 0, 0, .04);
+  color: #2570a8;
+}
+#toc h2 a {
+  color: rgba(0,0,0, 0.25);
+  padding: 10px 0;
+}
+#toc h2 a:hover {
+  background: none;
+}
+table {
+  margin:20px 0;
+  border-left: 1px solid #C9C6A3;
+  box-shadow: rgba(0,0,0,0.1) 0 2px 5px;
+}
+th,td {
+  padding:7px;
+  border-right: 1px solid #C9C6A3;
+  border-bottom: 1px solid #C9C6A3;
+}
+th {
+  background: #C9C6A3;
+}
+tr.even {
+  background:rgba(250,250,250,0.2);
+}
+.event-table th:first-child {
+  min-width:150px;
+}
+#avatars {
+  margin: 20px 0;
+}
+.avatar {
+  box-shadow: rgba(0,0,0,0.1) 0 2px 5px;
+  border: 2px solid rgba(0,0,0, 0.15);
+  margin-right: 10px;
+  opacity: .8;
+}
+.avatar:hover, .avatar:focus {
+  opacity: 1;
+}
+#avatars a {
+  border-bottom: none;
+}
+#download {
+  padding: 30px 0 0;
+}
+p.btn {
+  font-family: 'Arvo', courier, serif;
+  -moz-box-shadow: inset 0px 1px 0px 0px #CCC, rgba(0, 0, 0, 0.1) 0 2px 5px;
+  -webkit-box-shadow: inset 0px 1px 0px 0px #CCC, rgba(0, 0, 0, 0.1) 0 2px 5px;
+  box-shadow: inset 0px 1px 0px 0px #CCC, rgba(0, 0, 0, 0.1) 0 2px 5px;
+  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #616161), color-stop(1, #313131) );
+  background:-moz-linear-gradient( center top, #616161 5%, #313131 100% );
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#616161', endColorstr='#313131');
+  background-color:#616161;
+  -moz-border-radius:6px;
+  -webkit-border-radius:6px;
+  border-radius:6px;
+  border:1px solid #333;
+  display:inline-block;
+  color:#777777;
+  padding:12px 14px 6px;
+  text-decoration:none;
+  text-shadow:1px 1px 0px #ffffff;
+  cursor: pointer;
+}
+p.btn:active {
+  box-shadow:none;
+}
+p.btn a {
+  display: block;
+  border: none;
+  padding: 6px 0;
+  font-size:18px;
+  color: #fff;
+  text-shadow: #000 0 -1px 0;
+}
+p.btn a.zip {
+  min-height: 32px;
+  padding: 6px 0 0 37px;
+  background: url(../images/zip.png) no-repeat;
+}
+p.btn-small {
+  padding:2px 8px;
+}
+p.btn-small a {
+  font-size:14px;
+}
