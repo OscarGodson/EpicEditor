@@ -83,79 +83,79 @@ var editor = new EpicEditor(opts);
     <th>Default</th>
   </tr>
   <tr>
-    <td>`container`</td>
+    <td><code>container</code></td>
     <td>The ID (string) or element (object) of the target container in which you want the editor to appear.</td>
-    <td>`epiceditor`</td>
+    <td><code>epiceditor</code></td>
   </tr>
   <tr>
-    <td>`basePath`</td>
-    <td>The base path of the directory containing the `/themes`, `/images`, etc.</td>
-    <td>`epiceditor`</td>
+    <td><code>basePath</code></td>
+    <td>The base path of the directory containing the <code>/themes</code>, <code>/images</code>, etc.</td>
+    <td><code>epiceditor</code></td>
   </tr>
   <tr>
-    <td>`localStorageName`</td>
+    <td><code>localStorageName</code></td>
     <td>The name to use for the localStorage object.</td>
-    <td>`epiceditor`</td>
+    <td><code>epiceditor</code></td>
   </tr>
   <tr>
-    <td>`parser`</td>
+    <td><code>parser</code></td>
     <td>[Marked](https://github.com/chjj/marked) is the only parser built into EpicEditor, but you can customize or toggle this by passing a parsing function to this option. For example:<br><code>parser: MyCustomParser.parse</code></td>
-    <td>`marked`</td>
+    <td><code>marked</code></td>
   </tr>
   <tr>
-    <td>`focusOnLoad`</td>
-    <td>If `true`, editor will focus on load.</td>
-    <td>`false`</td>
+    <td><code>focusOnLoad</code></td>
+    <td>If <code>true</code>, editor will focus on load.</td>
+    <td><code>false</code></td>
   </tr>
   <tr>
-    <td>`file.name`</td>
+    <td><code>file.name</code></td>
     <td>If no file exists with this name a new one will be made, otherwise the existing will be opened.</td>
     <td>container ID</td>
   </tr>
   <tr>
-    <td>`file.defaultContent`</td>
+    <td><code>file.defaultContent</code></td>
     <td>The content to show if no content exists for a file.</td>
     <td></td>
   </tr>
   <tr>
-    <td>`file.autoSave`</td>
-    <td>How often to auto save the file in milliseconds. Set to `false` to turn it off.</td>
-    <td>`100`</td>
+    <td><code>file.autoSave</code></td>
+    <td>How often to auto save the file in milliseconds. Set to <code>false</code> to turn it off.</td>
+    <td><code>100</code></td>
   </tr>
   <tr>
-    <td>`theme.base`</td>
+    <td><code>theme.base</code></td>
     <td>The base styles such as the utility bar with the buttons.</td>
-    <td>`themes/base/epiceditor.css`</td>
+    <td><code>themes/base/epiceditor.css</code></td>
   </tr>
   <tr>
-    <td>`theme.editor`</td>
+    <td><code>theme.editor</code></td>
     <td>The theme for the editor which is the area you type into.</td>
-    <td>`themes/editor/epic-dark.css`</td>
+    <td><code>themes/editor/epic-dark.css</code></td>
   </tr>
   <tr>
-    <td>`theme.preview`</td>
+    <td><code>theme.preview</code></td>
     <td>The theme for the previewer.</td>
-    <td>`themes/preview/github.css`</td>
+    <td><code>themes/preview/github.css</code></td>
   </tr>
   <tr>
-    <td>`shortcut.modifier`</td>
+    <td><code>shortcut.modifier</code></td>
     <td>The key to hold while holding the other shortcut keys to trigger a key combo.</td>
-    <td>`18` (`alt` key)</td>
+    <td><code>18</code> (<code>alt</code> key)</td>
   </tr>
   <tr>
-    <td>`shortcut.fullscreen`</td>
+    <td><code>shortcut.fullscreen</code></td>
     <td>The shortcut to open fullscreen.</td>
-    <td>`70` (`f` key)</td>
+    <td><code>70</code> (<code>f</code> key)</td>
   </tr>
   <tr>
-    <td>`shortcut.preview`</td>
+    <td><code>shortcut.preview</code></td>
     <td>The shortcut to open the previewer.</td>
-    <td>`80` (`p` key)</td>
+    <td><code>80</code> (<code>p</code> key)</td>
   </tr>
   <tr>
-    <td>`shortcut.edit`</td>
+    <td><code>shortcut.edit</code></td>
     <td>The shortcut to open the editor.</td>
-    <td>`79` (`o` key)</td>
+    <td><code>79</code> (<code>o</code> key)</td>
   </tr>
 </table>
 
