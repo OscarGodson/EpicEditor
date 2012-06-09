@@ -376,6 +376,7 @@
       , nativeFs = document.body.webkitRequestFullScreen ? true : false
       , _goFullscreen
       , _exitFullscreen
+      , elementsToResize
       , fsElement
       , isMod = false
       , isCtrl = false
@@ -411,6 +412,21 @@
     , previewer: '<div id="epiceditor-preview"></div>'
     };
 
+    // Used to setup the initial size of the iframes
+    function setupIframeStyles(el) {
+      for (var x = 0; x < el.length; x++) {
+        el[x].style.width  = self.element.offsetWidth - widthDiff + 'px';
+        el[x].style.height = self.element.offsetHeight - heightDiff + 'px';
+      }
+    }
+
+    // Used for resetting the width of EE mainly for fluid width containers
+    function resetWidth(el) {
+      widthDiff = _outerWidth(self.element) - self.element.offsetWidth;
+      for (var x = 0; x < el.length; x++) {
+        el[x].style.width  = self.element.offsetWidth - widthDiff + 'px';
+      }
+    }
     // Write an iframe and then select it for the editor
     self.element.innerHTML = '<iframe scrolling="no" frameborder="0" id= "' + self.instanceId + '"></iframe>';
     iframeElement = document.getElementById(self.instanceId);
@@ -450,15 +466,9 @@
     // Set the default styles for the iframe
     widthDiff = _outerWidth(self.element) - self.element.offsetWidth;
     heightDiff = _outerHeight(self.element) - self.element.offsetHeight;
-      
-    function setupIframeStyles(iframes) {
-      for (var x = 0; x < iframes.length; x++) {
-        iframes[x].style.width  = self.element.offsetWidth - widthDiff + 'px';
-        iframes[x].style.height = self.element.offsetHeight - heightDiff + 'px';
-      }
-    }
-
-    setupIframeStyles([self.iframeElement, self.editorIframe, self.previewerIframe]);
+    elementsToResize = [self.iframeElement, self.editorIframe, self.previewerIframe];
+     
+    setupIframeStyles(elementsToResize);
 
     // Insert Base Stylesheet
     _insertCSSLink(self.settings.basePath + self.settings.theme.base, self.iframe);
@@ -600,7 +610,13 @@
       _saveStyleState(self.iframeElement, 'apply', _elementStates.iframeElement);
       _saveStyleState(self.editorIframe, 'apply', _elementStates.editorIframe);
       _saveStyleState(self.previewerIframe, 'apply', _elementStates.previewerIframe);
-      
+     
+      // We want to always revert back to the original styles in the CSS so,
+      // if it's a fluid width container it will expand on resize and not get
+      // stuck at a specific width after closing fullscreen.
+      self.element.style.width = '';
+      self.element.style.height = '';
+
       utilBtns.style.visibility = 'visible';
       
       if (!nativeFs) {
@@ -619,6 +635,8 @@
       else {
         self.preview();
       }
+
+      resetWidth(elementsToResize);
     };
 
     // This setups up live previews by triggering preview() IF in fullscreen on keyup
@@ -772,6 +790,8 @@
     }
 
     window.addEventListener('resize', function () {
+      // If NOT webkit, and in fullscreen, we need to account for browser resizing
+      // we don't care about webkit because you can't resize in webkit's fullscreen
       if (!self.iframe.webkitRequestFullScreen && self.eeState.fullscreen) {
         _applyStyles(self.iframeElement, {
           'width': window.outerWidth + 'px'
@@ -791,6 +811,10 @@
           'width': window.outerWidth / 2 + 'px'
         , 'height': window.innerHeight + 'px'
         });
+      }
+      // Makes the editor support fluid width when not in fullscreen mode
+      else if (!self.eeState.fullscreen) {
+        resetWidth(elementsToResize);
       }
     });
 
