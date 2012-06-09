@@ -314,44 +314,44 @@ created, removed, or updated. Below is a complete list of currently supported ev
     <th>Description</th>
   </tr>
   <tr>
-    <td>`create`</td>
+    <td><code>create</code></td>
     <td>Fires whenever a new file is created.</td>
   </tr>
   <tr>
-    <td>`read`</td>
+    <td><code>read</code></td>
     <td>Fires whenever a file is read.</td>
   </tr>
   <tr>
-    <td>`update`</td>
+    <td><code>update</code></td>
     <td>Fires whenever a file is updated.</td>
   </tr>
   <tr>
-    <td>`remove`</td>
+    <td><code>remove</code></td>
     <td>Fires whenever a file is deleted.</td>
   </tr>
   <tr>
-    <td>`load`</td>
-    <td>Fires when the editor loads via `load()`.</td>
+    <td><code>load</code></td>
+    <td>Fires when the editor loads via <code>load()</code>.</td>
   </tr>
   <tr>
-    <td>`unload`</td>
-    <td>Fires whenever the editor is unloaded via `unload()`</td>
+    <td><code>unload</code></td>
+    <td>Fires whenever the editor is unloaded via <code>unload()</code></td>
   </tr>
   <tr>
-    <td>`preview`</td>
-    <td>Fires whenever the previewer is opened (excluding fullscreen) via `preview()` or the preview button.</td>
+    <td><code>preview</code></td>
+    <td>Fires whenever the previewer is opened (excluding fullscreen) via <code>preview()</code> or the preview button.</td>
   </tr>
   <tr>
-    <td>`edit`</td>
-    <td>Fires whenever the editor is opened (excluding fullscreen) via `edit()` or the edit button.</td>
+    <td><code>edit</code></td>
+    <td>Fires whenever the editor is opened (excluding fullscreen) via <code>edit()</code> or the edit button.</td>
   </tr>
   <tr>
-    <td>`save`</td>
-    <td>Fires whenever the file is saved whether by EpicEditor automatically or when `save()` is called.</td>
+    <td><code>save</code></td>
+    <td>Fires whenever the file is saved whether by EpicEditor automatically or when <code>save()</code> is called.</td>
   </tr>
   <tr>
-    <td>`open`</td>
-    <td>Fires whenever a file is opened or loads automatically by EpicEditor or when `open()` is called.</td>
+    <td><code>open</code></td>
+    <td>Fires whenever a file is opened or loads automatically by EpicEditor or when <code>open()</code> is called.</td>
   </tr>
 </table>
 
