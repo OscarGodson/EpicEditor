@@ -496,13 +496,13 @@
     setupIframeStyles(elementsToResize);
 
     // Insert Base Stylesheet
-    _insertCSSLink(self.settings.basePath + self.settings.theme.base, self.iframe);
+    _insertCSSLink(self.settings.basePath + self.settings.theme.base, self.iframe, 'theme');
     
     // Insert Editor Stylesheet
-    _insertCSSLink(self.settings.basePath + self.settings.theme.editor, self.editorIframeDocument);
+    _insertCSSLink(self.settings.basePath + self.settings.theme.editor, self.editorIframeDocument, 'theme');
     
     // Insert Previewer Stylesheet
-    _insertCSSLink(self.settings.basePath + self.settings.theme.preview, self.previewerIframeDocument);
+    _insertCSSLink(self.settings.basePath + self.settings.theme.preview, self.previewerIframeDocument, 'theme');
 
     // Add a relative style to the overall wrapper to keep CSS relative to the editor
     self.iframe.getElementById('epiceditor-wrapper').style.position = 'relative';
@@ -523,9 +523,6 @@
     if (_isIE() > -1) {
       this.previewer.style.height = parseInt(_getStyle(this.previewer, 'height'), 10) + 2;
     }
-
-    // Preload the preview theme:
-    _insertCSSLink(self.settings.basePath + self.settings.theme.preview, self.previewerIframeDocument, 'theme');
 
     // If there is a file to be opened with that filename and it has content...
     this.open(self.settings.file.name);
