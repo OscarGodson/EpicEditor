@@ -81,23 +81,79 @@ describe('EpicEditor.load.options', function () {
     testEl = _createTestElement();
   });
 
-  it('check that the container option can be a string of an ID of an element', function () {
-    editor = new EpicEditor(
-      { basePath: '/epiceditor/'
-      , container: testEl
-      }
-    ).load();
-    
-    expect(document.getElementById(testEl).getElementsByTagName('iframe').length).to(be, 1);
+  after(function () {
+    editor.unload();
   });
 
-  it('check that the container option can be a DOM object an element', function () {
-    editor = new EpicEditor({
-      basePath: '/epiceditor/'
-    , container: document.getElementById(testEl)
-    }).load();
+  describe('when setting the container element', function () {
 
-    expect(document.getElementById(testEl).getElementsByTagName('iframe').length).to(be, 1);
+    it('allows the value to be a string of an ID to an element', function () {
+      editor = new EpicEditor(
+        { basePath: '/epiceditor/'
+        , container: testEl
+        }
+      ).load();
+      
+      expect(document.getElementById(testEl).getElementsByTagName('iframe').length).to(be, 1);
+    });
+
+    it('allows the value to be a DOM object of an element', function () {
+      editor = new EpicEditor({
+        basePath: '/epiceditor/'
+      , container: document.getElementById(testEl)
+      }).load();
+
+      expect(document.getElementById(testEl).getElementsByTagName('iframe').length).to(be, 1);
+    });
+
+    it('check that the localStorage key is correctly named for string values (IDs)', function () {
+      editor = new EpicEditor({
+        basePath: '/epiceditor/'
+      , container: testEl
+      }).load();
+      expect(JSON.parse(localStorage.epiceditor)[testEl]).to(beTruthy);
+    });
+
+    it('check that the localStorage key is correctly named for DOM elements by using the ID of the element', function () {
+      
+      // This is all for a one off test. Creates an element with a different class name and ID
+      // and we need to be able to get the name of the ID and class later
+      var tempEl = document.createElement('div')
+        , tempId = 'foo' + _randomNum()
+        , tempClassName = 'bar' + _randomNum();
+      tempEl.id = tempId;
+      tempEl.className = tempClassName;
+      document.body.appendChild(tempEl);
+
+      editor = new EpicEditor({
+        basePath: '/epiceditor/'
+      , container: document.getElementsByClassName(tempClassName)[0]
+      }).load();
+      expect(JSON.parse(localStorage.epiceditor)[tempId]).to(beTruthy);
+    });
+
+    it('check that the localStorage key is correctly named for manually set file names', function () {
+      var tempName = 'foo' + _randomNum();
+      editor = new EpicEditor({
+        basePath: '/epiceditor/'
+      , container: testEl
+      , file: { name: tempName }
+      }).load();
+      expect(JSON.parse(localStorage.epiceditor)[testEl]).to(beFalsy);
+    });
+
+    it('check that the localStorage key is correctly named when there\'s no fallback name', function () {
+      var tempEl = document.createElement('div')
+        , tempClassName = 'foo' + _randomNum();
+      tempEl.className = tempClassName;
+      document.body.appendChild(tempEl);
+
+      editor = new EpicEditor({
+        basePath: '/epiceditor/'
+      , container: document.getElementsByClassName(tempClassName)[0]
+      }).load();
+      expect(JSON.parse(localStorage.epiceditor)['__epiceditor-untitled-1']).to(beTruthy);
+    });
   });
 });
 
@@ -162,6 +218,10 @@ describe('EpicEditor.open', function () {
     editor.on('open', function () {
       eventWasFired = true;
     });
+  });
+
+  after(function () {
+    editor.unload();
   });
 
   it('check that the openMe file was created successfully', function () {
@@ -233,6 +293,10 @@ describe('EpicEditor.importFile', function () {
     eventWasFired = false;
   });
 
+  after(function () {
+    editor.unload();
+  });
+
   it('check that the content is currently blank', function () {
     expect(editor.exportFile()).to(be, '');
   });
@@ -294,6 +358,9 @@ describe('EpicEditor.exportFile', function () {
       }).load();
   });
 
+  after(function () {
+    editor.unload();
+  });
 
   it('check that exportFile will work without parameters by outputting the current file as raw text', function () {
     contents = editor.exportFile();
@@ -330,6 +397,10 @@ describe('EpicEditor.rename', function () {
     editor.importFile(oldName, 'testing...');
   });
 
+  after(function () {
+    editor.unload();
+  });
+
   it('check to see if the foo file exists before trying to rename', function () {
     expect(editor.exportFile(oldName)).to(be, 'testing...');
   });
@@ -357,7 +428,11 @@ describe('EpicEditor.remove', function () {
     dontRemoveMeFile = 'dontRemoveMe' + _randomNum();
     editor.importFile(removeMeFile, 'hello world').importFile(dontRemoveMeFile, 'foo bar');
   });
-  
+ 
+  after(function () {
+    editor.unload();
+  });
+
   it('check that the foo file was imported', function () {
     expect(editor.exportFile(removeMeFile)).to(be, 'hello world');
   });
@@ -406,6 +481,7 @@ describe('EpicEditor.preview and EpicEditor.edit', function () {
   after(function () {
     editor.removeListener('preview');
     editor.removeListener('edit');
+    editor.unload();
   });
 
   it('check that the editor is currently displayed and not the previewer', function () {
@@ -514,6 +590,10 @@ describe('EpicEditor.save', function () {
     eventWasFired = false;
   });
 
+  after(function () {
+    editor.unload();
+  });
+
   it('check that foo is the default content in the editor', function () {
     expect(editor.getElement('editor').body.innerHTML).to(be, 'foo');
   });
@@ -574,6 +654,7 @@ describe('EpicEditor.on', function () {
 
   after(function () {
     editor.removeListener('foo');
+    editor.unload();
   });
 
   it('check that on fires on an EE event, preview', function () {
@@ -606,6 +687,7 @@ describe('EpicEditor.emit', function () {
 
   after(function () {
     editor.removeListener('foo');
+    editor.unload();
   });
 
   // We don't use events in EpicEditor so only custom events need to be checked
@@ -642,6 +724,10 @@ describe('EpicEditor.removeListener', function () {
 
     editor.on('bar', baz);
     editor.on('bar', qux);
+  });
+
+  after(function () {
+    editor.unload();
   });
 
   it('check that the foo event can be fired', function () {

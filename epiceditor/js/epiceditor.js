@@ -280,8 +280,8 @@
       , defaults = { container: 'epiceditor'
         , basePath: 'epiceditor'
         , localStorageName: 'epiceditor'
-        , file: { name: opts.container || 'epiceditor' // Use the container's ID for an unique persistent file name - will be overwritten if passed a file.name opt
-          , defaultContent: ''
+        , file: { name: null
+        , defaultContent: ''
           , autoSave: 100 // Set to false for no auto saving
           }
         , theme: { base: '/themes/base/epiceditor.css'
@@ -306,9 +306,41 @@
       }
     }
 
+
+    // Grab the container element and save it to self.element
+    // if it's a string assume it's an ID and if it's an object
+    // assume it's a DOM element
+    if (typeof self.settings.container == 'string') {
+      self.element = document.getElementById(self.settings.container);
+    }
+    else if (typeof self.settings.container == 'object') {
+      self.element = self.settings.container;
+    }
+    
+    // Figure out the file name. If no file name is given we'll use the ID.
+    // If there's no ID either we'll use a namespaced file name that's incremented
+    // based on the calling order. As long as it doesn't change, drafts will be saved.
+    if (!self.settings.file.name) {
+      if (typeof self.settings.container == 'string') {
+        self.settings.file.name = self.settings.container;
+      }
+      else if (typeof self.settings.container == 'object') {
+        if (self.element.id) {
+          self.settings.file.name = self.element.id;
+        }
+        else {
+          if (!EpicEditor._data.unnamedEditors) {
+            EpicEditor._data.unnamedEditors = [];
+          }
+          EpicEditor._data.unnamedEditors.push(self);
+          self.settings.file.name = '__epiceditor-untitled-' + EpicEditor._data.unnamedEditors.length;
+        }
+      }
+    }
+
     // Protect the id and overwrite if passed in as an option
     // TODO: Put underscrore to denote that this is private
-    self.instanceId = 'epiceditor-' + Math.round(Math.random() * 100000);
+    self._instanceId = 'epiceditor-' + Math.round(Math.random() * 100000);
 
     self._canSave = true;
 
@@ -341,13 +373,6 @@
     // Now that it exists, allow binding of events if it doesn't exist yet
     if (!self.events) {
       self.events = {};
-    }
-
-    if (typeof self.settings.container == 'string') {
-      self.element = document.getElementById(self.settings.container);
-    }
-    else if (typeof self.settings.container == 'object') {
-      self.element = self.settings.container;
     }
 
     return this;
@@ -428,8 +453,8 @@
       }
     }
     // Write an iframe and then select it for the editor
-    self.element.innerHTML = '<iframe scrolling="no" frameborder="0" id= "' + self.instanceId + '"></iframe>';
-    iframeElement = document.getElementById(self.instanceId);
+    self.element.innerHTML = '<iframe scrolling="no" frameborder="0" id= "' + self._instanceId + '"></iframe>';
+    iframeElement = document.getElementById(self._instanceId);
     
     // Store a reference to the iframeElement itself
     self.iframeElement = iframeElement;
@@ -839,7 +864,7 @@
     }
 
     var self = this
-      , editor = window.parent.document.getElementById(self.instanceId);
+      , editor = window.parent.document.getElementById(self._instanceId);
 
     editor.parentNode.removeChild(editor);
     self.eeState.loaded = false;
@@ -1172,6 +1197,9 @@
   }
 
   EpicEditor.version = '0.1.0';
+
+  // Used to store information to be shared acrossed editors
+  EpicEditor._data = {};
 
   window.EpicEditor = EpicEditor;
 })(window);
