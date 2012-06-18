@@ -739,16 +739,12 @@
       if (isMod === true && e.keyCode == self.settings.shortcut.preview && !self.eeState.fullscreen) {
         e.preventDefault();
         self.preview();
-        // Need this to flip back and forth in Firefox
-        self.previewerIframe.focus();
       }
       // Check for alt+o - default shortcut to switch back to the editor
       if (isMod === true && e.keyCode == self.settings.shortcut.edit) {
         e.preventDefault();
         if (!self.eeState.fullscreen) {
           self.edit();
-          // Need this to flip back and forth in Firefox
-          self.editorIframe.focus();
         }
       }
       // Check for alt+f - default shortcut to make editor fullscreen
@@ -906,6 +902,7 @@
       self.previewerIframe.style.display = 'block';
       self.eeState.preview = true;
       self.eeState.edit = false;
+      self.previewerIframe.focus();
     }
     
     self.emit('preview');
@@ -923,6 +920,7 @@
     self.eeState.edit = true;
     self.editorIframe.style.display = 'block';
     self.previewerIframe.style.display = 'none';
+    self.editorIframe.focus();
     self.emit('edit');
     return this;
   }
