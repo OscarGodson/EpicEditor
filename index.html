@@ -166,12 +166,16 @@ var editor = new EpicEditor(opts);</code></pre>
 <p>Loads the editor by inserting it into the DOM by creating an <code>iframe</code>. Will trigger the <code>load</code> event, or you can provide a callback.
 
 </p>
-<pre><code class="lang-javascript">editor.load(function () { console.log(&quot;Editor loaded.&quot;) });</code></pre>
+<pre><code class="lang-javascript">editor.load(function () {
+  console.log(&quot;Editor loaded.&quot;)
+});</code></pre>
 <h3>unload([<em>callback</em>])</h3>
 <p>Unloads the editor by removing the <code>iframe</code>. Keeps any options and file contents so you can easily call <code>.load()</code> again. Will trigger the <code>unload</code> event, or you can provide a callback.
 
 </p>
-<pre><code class="lang-javascript">editor.unload(function () { console.log(&quot;Editor unloaded.&quot;) });</code></pre>
+<pre><code class="lang-javascript">editor.unload(function () {
+  console.log(&quot;Editor unloaded.&quot;)
+});</code></pre>
 <h3>getElement(<em>element</em>)</h3>
 <p>Grabs an editor element for easy DOM manipulation. See the Themes section below for more on the layout of EpicEditor elements.
 
@@ -185,28 +189,28 @@ var editor = new EpicEditor(opts);</code></pre>
 <li><code>previewer</code>: The #document of the previewer iframe (i.e. you could do <code>editor.getElement(&#39;previewer&#39;).body</code>).</li>
 <li><code>previewerIframe</code>: The iframe containing the <code>previewer</code> element.</li>
 </ul>
-<pre><code class="lang-javascript">someBtn.onclick = function(){
+<pre><code class="lang-javascript">someBtn.onclick = function () {
   console.log(editor.getElement(&#39;editor&#39;).body.innerHTML); // Returns the editor&#39;s content
 }</code></pre>
 <h3>open(<em>filename</em>)</h3>
 <p>Opens a file into the editor.
 
 </p>
-<pre><code class="lang-javascript">openFileBtn.onclick = function(){
+<pre><code class="lang-javascript">openFileBtn.onclick = function () {
   editor.open(&#39;some-file&#39;); // Opens a file when the user clicks this button
 }</code></pre>
 <h3>importFile([<em>filename</em>],[<em>content</em>])</h3>
 <p>Imports a string of content into a file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX. Will also run <code>.open()</code> after import automatically.
 
 </p>
-<pre><code class="lang-javascript">importFileBtn.onclick = function(){
+<pre><code class="lang-javascript">importFileBtn.onclick = function () {
   editor.importFile(&#39;some-file&#39;,&quot;#Imported markdown\nFancy, huh?&quot;); //Imports a file when the user clicks this button
 }</code></pre>
 <h3>exportFile([<em>filename</em>],[<em>type</em>])</h3>
 <p>Returns the raw content of the file by default, or if given a <code>type</code> will return the content converted into that type. If you leave both parameters <code>null</code> it will return the current document&#39;s raw content.
 
 </p>
-<pre><code class="lang-javascript">syncWithServerBtn.onclick = function(){
+<pre><code class="lang-javascript">syncWithServerBtn.onclick = function () {
   var theContent = editor.exportFile();
   saveToServerAjaxCall(&#39;/save&#39;, {data:theContent}, function () {
     console.log(&#39;Data was saved to the database.&#39;);
@@ -216,7 +220,7 @@ var editor = new EpicEditor(opts);</code></pre>
 <p>Renames a file.
 
 </p>
-<pre><code class="lang-javascript">renameFileBtn.onclick = function(){
+<pre><code class="lang-javascript">renameFileBtn.onclick = function () {
   var newName = prompt(&#39;What do you want to rename this file to?&#39;);
   editor.rename(&#39;old-filename.md&#39;, newName); //Prompts a user and renames a file on button click
 }</code></pre>
@@ -224,21 +228,29 @@ var editor = new EpicEditor(opts);</code></pre>
 <p>Manually saves a file. EpicEditor will save continuously every 100ms by default, but if you set <code>autoSave</code> in the options to <code>false</code> or to longer intervals it&#39;s useful to manually save.
 
 </p>
-<pre><code class="lang-javascript">saveFileBtn.onclick = function(){
+<pre><code class="lang-javascript">saveFileBtn.onclick = function () {
   editor.save();
 }</code></pre>
 <h3>remove(<em>name</em>)</h3>
 <p>Deletes a file.
 
 </p>
-<pre><code class="lang-javascript">removeFileBtn.onclick = function(){
+<pre><code class="lang-javascript">removeFileBtn.onclick = function () {
   editor.remove(&#39;example.md&#39;);
 }</code></pre>
+<h3>fileList([<em>name</em>])</h3>
+<p>If no <code>name</code> is given it returns an object containing all the file objects. If a <code>name</code> is specified it will return just that single file object.
+
+</p>
+<pre><code class="lang-javascript">var files = editor.fileList();
+for (x in files) {
+  console.log(&#39;File: &#39; + x); //Returns the name of each file
+};</code></pre>
 <h3>on(<em>event</em>, <em>handler</em>)</h3>
 <p>Sets up an event handler (callback) for a specified event. For all event types, see the Events section below.
 
 </p>
-<pre><code class="lang-javascript">editor.on(&#39;unload&#39;,function(){
+<pre><code class="lang-javascript">editor.on(&#39;unload&#39;, function () {
   console.log(&#39;Editor was removed&#39;);
 });</code></pre>
 <h3>emit(<em>event</em>)</h3>
@@ -255,7 +267,7 @@ var editor = new EpicEditor(opts);</code></pre>
 <p>Puts the editor into preview mode.
 
 </p>
-<pre><code class="lang-javascript">previewBtn.onclick = function(){
+<pre><code class="lang-javascript">previewBtn.onclick = function () {
   editor.preview();
 }</code></pre>
 <h3>edit()</h3>
@@ -382,7 +394,6 @@ The editor is the styles for the contents of editor <code>&lt;iframe&gt;</code> 
 </p>
 <h2>Credits</h2>
 <p>EpicEditor relies on <a href="https://github.com/chjj/marked">Marked</a> to parse markdown and is brought to you in part by <a href="http://twitter.com/oscargodson">Oscar Godson</a> and <a href="http://twitter.com/johnmdonahue">John Donahue</a>. Special thanks to <a href="http://twitter.com/adam_bickford">Adam Bickford</a> for the bug fixes and being the QA for pull requests. Lastly, huge thanks to <a href="http://twitter.com/sebnitu">Sebastian Nitu</a> for the amazing logo and doc styles.
-
 </p>
 
   <div id="avatars">
