@@ -199,6 +199,36 @@ describe('EpicEditor.getElement', function () {
 });
 
 
+describe('EpicEditor.getFiles', function () {
+  var testEl, editor, fooFile, barFile;
+
+  before(function () {
+    localStorage.clear();
+    testEl = _createTestElement();
+    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+    fooFile = 'foo'+_randomNum();
+    barFile = 'bar'+_randomNum();
+    editor.importFile(fooFile, 'foo');
+    editor.importFile(barFile, 'bar');
+  });
+
+  after(function () {
+    editor.unload();
+  });
+
+  it('check to see if the correct number of files is returned when asking for all files', function () {
+    var fileCount = 0;
+    for (x in editor.getFiles()) {
+      fileCount++;
+    }
+    expect(fileCount).to(be, 3);
+  });
+
+  it('check to see if a single (and correct) file is returned when the name param is specified', function () {
+    expect(editor.getFiles(fooFile).content).to(be, 'foo');
+  });
+});
+
 
 describe('EpicEditor.open', function () {
 
