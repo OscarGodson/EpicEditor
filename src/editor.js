@@ -361,8 +361,8 @@
         defaultStorage = JSON.stringify(defaultStorage);
         localStorage[self.settings.localStorageName] = defaultStorage;
       }
-      else if (self.fileList(self.settings.file.name) === undefined) {
-        _defaultFile = self.fileList(self.settings.file.name);
+      else if (self.getFiles(self.settings.file.name) === undefined) {
+        _defaultFile = self.getFiles(self.settings.file.name);
         _defaultFile = self._defaultFileSchema();
         _defaultFile.content = self.settings.file.defaultContent;
       }
@@ -965,7 +965,7 @@
     name = name || self.settings.file.name;
     self.settings.file.name = name;
     if (localStorage && localStorage[self.settings.localStorageName]) {
-      fileObj = self.fileList();
+      fileObj = self.getFiles();
       if (fileObj[name] !== undefined) {
         _setText(self.editor, fileObj[name].content);
         self.emit('read');
@@ -1105,7 +1105,7 @@
     name = name || self.settings.file.name;
     kind = kind || 'text';
    
-    file = self.fileList(name);
+    file = self.getFiles(name);
 
     // If the file doesn't exist just return early with undefined
     if (file === undefined) {
@@ -1129,7 +1129,7 @@
     }
   }
 
-  EpicEditor.prototype.fileList = function (name) {
+  EpicEditor.prototype.getFiles = function (name) {
     var files = JSON.parse(localStorage[this.settings.localStorageName]);
     if (name) {
       return files[name];
@@ -1166,7 +1166,7 @@
     var self = this
       , x;
 
-    data = data || self.fileList(self.settings.file.name);
+    data = data || self.getFiles(self.settings.file.name);
 
     if (!this.events[ev]) {
       return;

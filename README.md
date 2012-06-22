@@ -261,12 +261,12 @@ removeFileBtn.onclick = function () {
 }
 ```
 
-### fileList([_name_])
+### getFiles([_name_])
 
 If no `name` is given it returns an object containing all the file objects. If a `name` is specified it will return just that single file object.
 
 ```javascript
-var files = editor.fileList();
+var files = editor.getFiles();
 for (x in files) {
   console.log('File: ' + x); //Returns the name of each file
 };

@@ -238,11 +238,11 @@ var editor = new EpicEditor(opts);</code></pre>
 <pre><code class="lang-javascript">removeFileBtn.onclick = function () {
   editor.remove(&#39;example.md&#39;);
 }</code></pre>
-<h3>fileList([<em>name</em>])</h3>
+<h3>getFiles([<em>name</em>])</h3>
 <p>If no <code>name</code> is given it returns an object containing all the file objects. If a <code>name</code> is specified it will return just that single file object.
 
 </p>
-<pre><code class="lang-javascript">var files = editor.fileList();
+<pre><code class="lang-javascript">var files = editor.getFiles();
 for (x in files) {
   console.log(&#39;File: &#39; + x); //Returns the name of each file
 };</code></pre>
