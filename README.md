@@ -164,7 +164,9 @@ var editor = new EpicEditor(opts);
 Loads the editor by inserting it into the DOM by creating an `iframe`. Will trigger the `load` event, or you can provide a callback.
 
 ```javascript
-editor.load(function () { console.log("Editor loaded.") });
+editor.load(function () {
+  console.log("Editor loaded.")
+});
 ```
 
 ### unload([_callback_])
@@ -172,7 +174,9 @@ editor.load(function () { console.log("Editor loaded.") });
 Unloads the editor by removing the `iframe`. Keeps any options and file contents so you can easily call `.load()` again. Will trigger the `unload` event, or you can provide a callback.
 
 ```javascript
-editor.unload(function () { console.log("Editor unloaded.") });
+editor.unload(function () {
+  console.log("Editor unloaded.")
+});
 ```
 
 ### getElement(_element_)
@@ -188,7 +192,7 @@ Grabs an editor element for easy DOM manipulation. See the Themes section below 
 * `previewerIframe`: The iframe containing the `previewer` element.
 
 ```javascript
-someBtn.onclick = function(){
+someBtn.onclick = function () {
   console.log(editor.getElement('editor').body.innerHTML); // Returns the editor's content
 }
 ```
@@ -198,7 +202,7 @@ someBtn.onclick = function(){
 Opens a file into the editor.
 
 ```javascript
-openFileBtn.onclick = function(){
+openFileBtn.onclick = function () {
   editor.open('some-file'); // Opens a file when the user clicks this button
 }
 ```
@@ -208,7 +212,7 @@ openFileBtn.onclick = function(){
 Imports a string of content into a file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX. Will also run `.open()` after import automatically.
 
 ```javascript
-importFileBtn.onclick = function(){
+importFileBtn.onclick = function () {
   editor.importFile('some-file',"#Imported markdown\nFancy, huh?"); //Imports a file when the user clicks this button
 }
 ```
@@ -218,7 +222,7 @@ importFileBtn.onclick = function(){
 Returns the raw content of the file by default, or if given a `type` will return the content converted into that type. If you leave both parameters `null` it will return the current document's raw content.
 
 ```javascript
-syncWithServerBtn.onclick = function(){
+syncWithServerBtn.onclick = function () {
   var theContent = editor.exportFile();
   saveToServerAjaxCall('/save', {data:theContent}, function () {
     console.log('Data was saved to the database.');
@@ -231,7 +235,7 @@ syncWithServerBtn.onclick = function(){
 Renames a file.
 
 ```javascript
-renameFileBtn.onclick = function(){
+renameFileBtn.onclick = function () {
   var newName = prompt('What do you want to rename this file to?');
   editor.rename('old-filename.md', newName); //Prompts a user and renames a file on button click
 }
@@ -242,7 +246,7 @@ renameFileBtn.onclick = function(){
 Manually saves a file. EpicEditor will save continuously every 100ms by default, but if you set `autoSave` in the options to `false` or to longer intervals it's useful to manually save.
 
 ```javascript
-saveFileBtn.onclick = function(){
+saveFileBtn.onclick = function () {
   editor.save();
 }
 ```
@@ -252,9 +256,20 @@ saveFileBtn.onclick = function(){
 Deletes a file.
 
 ```javascript
-removeFileBtn.onclick = function(){
+removeFileBtn.onclick = function () {
   editor.remove('example.md');
 }
+```
+
+### getFiles([_name_])
+
+If no `name` is given it returns an object containing all the file objects. If a `name` is specified it will return just that single file object.
+
+```javascript
+var files = editor.getFiles();
+for (x in files) {
+  console.log('File: ' + x); //Returns the name of each file
+};
 ```
 
 ### on(_event_, _handler_)
@@ -262,7 +277,7 @@ removeFileBtn.onclick = function(){
 Sets up an event handler (callback) for a specified event. For all event types, see the Events section below.
 
 ```javascript
-editor.on('unload',function(){
+editor.on('unload', function () {
   console.log('Editor was removed');
 });
 ```
@@ -288,7 +303,7 @@ editor.removeListener('unload'); //The handler above would no longer fire
 Puts the editor into preview mode.
 
 ```javascript
-previewBtn.onclick = function(){
+previewBtn.onclick = function () {
   editor.preview();
 }
 ```
@@ -421,4 +436,3 @@ Contributions are greatly encouraged and appreciated. For more on ways to contri
 ## Credits
 
 EpicEditor relies on [Marked](https://github.com/chjj/marked) to parse markdown and is brought to you in part by [Oscar Godson](http://twitter.com/oscargodson) and [John Donahue](http://twitter.com/johnmdonahue). Special thanks to [Adam Bickford](http://twitter.com/adam_bickford) for the bug fixes and being the QA for pull requests. Lastly, huge thanks to [Sebastian Nitu](http://twitter.com/sebnitu) for the amazing logo and doc styles.
-
