@@ -767,6 +767,7 @@
       if (isCtrl === true && e.keyCode == 83) {
         self.save();
         e.preventDefault();
+        isCtrl = false;
       }
 
       // Do the same for Mac now (metaKey == cmd).
