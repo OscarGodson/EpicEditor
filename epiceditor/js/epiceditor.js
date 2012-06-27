@@ -739,6 +739,7 @@
       if (isMod === true && e.keyCode == self.settings.shortcut.preview && !self.eeState.fullscreen) {
         e.preventDefault();
         self.preview();
+        isMod = false;
       }
       // Check for alt+o - default shortcut to switch back to the editor
       if (isMod === true && e.keyCode == self.settings.shortcut.edit) {
@@ -746,11 +747,13 @@
         if (!self.eeState.fullscreen) {
           self.edit();
         }
+        isMod = false;
       }
       // Check for alt+f - default shortcut to make editor fullscreen
       if (isMod === true && e.keyCode == self.settings.shortcut.fullscreen) {
         e.preventDefault();
         _goFullscreen(fsElement);
+        isMod = false;
       }
 
       // When a user presses "esc", revert everything!
