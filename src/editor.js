@@ -1132,6 +1132,7 @@
       content = content.replace(/\u00a0/g, ' ').replace(/&nbsp;/g, ' ');
       return self.settings.parser(content);
     case 'text':
+      content = content.replace(/&nbsp;/g, ' ');
       return content;
     default:
       return content;
