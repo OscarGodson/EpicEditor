@@ -990,15 +990,16 @@
   EpicEditor.prototype.save = function () {
     var self = this
       , storage
+      , isUpdate = false
       , file = self.settings.file.name
       , content = _getText(this.editor);
 
     // This could have been false but since we're manually saving
     // we know it's save to start autoSaving again
     this._canSave = true;
-    
+
     storage = JSON.parse(localStorage[self.settings.localStorageName]);
-   
+
     // If the file doesn't exist we need to create it
     if (storage[file] === undefined) {
       storage[file] = self._defaultFileSchema();
@@ -1008,11 +1009,17 @@
     // if it is, send the update event and update the timestamp
     else if (content !== storage[file].content) {
       storage[file].modified = new Date();
-      self.emit('update');
+      isUpdate = true;
     }
-    
+
     storage[file].content = content;
     localStorage[self.settings.localStorageName] = JSON.stringify(storage);
+
+    // After the content is actually changed, emit update so it emits the updated content
+    if (isUpdate) {
+      self.emit('update');
+    }
+
     this.emit('save');
     return this;
   }
