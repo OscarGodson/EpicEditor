@@ -739,7 +739,6 @@
       if (isMod === true && e.keyCode == self.settings.shortcut.preview && !self.eeState.fullscreen) {
         e.preventDefault();
         self.preview();
-        isMod = false;
       }
       // Check for alt+o - default shortcut to switch back to the editor
       if (isMod === true && e.keyCode == self.settings.shortcut.edit) {
@@ -747,12 +746,16 @@
         if (!self.eeState.fullscreen) {
           self.edit();
         }
-        isMod = false;
       }
       // Check for alt+f - default shortcut to make editor fullscreen
       if (isMod === true && e.keyCode == self.settings.shortcut.fullscreen) {
         e.preventDefault();
         _goFullscreen(fsElement);
+      }
+
+      // Set the modifier key to false once *any* key combo is completed
+      // or else, on Windows, hitting the alt key will lock the isMod state to true (ticket #133)
+      if (isMod === true && e.keyCode !== self.settings.shortcut.modifier) {
         isMod = false;
       }
 
