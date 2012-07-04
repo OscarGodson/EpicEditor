@@ -279,6 +279,7 @@
       , _defaultFile
       , defaults = { container: 'epiceditor'
         , basePath: 'epiceditor'
+        , clientSideStorage: true
         , localStorageName: 'epiceditor'
         , file: { name: null
         , defaultContent: ''
@@ -341,7 +342,7 @@
     // Protect the id and overwrite if passed in as an option
     // TODO: Put underscrore to denote that this is private
     self._instanceId = 'epiceditor-' + Math.round(Math.random() * 100000);
-
+    self._storage = {};
     self._canSave = true;
 
     // Setup local storage of files
@@ -353,23 +354,22 @@
       }
     }
 
-    if (localStorage) {
-      if (!localStorage[self.settings.localStorageName]) {
-        // TODO: Needs a dynamic file name!
-        defaultStorage = {};
-        defaultStorage[self.settings.file.name] = self._defaultFileSchema();
-        defaultStorage = JSON.stringify(defaultStorage);
-        localStorage[self.settings.localStorageName] = defaultStorage;
-      }
-      else if (self.getFiles(self.settings.file.name) === undefined) {
+    if (localStorage && self.settings.clientSideStorage) {
+      this._storage = localStorage;
+      if (this._storage[self.settings.localStorageName] && self.getFiles(self.settings.file.name) === undefined) {
         _defaultFile = self.getFiles(self.settings.file.name);
         _defaultFile = self._defaultFileSchema();
         _defaultFile.content = self.settings.file.defaultContent;
       }
-      else {
-        self.content = self.settings.file.defaultContent;
-      }
     }
+
+    if (!this._storage[self.settings.localStorageName]) {
+      defaultStorage = {};
+      defaultStorage[self.settings.file.name] = self._defaultFileSchema();
+      defaultStorage = JSON.stringify(defaultStorage);
+      this._storage[self.settings.localStorageName] = defaultStorage;
+    }
+
     // Now that it exists, allow binding of events if it doesn't exist yet
     if (!self.events) {
       self.events = {};
@@ -969,7 +969,7 @@
       , fileObj;
     name = name || self.settings.file.name;
     self.settings.file.name = name;
-    if (localStorage && localStorage[self.settings.localStorageName]) {
+    if (this._storage[self.settings.localStorageName]) {
       fileObj = self.getFiles();
       if (fileObj[name] !== undefined) {
         _setText(self.editor, fileObj[name].content);
@@ -1001,7 +1001,7 @@
     // we know it's save to start autoSaving again
     this._canSave = true;
 
-    storage = JSON.parse(localStorage[self.settings.localStorageName]);
+    storage = JSON.parse(this._storage[self.settings.localStorageName]);
 
     // If the file doesn't exist we need to create it
     if (storage[file] === undefined) {
@@ -1016,7 +1016,7 @@
     }
 
     storage[file].content = content;
-    localStorage[self.settings.localStorageName] = JSON.stringify(storage);
+    this._storage[self.settings.localStorageName] = JSON.stringify(storage);
 
     // After the content is actually changed, emit update so it emits the updated content
     if (isUpdate) {
@@ -1042,9 +1042,9 @@
       self._canSave = false;
     }
 
-    s = JSON.parse(localStorage[self.settings.localStorageName]);
+    s = JSON.parse(this._storage[self.settings.localStorageName]);
     delete s[name];
-    localStorage[self.settings.localStorageName] = JSON.stringify(s);
+    this._storage[self.settings.localStorageName] = JSON.stringify(s);
     this.emit('remove');
     return this;
   };
@@ -1057,10 +1057,10 @@
    */
   EpicEditor.prototype.rename = function (oldName, newName) {
     var self = this
-      , s = JSON.parse(localStorage[self.settings.localStorageName]);
+      , s = JSON.parse(this._storage[self.settings.localStorageName]);
     s[newName] = s[oldName];
     delete s[oldName];
-    localStorage[self.settings.localStorageName] = JSON.stringify(s);
+    this._storage[self.settings.localStorageName] = JSON.stringify(s);
     self.open(newName);
     return this;
   };
@@ -1082,7 +1082,7 @@
     kind = kind || 'md';
     meta = meta || {};
   
-    if (JSON.parse(localStorage[self.settings.localStorageName])[name] === undefined) {
+    if (JSON.parse(this._storage[self.settings.localStorageName])[name] === undefined) {
       isNew = true;
     }
 
@@ -1143,7 +1143,7 @@
   }
 
   EpicEditor.prototype.getFiles = function (name) {
-    var files = JSON.parse(localStorage[this.settings.localStorageName]);
+    var files = JSON.parse(this._storage[this.settings.localStorageName]);
     if (name) {
       return files[name];
     }
