@@ -57,6 +57,7 @@
 <pre><code class="lang-javascript">var opts = {
   container: &#39;epiceditor&#39;,
   basePath: &#39;epiceditor&#39;,
+  clientSideStorage: true,
   localStorageName: &#39;epiceditor&#39;,
   parser: marked,
   file: {
@@ -94,6 +95,11 @@ var editor = new EpicEditor(opts);</code></pre>
     <td><code>basePath</code></td>
     <td>The base path of the directory containing the <code>/themes</code>, <code>/images</code>, etc.</td>
     <td><code>epiceditor</code></td>
+  </tr>
+  <tr>
+    <td><code>clientSideStorage</code></td>
+    <td>Setting this to false will disable localStorage.</td>
+    <td><code>true</code></td>
   </tr>
   <tr>
     <td><code>localStorageName</code></td>

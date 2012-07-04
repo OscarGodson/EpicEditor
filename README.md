@@ -52,6 +52,7 @@ The `EpicEditor` constructor creates a new editor instance. Customize the instan
 var opts = {
   container: 'epiceditor',
   basePath: 'epiceditor',
+  clientSideStorage: true,
   localStorageName: 'epiceditor',
   parser: marked,
   file: {
@@ -91,6 +92,11 @@ var editor = new EpicEditor(opts);
     <td><code>basePath</code></td>
     <td>The base path of the directory containing the <code>/themes</code>, <code>/images</code>, etc.</td>
     <td><code>epiceditor</code></td>
+  </tr>
+  <tr>
+    <td><code>clientSideStorage</code></td>
+    <td>Setting this to false will disable localStorage.</td>
+    <td><code>true</code></td>
   </tr>
   <tr>
     <td><code>localStorageName</code></td>
