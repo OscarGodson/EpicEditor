@@ -155,6 +155,26 @@ describe('EpicEditor.load.options', function () {
       expect(JSON.parse(localStorage.epiceditor)['__epiceditor-untitled-1']).to(beTruthy);
     });
   });
+
+  describe('when setting clientSideStorage', function () {
+    it('check that when FALSE NO data is saved to localStorage', function (){
+      editor = new EpicEditor({
+        basePath: '/epiceditor/'
+      , container: testEl
+      , clientSideStorage: false
+      }).load();
+      expect(JSON.parse(localStorage['epiceditor'])[testEl]).to(be, undefined);
+    });
+
+    it('check that when TRUE data IS saved to localStorage', function () {
+      editor = new EpicEditor({
+        basePath: '/epiceditor/'
+      , container: testEl
+      , clientSideStorage: true
+      }).load();
+      expect(JSON.parse(localStorage['epiceditor'])[testEl]).toNot(be, undefined);
+    });
+  });
 });
 
 describe('EpicEditor.getElement', function () {
