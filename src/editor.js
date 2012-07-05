@@ -302,7 +302,7 @@
 
     self.settings = _mergeObjs(true, defaults, opts);
     
-    if (self.settings.images[self.settings.images.length-1] != '/') {
+    if (self.settings.images[self.settings.images.length - 1] != '/') {
       self.settings.images += '/'
     }
 
