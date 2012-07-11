@@ -157,7 +157,7 @@ describe('EpicEditor.load.options', function () {
   });
 
   describe('when setting clientSideStorage', function () {
-    it('check that when FALSE NO data is saved to localStorage', function (){
+    it('check that when FALSE NO data is saved to localStorage', function () {
       editor = new EpicEditor({
         basePath: '/epiceditor/'
       , container: testEl
@@ -226,8 +226,8 @@ describe('EpicEditor.getFiles', function () {
     localStorage.clear();
     testEl = _createTestElement();
     editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
-    fooFile = 'foo'+_randomNum();
-    barFile = 'bar'+_randomNum();
+    fooFile = 'foo' + _randomNum();
+    barFile = 'bar' + _randomNum();
     editor.importFile(fooFile, 'foo');
     editor.importFile(barFile, 'bar');
   });
@@ -238,7 +238,7 @@ describe('EpicEditor.getFiles', function () {
 
   it('check to see if the correct number of files is returned when asking for all files', function () {
     var fileCount = 0;
-    for (x in editor.getFiles()) {
+    for (var x in editor.getFiles()) {
       fileCount++;
     }
     expect(fileCount).to(be, 3);
