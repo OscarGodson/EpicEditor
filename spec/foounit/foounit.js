@@ -463,7 +463,7 @@ foounit.mixin(foounit.WorkQueue.prototype, {
   , _onTaskFailure: function (task){
     this.onTaskFailure(task);
   }
-
+        
   , _onTaskComplete: function (task){
     this.onTaskComplete(task);
     this._runNext();

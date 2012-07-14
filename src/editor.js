@@ -308,67 +308,12 @@
     }
 
 
-    // Grab the container element and save it to self.element
-    // if it's a string assume it's an ID and if it's an object
-    // assume it's a DOM element
-    if (typeof self.settings.container == 'string') {
-      self.element = document.getElementById(self.settings.container);
-    }
-    else if (typeof self.settings.container == 'object') {
-      self.element = self.settings.container;
-    }
     
-    // Figure out the file name. If no file name is given we'll use the ID.
-    // If there's no ID either we'll use a namespaced file name that's incremented
-    // based on the calling order. As long as it doesn't change, drafts will be saved.
-    if (!self.settings.file.name) {
-      if (typeof self.settings.container == 'string') {
-        self.settings.file.name = self.settings.container;
-      }
-      else if (typeof self.settings.container == 'object') {
-        if (self.element.id) {
-          self.settings.file.name = self.element.id;
-        }
-        else {
-          if (!EpicEditor._data.unnamedEditors) {
-            EpicEditor._data.unnamedEditors = [];
-          }
-          EpicEditor._data.unnamedEditors.push(self);
-          self.settings.file.name = '__epiceditor-untitled-' + EpicEditor._data.unnamedEditors.length;
-        }
-      }
-    }
-
     // Protect the id and overwrite if passed in as an option
     // TODO: Put underscrore to denote that this is private
     self._instanceId = 'epiceditor-' + Math.round(Math.random() * 100000);
     self._storage = {};
     self._canSave = true;
-
-    // Setup local storage of files
-    self._defaultFileSchema = function () {
-      return {
-        content: self.settings.file.defaultContent
-      , created: new Date()
-      , modified: new Date()
-      }
-    }
-
-    if (localStorage && self.settings.clientSideStorage) {
-      this._storage = localStorage;
-      if (this._storage[self.settings.localStorageName] && self.getFiles(self.settings.file.name) === undefined) {
-        _defaultFile = self.getFiles(self.settings.file.name);
-        _defaultFile = self._defaultFileSchema();
-        _defaultFile.content = self.settings.file.defaultContent;
-      }
-    }
-
-    if (!this._storage[self.settings.localStorageName]) {
-      defaultStorage = {};
-      defaultStorage[self.settings.file.name] = self._defaultFileSchema();
-      defaultStorage = JSON.stringify(defaultStorage);
-      this._storage[self.settings.localStorageName] = defaultStorage;
-    }
 
     // Now that it exists, allow binding of events if it doesn't exist yet
     if (!self.events) {
@@ -382,7 +327,7 @@
    * Inserts the EpicEditor into the DOM via an iframe and gets it ready for editing and previewing
    * @returns {object} EpicEditor will be returned
    */
-  EpicEditor.prototype.load = function (callback) {
+  EpicEditor.prototype.load = function (callback, test) {
     
     var __load = function () {
     // TODO: Gotta get the privates with underscores!
@@ -427,6 +372,53 @@
       else if (typeof self.settings.container == 'object') {
         self.element = self.settings.container;
       }
+      
+
+      // Figure out the file name. If no file name is given we'll use the ID.
+      // If there's no ID either we'll use a namespaced file name that's incremented
+      // based on the calling order. As long as it doesn't change, drafts will be saved.
+      if (!self.settings.file.name) {
+        if (typeof self.settings.container == 'string') {
+          self.settings.file.name = self.settings.container;
+        }
+        else if (typeof self.settings.container == 'object') {
+          if (self.element.id) {
+            self.settings.file.name = self.element.id;
+          }
+          else {
+            if (!EpicEditor._data.unnamedEditors) {
+              EpicEditor._data.unnamedEditors = [];
+            }
+            EpicEditor._data.unnamedEditors.push(self);
+            self.settings.file.name = '__epiceditor-untitled-' + EpicEditor._data.unnamedEditors.length;
+          }
+        }
+      }
+      // Setup local storage of files
+      self._defaultFileSchema = function () {
+        return {
+          content: self.settings.file.defaultContent
+        , created: new Date()
+        , modified: new Date()
+        }
+      }
+      
+      if (localStorage && self.settings.clientSideStorage) {
+        this._storage = localStorage;
+        if (this._storage[self.settings.localStorageName] && self.getFiles(self.settings.file.name) === undefined) {
+          var _defaultFile;
+          _defaultFile = self.getFiles(self.settings.file.name);
+          _defaultFile = self._defaultFileSchema();
+          _defaultFile.content = self.settings.file.defaultContent;
+        }
+      }
+
+      if (!this._storage[self.settings.localStorageName]) {
+        var defaultStorage = {};
+        defaultStorage[self.settings.file.name] = self._defaultFileSchema();
+        defaultStorage = JSON.stringify(defaultStorage);
+        this._storage[self.settings.localStorageName] = defaultStorage;
+      }
     
       // The editor HTML
       // TODO: edit-mode class should be dynamically added
@@ -447,8 +439,8 @@
       };
 
       // Write an iframe and then select it for the editor
-      self.element.innerHTML = '<iframe scrolling="no" frameborder="0" id= "' + self.instanceId + '"></iframe>';
-      iframeElement = document.getElementById(self.instanceId);
+      self.element.innerHTML = '<iframe scrolling="no" frameborder="0" id= "' + self._instanceId + '"></iframe>';
+      iframeElement = document.getElementById(self._instanceId);
     
       // Store a reference to the iframeElement itself
       self.iframeElement = iframeElement;
@@ -840,18 +832,21 @@
     };
     
     var self = this;
-    //IE detect
-    if (window.attachEvent) {
-      document.onreadystatechange = function () {
-        if (document.readyState == "complete") {
-          __load.call(self);
-        }
+    
+    return (function () {
+      if (test) {
+        return __load.call(self);
       }
-    } else {
-      document.addEventListener('DOMContentLoaded', function () {
-        __load.call(self);
-      }, false);
-    }
+      if (!window.attachEvent) {
+        window.addEventListener("load", function () {
+          return __load.call(self);
+        }, false);
+      } else {//IE detect
+        window.attachEvent("onload", function () {
+          return __load.call(self);
+        });
+      }
+    })();
   }
 
   /**
@@ -866,9 +861,8 @@
     }
 
     var self = this
-      , editor = window.parent.document.getElementById(self._instanceId);
-
-    editor.parentNode.removeChild(editor);
+      , editor = self.element;
+    self.element.innerHTML = "";
     self.eeState.loaded = false;
     self.eeState.unloaded = true;
     callback = callback || function () {};
@@ -1218,7 +1212,7 @@
     return self;
   }
 
-  EpicEditor.version = '@VERSION';
+  EpicEditor.version = '0.1.0';
 
   // Used to store information to be shared acrossed editors
   EpicEditor._data = {};

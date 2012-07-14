@@ -8,21 +8,22 @@
     .progress-bar { font-family:monospace; }*/
     [id^="epiceditor-"] { display:none; }
   </style>
-
   <script type="text/javascript" src="foounit/foounit.js"></script>
   <script type="text/javascript" src="foounit/foounit-browser.js"></script>
 </head>
 <body>
 
   <script type="text/javascript">
-    var tid = setInterval( function () {
-      if (document.readyState !== 'complete') {
-        return;
-      }
-      clearInterval(tid);
-      run();
-    }, 100 );
-
+    
+    if (!window.attachEvent)
+      window.addEventListener("load", function() {
+        run();
+      }, false); 
+    else
+      window.attachEvent("onload", function() {
+        run();
+      })
+    
     function run () {
       foounit.globalize();
 

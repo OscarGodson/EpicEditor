@@ -1,6 +1,7 @@
 // foounit.require(':spec/spec-helper');
 
 // Include your source file here
+
 foounit.require('/epiceditor/js/epiceditor')
 
 function _getIframeInnards(el) {
@@ -24,8 +25,9 @@ function _randomNum() {
 localStorage.clear();
 
 // BEGIN THY TESTS
-describe('EpicEditor.load', function () {
 
+describe('EpicEditor.load', function () {
+  
   var testEl = _createTestElement()
     , editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl })
     , editorIframe
@@ -36,12 +38,11 @@ describe('EpicEditor.load', function () {
     wasLoaded = this;
   });
 
-  editor.load();
-
+  editor.load(function () {}, true);
+  
   it('check if EE returns an object reference', function () {
     expect(typeof editor).to(be, 'object');
   });
-
 
   it('make sure the load event was fired', function () {
     expect(typeof wasLoaded).to(be, 'object');
@@ -51,7 +52,7 @@ describe('EpicEditor.load', function () {
 
     editorIframe = document.getElementById(testEl).getElementsByTagName('iframe');
     editorInnards = _getIframeInnards(editorIframe[0]);
-
+    
     it('make sure there\'s one wrapping iframe', function () {
       expect(editorIframe.length).to(be, 1);
     });
@@ -71,7 +72,9 @@ describe('EpicEditor.load', function () {
     it('check to make sure the utility bar exists', function () {
       expect(editorInnards.getElementById('epiceditor-utilbar')).toNot(beNull);
     });
+    
   });
+  
 });
 
 describe('EpicEditor.load.options', function () {
@@ -92,17 +95,19 @@ describe('EpicEditor.load.options', function () {
         { basePath: '/epiceditor/'
         , container: testEl
         }
-      ).load();
+      ).load(function () {}, true);
       
       expect(document.getElementById(testEl).getElementsByTagName('iframe').length).to(be, 1);
     });
 
+    
     it('allows the value to be a DOM object of an element', function () {
+      
       editor = new EpicEditor({
         basePath: '/epiceditor/'
       , container: document.getElementById(testEl)
-      }).load();
-
+      }).load(function () {}, true);
+      
       expect(document.getElementById(testEl).getElementsByTagName('iframe').length).to(be, 1);
     });
 
@@ -110,7 +115,8 @@ describe('EpicEditor.load.options', function () {
       editor = new EpicEditor({
         basePath: '/epiceditor/'
       , container: testEl
-      }).load();
+      }).load(function () {}, true);
+      
       expect(JSON.parse(localStorage.epiceditor)[testEl]).to(beTruthy);
     });
 
@@ -128,7 +134,7 @@ describe('EpicEditor.load.options', function () {
       editor = new EpicEditor({
         basePath: '/epiceditor/'
       , container: document.getElementsByClassName(tempClassName)[0]
-      }).load();
+      }).load(function () {}, true);
       expect(JSON.parse(localStorage.epiceditor)[tempId]).to(beTruthy);
     });
 
@@ -138,7 +144,7 @@ describe('EpicEditor.load.options', function () {
         basePath: '/epiceditor/'
       , container: testEl
       , file: { name: tempName }
-      }).load();
+      }).load(function () {}, true);
       expect(JSON.parse(localStorage.epiceditor)[testEl]).to(beFalsy);
     });
 
@@ -151,18 +157,20 @@ describe('EpicEditor.load.options', function () {
       editor = new EpicEditor({
         basePath: '/epiceditor/'
       , container: document.getElementsByClassName(tempClassName)[0]
-      }).load();
+      }).load(function () {}, true);
       expect(JSON.parse(localStorage.epiceditor)['__epiceditor-untitled-1']).to(beTruthy);
     });
+    
   });
 
   describe('when setting clientSideStorage', function () {
+    
     it('check that when FALSE NO data is saved to localStorage', function () {
       editor = new EpicEditor({
         basePath: '/epiceditor/'
       , container: testEl
       , clientSideStorage: false
-      }).load();
+      }).load(function () {}, true);
       expect(JSON.parse(localStorage['epiceditor'])[testEl]).to(be, undefined);
     });
 
@@ -171,18 +179,21 @@ describe('EpicEditor.load.options', function () {
         basePath: '/epiceditor/'
       , container: testEl
       , clientSideStorage: true
-      }).load();
+      }).load(function () {}, true);
       expect(JSON.parse(localStorage['epiceditor'])[testEl]).toNot(be, undefined);
     });
+    
   });
+  
 });
 
 describe('EpicEditor.getElement', function () {
   var testEl = _createTestElement()
-    , editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load()
+    , editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load(function () {}, true)
     , wrapperIframe
     , innerWrapper;
-
+    
+  
   before(function () {
     wrapperIframe = document.getElementById(testEl).getElementsByTagName('iframe')[0];
     innerWrapper = _getIframeInnards(wrapperIframe);
@@ -194,6 +205,7 @@ describe('EpicEditor.getElement', function () {
 
   it('check that the "wrapper" is the div inside the wrapping iframe containing the other two iframes', function () {
     var innerWrapperDiv = innerWrapper.getElementById('epiceditor-wrapper');
+   
     expect(editor.getElement('wrapper')).to(be, innerWrapperDiv);
   });
 
@@ -221,11 +233,10 @@ describe('EpicEditor.getElement', function () {
 
 describe('EpicEditor.getFiles', function () {
   var testEl, editor, fooFile, barFile;
-
   before(function () {
     localStorage.clear();
     testEl = _createTestElement();
-    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load(function () {}, true);
     fooFile = 'foo' + _randomNum();
     barFile = 'bar' + _randomNum();
     editor.importFile(fooFile, 'foo');
@@ -258,7 +269,7 @@ describe('EpicEditor.open', function () {
     testEl = _createTestElement();
     openMeFile = 'openMe' + _randomNum();
     openMeLaterFile = 'openMeLater' + _randomNum();
-    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load(function () {}, true);
     editor.importFile(openMeLaterFile, 'open me later').importFile(openMeFile, 'open this file');
    
     createEventWasFired = false;
@@ -338,7 +349,7 @@ describe('EpicEditor.importFile', function () {
     editor = new EpicEditor(
       { basePath: '/epiceditor/'
       , container: testEl
-      }).load();
+      }).load(function () {}, true);
     fooFile = 'foo' + _randomNum();
     eventWasFired = false;
   });
@@ -405,7 +416,7 @@ describe('EpicEditor.exportFile', function () {
       { basePath: '/epiceditor/'
       , file: { defaultContent: '#foo\n\n##bar' }
       , container: testEl
-      }).load();
+      }).load(function () {}, true);
   });
 
   after(function () {
@@ -441,7 +452,7 @@ describe('EpicEditor.rename', function () {
 
   before(function () {
     testEl = _createTestElement()
-    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load(function () {}, true);
     oldName = 'foo' + _randomNum();
     newName = 'bar' + _randomNum();
     editor.importFile(oldName, 'testing...');
@@ -473,7 +484,7 @@ describe('EpicEditor.remove', function () {
 
   before(function () {
     testEl = _createTestElement();
-    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load(function () {}, true);
     removeMeFile = 'removeMe' + _randomNum();
     dontRemoveMeFile = 'dontRemoveMe' + _randomNum();
     editor.importFile(removeMeFile, 'hello world').importFile(dontRemoveMeFile, 'foo bar');
@@ -514,7 +525,7 @@ describe('EpicEditor.preview and EpicEditor.edit', function () {
 
   before(function () {
     testEl = _createTestElement();
-    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load(function () {}, true);
     
     previewEventWasCalled = false;
     editEventWasCalled = false;
@@ -577,7 +588,7 @@ describe('EpicEditor.unload', function () {
   before(function () {
     testEl = _createTestElement()
     editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl });
-    editor.load();
+    editor.load(function () {}, true);
 
     eventWasCalled = false;
 
@@ -616,7 +627,7 @@ describe('EpicEditor.unload', function () {
 
   it('check that unload and reloading and then requesting getElement doesn\'t return null as if it were unloaded', function () {
     editor.unload();
-    editor.load();
+    editor.load(function () {}, true);
     expect(editor.getElement('editor')).to(beTruthy);
   });
 
@@ -635,7 +646,7 @@ describe('EpicEditor.save', function () {
         { defaultContent: 'foo'
         , autoSave: false
         }
-      }).load();
+      }).load(function () {}, true);
 
     eventWasFired = false;
   });
@@ -698,7 +709,7 @@ describe('EpicEditor.on', function () {
 
   before(function () {
     testEl = _createTestElement();
-    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load(function () {}, true);
     hasBeenFired = false;
   });
 
@@ -731,7 +742,7 @@ describe('EpicEditor.emit', function () {
 
   before(function () {
     testEl = _createTestElement();
-    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load(function () {}, true);
     hasBeenFired = false;
   });
 
@@ -757,7 +768,7 @@ describe('EpicEditor.removeListener', function () {
 
   before(function () {
     testEl = _createTestElement();
-    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load(function () {}, true);
     hasBeenFired = false;
     callCount = 0;
     editor.on('foo', function () {
