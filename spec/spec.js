@@ -239,7 +239,9 @@ describe('EpicEditor.getFiles', function () {
   it('check to see if the correct number of files is returned when asking for all files', function () {
     var fileCount = 0;
     for (var x in editor.getFiles()) {
-      fileCount++;
+      if (editor.getFiles().hasOwnProperty(x)) {
+        fileCount++;
+      }
     }
     expect(fileCount).to(be, 3);
   });
