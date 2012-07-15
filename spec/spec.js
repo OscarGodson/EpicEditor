@@ -225,7 +225,11 @@ describe('EpicEditor.getFiles', function () {
   before(function () {
     localStorage.clear();
     testEl = _createTestElement();
-    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+    editor = new EpicEditor({
+      basePath: '/epiceditor/'
+    , container: testEl
+    , localStorageName: 'epiceditor-getFiles'
+    }).load();
     fooFile = 'foo' + _randomNum();
     barFile = 'bar' + _randomNum();
     editor.importFile(fooFile, 'foo');
