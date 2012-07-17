@@ -738,7 +738,12 @@
       // Check for alt+p and make sure were not in fullscreen - default shortcut to switch to preview
       if (isMod === true && e.keyCode == self.settings.shortcut.preview && !self.eeState.fullscreen) {
         e.preventDefault();
-        self.preview();
+        if (self.eeState.edit) {
+          self.preview();
+        }
+        else {
+          self.edit();
+        }
       }
       // Check for alt+o - default shortcut to switch back to the editor
       if (isMod === true && e.keyCode == self.settings.shortcut.edit) {
