@@ -69,8 +69,7 @@ var opts = {
   shortcut: {
     modifier: 18,
     fullscreen: 70,
-    preview: 80,
-    edit: 79
+    preview: 80
   }
 }
 var editor = new EpicEditor(opts);
@@ -155,13 +154,8 @@ var editor = new EpicEditor(opts);
   </tr>
   <tr>
     <td><code>shortcut.preview</code></td>
-    <td>The shortcut to open the previewer.</td>
+    <td>The shortcut to open and close the previewer.</td>
     <td><code>80</code> (<code>p</code> key)</td>
-  </tr>
-  <tr>
-    <td><code>shortcut.edit</code></td>
-    <td>The shortcut to open the editor.</td>
-    <td><code>79</code> (<code>o</code> key)</td>
   </tr>
 </table>
 

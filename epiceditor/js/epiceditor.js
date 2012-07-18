@@ -293,7 +293,6 @@
         , shortcut: { modifier: 18 // alt keycode
           , fullscreen: 70 // f keycode
           , preview: 80 // p keycode
-          , edit: 79 // o keycode
           }
         , parser: typeof marked == 'function' ? marked : null
         }
@@ -742,13 +741,6 @@
           self.preview();
         }
         else {
-          self.edit();
-        }
-      }
-      // Check for alt+o - default shortcut to switch back to the editor
-      if (isMod === true && e.keyCode == self.settings.shortcut.edit) {
-        e.preventDefault();
-        if (!self.eeState.fullscreen) {
           self.edit();
         }
       }
