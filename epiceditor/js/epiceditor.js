@@ -293,7 +293,6 @@
         , shortcut: { modifier: 18 // alt keycode
           , fullscreen: 70 // f keycode
           , preview: 80 // p keycode
-          , edit: 79 // o keycode
           }
         , parser: typeof marked == 'function' ? marked : null
         }
@@ -738,12 +737,10 @@
       // Check for alt+p and make sure were not in fullscreen - default shortcut to switch to preview
       if (isMod === true && e.keyCode == self.settings.shortcut.preview && !self.eeState.fullscreen) {
         e.preventDefault();
-        self.preview();
-      }
-      // Check for alt+o - default shortcut to switch back to the editor
-      if (isMod === true && e.keyCode == self.settings.shortcut.edit) {
-        e.preventDefault();
-        if (!self.eeState.fullscreen) {
+        if (self.eeState.edit) {
+          self.preview();
+        }
+        else {
           self.edit();
         }
       }
