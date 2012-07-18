@@ -154,7 +154,7 @@ var editor = new EpicEditor(opts);
   </tr>
   <tr>
     <td><code>shortcut.preview</code></td>
-    <td>The shortcut to open and close the previewer.</td>
+    <td>The shortcut to toggle the previewer.</td>
     <td><code>80</code> (<code>p</code> key)</td>
   </tr>
 </table>
