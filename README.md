@@ -54,6 +54,7 @@ var opts = {
   basePath: 'epiceditor',
   clientSideStorage: true,
   localStorageName: 'epiceditor',
+  useNativeFullsreen: true,
   parser: marked,
   file: {
     name: 'epiceditor',
