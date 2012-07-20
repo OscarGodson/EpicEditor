@@ -281,6 +281,7 @@
         , basePath: 'epiceditor'
         , clientSideStorage: true
         , localStorageName: 'epiceditor'
+        , useNativeFullscreen: true
         , file: { name: null
         , defaultContent: ''
           , autoSave: 100 // Set to false for no auto saving
@@ -397,15 +398,17 @@
       , mousePos = { y: -1, x: -1 }
       , _elementStates
       , _isInEdit
-      , nativeFs = document.body.webkitRequestFullScreen ? true : false
-      , _goFullscreen
-      , _exitFullscreen
+      , nativeFs = false
       , elementsToResize
       , fsElement
       , isMod = false
       , isCtrl = false
       , eventableIframes
       , i; // i is reused for loops
+
+    if (self.settings.useNativeFullscreen) {
+      nativeFs = document.body.webkitRequestFullScreen ? true : false
+    }
 
     callback = callback || function () {};
 
@@ -536,15 +539,13 @@
       });
     }
 
-    // TODO: Should probably have an ID since we only select one
-    // TODO: Should probably have an underscore?
     utilBtns = self.iframe.getElementById('epiceditor-utilbar');
 
     _elementStates = {}
-    _goFullscreen = function (el) {
+    self._goFullscreen = function (el) {
       
       if (self.eeState.fullscreen) {
-        _exitFullscreen(el);
+        self._exitFullscreen(el);
         return;
       }
 
@@ -624,14 +625,16 @@
       self.preview();
 
       self.editorIframeDocument.body.focus();
+
+      self.emit('fullscreenenter');
     };
 
-    _exitFullscreen = function (el) {
+    self._exitFullscreen = function (el) {
       _saveStyleState(self.element, 'apply', _elementStates.element);
       _saveStyleState(self.iframeElement, 'apply', _elementStates.iframeElement);
       _saveStyleState(self.editorIframe, 'apply', _elementStates.editorIframe);
       _saveStyleState(self.previewerIframe, 'apply', _elementStates.previewerIframe);
-     
+
       // We want to always revert back to the original styles in the CSS so,
       // if it's a fluid width container it will expand on resize and not get
       // stuck at a specific width after closing fullscreen.
@@ -639,7 +642,7 @@
       self.element.style.height = '';
 
       utilBtns.style.visibility = 'visible';
-      
+
       if (!nativeFs) {
         document.body.style.overflow = 'auto';
       }
@@ -649,7 +652,7 @@
       // Put the editor back in the right state
       // TODO: This is ugly... how do we make this nicer?
       self.eeState.fullscreen = false;
-      
+
       if (_isInEdit) {
         self.edit();
       }
@@ -658,6 +661,8 @@
       }
 
       resetWidth(elementsToResize);
+
+      self.emit('fullscreenexit');
     };
 
     // This setups up live previews by triggering preview() IF in fullscreen on keyup
@@ -684,7 +689,7 @@
         self.edit();
       }
       else if (targetClass.indexOf('epiceditor-fullscreen-btn') > -1) {
-        _goFullscreen(fsElement);
+        self._goFullscreen(fsElement);
       }
     });
 
@@ -692,7 +697,7 @@
     if (document.body.webkitRequestFullScreen) {
       fsElement.addEventListener('webkitfullscreenchange', function () {
         if (!document.webkitIsFullScreen) {
-          _exitFullscreen(fsElement);
+          self._exitFullscreen(fsElement);
         }
       }, false);
     }
@@ -747,7 +752,7 @@
       // Check for alt+f - default shortcut to make editor fullscreen
       if (isMod === true && e.keyCode == self.settings.shortcut.fullscreen) {
         e.preventDefault();
-        _goFullscreen(fsElement);
+        self._goFullscreen(fsElement);
       }
 
       // Set the modifier key to false once *any* key combo is completed
@@ -758,9 +763,7 @@
 
       // When a user presses "esc", revert everything!
       if (e.keyCode == 27 && self.eeState.fullscreen) {
-        if (!document.body.webkitRequestFullScreen) {
-          _exitFullscreen(fsElement);
-        }
+        self._exitFullscreen(fsElement);
       }
 
       // Check for ctrl + s (since a lot of people do it out of habit) and make it do nothing
@@ -911,6 +914,26 @@
     
     self.emit('preview');
     return self;
+  }
+
+  /**
+   * Puts the editor into fullscreen mode
+   * @returns {object} EpicEditor will be returned
+   */
+  EpicEditor.prototype.enterFullscreen = function () {
+    if (this.eeState.fullscreen) { return this; }
+    this._goFullscreen(this.iframeElement);
+    return this;
+  }
+
+  /**
+   * Closes fullscreen mode if opened
+   * @returns {object} EpicEditor will be returned
+   */
+  EpicEditor.prototype.exitFullscreen = function () {
+    if (!this.eeState.fullscreen) { return this; }
+    this._exitFullscreen(this.iframeElement);
+    return this;
   }
 
   /**

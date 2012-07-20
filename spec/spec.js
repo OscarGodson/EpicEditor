@@ -576,6 +576,85 @@ describe('EpicEditor.preview and EpicEditor.edit', function () {
   });
 });
 
+describe('EpicEditor.enterFullscreen', function () {
+  var testEl, editor, eventWasCalled;
+
+  before(function () {
+    testEl = _createTestElement();
+    editor = new EpicEditor({basePath: '/epiceditor/', container: testEl}).load();
+  });
+
+  after(function () {
+    editor.removeListener('fullscreenenter');
+    editor.unload();
+  });
+
+  // TODO: Figure out some way to actually test if fullscreen opened
+  it('check that calling enterFullscreen opens fullscreen', function () {
+    editor.enterFullscreen();
+    expect(editor.eeState.fullscreen).to(beTrue);
+  });
+
+  it('check that the fullscreen event is fired', function () {
+    editor.on('fullscreenenter', function () {
+      eventWasCalled = true;
+    });
+    editor.enterFullscreen();
+    expect(eventWasCalled).to(beTrue);
+  });
+
+  it('check that calling fullscreen twice only emits the event once', function () {
+    var count = 0;
+    editor.on('fullscreenenter', function () {
+      count++;
+    });
+    editor.enterFullscreen();
+    editor.enterFullscreen();
+    expect(count).to(be, 1);
+  });
+});
+
+describe('EpicEditor.exitFullscreen', function () {
+  var testEl, editor, eventWasCalled;
+
+  before(function () {
+    testEl = _createTestElement();
+    editor = new EpicEditor({basePath: '/epiceditor/', container: testEl}).load();
+  });
+
+  after(function () {
+    editor.removeListener('fullscreenexit');
+    editor.unload();
+  });
+
+  // TODO: Figure out some way to actually test if fullscreen opened
+  it('check that calling exitFullscreen closes fullscreen', function () {
+    editor.enterFullscreen();
+    editor.exitFullscreen();
+    expect(editor.eeState.fullscreen).to(beFalse);
+  });
+
+  it('check that the exit fullscreen event is fired', function () {
+    editor.on('fullscreenexit', function () {
+      eventWasCalled = true;
+    });
+    editor.enterFullscreen();
+    editor.exitFullscreen();
+    expect(eventWasCalled).to(beTrue);
+  });
+
+  it('check that calling exit fullscreen twice only emits the event once', function () {
+    var count = 0;
+    editor.on('fullscreenexit', function () {
+      count++;
+    });
+    editor.enterFullscreen();
+    editor.exitFullscreen();
+    editor.exitFullscreen();
+    expect(count).to(be, 1);
+  });
+});
+
 describe('EpicEditor.unload', function () {
 
   var testEl, editor, eventWasCalled;

@@ -103,6 +103,11 @@ var editor = new EpicEditor(opts);
     <td><code>epiceditor</code></td>
   </tr>
   <tr>
+    <td><code>useNativeFullscreen</code></td>
+    <td>Set to false to always use faux fullscreen (the same as what is used for unsupported browsers).</td>
+    <td><code>true</code></td>
+  </tr>
+  <tr>
     <td><code>parser</code></td>
     <td>[Marked](https://github.com/chjj/marked) is the only parser built into EpicEditor, but you can customize or toggle this by passing a parsing function to this option. For example:<br><code>parser: MyCustomParser.parse</code></td>
     <td><code>marked</code></td>
@@ -317,6 +322,27 @@ editBtn.onclick = function () {
   editor.edit();
 }
 ```
+### enterFullscreen()
+
+Puts the editor into fullscreen mode.
+
+**Note:** due to browser security restrictions, calling `enterFullscreen` programmatically
+like this will not trigger native fullscreen. Native fullscreen can only be triggered by a user interaction like mousedown or keyup.
+
+```javascript
+enterFullscreenBtn.onclick = function () {
+  editor.enterFullscreen();
+}
+```
+### exitFullscreen()
+
+Closes fullscreen mode.
+
+```javascript
+exitFullscreenBtn.onclick = function () {
+  editor.exitFullscreen();
+}
+```
 
 ## Events
 
@@ -359,6 +385,14 @@ created, removed, or updated. Below is a complete list of currently supported ev
   <tr>
     <td><code>edit</code></td>
     <td>Fires whenever the editor is opened (excluding fullscreen) via <code>edit()</code> or the edit button.</td>
+  </tr>
+  <tr>
+    <td><code>fullscreenenter</code></td>
+    <td>Fires whenever the editor opens in fullscreen via <code>fullscreen()</code> or the fullscreen button.</td>
+  </tr>
+  <tr>
+    <td><code>fullscreenexit</code></td>
+    <td>Fires whenever the editor closes in fullscreen via <code>fullscreen()</code> or the fullscreen button.</td>
   </tr>
   <tr>
     <td><code>save</code></td>
