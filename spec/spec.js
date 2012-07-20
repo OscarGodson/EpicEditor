@@ -218,6 +218,89 @@ describe('EpicEditor.getElement', function () {
   });
 });
 
+describe('EpicEditor.is', function () {
+  var testEl, editor, cleanup = true;
+
+  // cleanup = true is set because sometimes we dont even load the editor in the tests below
+  // and if you try to unload when it's not loaded you'll get an error
+
+  before(function () {
+    testEl = _createTestElement();
+    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl });
+  });
+
+  after(function () {
+    if (cleanup) {
+      editor.unload();
+    }
+    cleanup = true;
+  });
+
+  it('check that the loaded state returns FALSE when the editor ISN\'T loaded', function () {
+    cleanup = false;
+    expect(editor.is('loaded')).to(beFalse);
+  });
+
+  it('check that the loaded state returns TRUE when the editor IS loaded', function () {
+    editor.load();
+    expect(editor.is('loaded')).to(beTrue);
+  });
+
+  it('check that the unloaded state returns TRUE when the editor IS unloaded', function () {
+    cleanup = false;
+    editor.load();
+    editor.unload();
+    expect(editor.is('unloaded')).to(beTrue);
+  });
+
+  it('check that the unloaded state returns FALSE when the editor is reloaded', function () {
+    editor.load();
+    editor.unload();
+    editor.load();
+    expect(editor.is('unloaded')).to(beFalse);
+  });
+
+  it('check that the edit state returns TRUE when the editor is loaded by default', function () {
+    editor.load();
+    expect(editor.is('edit')).to(beTrue);
+  });
+
+  it('check that the edit state returns TRUE when the editor is switched from preview to edit again', function () {
+    editor.load();
+    editor.preview();
+    editor.edit();
+    expect(editor.is('edit')).to(beTrue);
+  });
+
+  it('check that the preview state returns TRUE when the editor is in preview mode', function () {
+    editor.load();
+    editor.preview();
+    expect(editor.is('preview')).to(beTrue);
+  });
+
+  it('check that the fullscreen state returns FALSE when the editor ISN\'T in fullscreen', function () {
+    editor.load();
+    expect(editor.is('fullscreen')).to(beFalse);
+  });
+
+  it('check that the fullscreen state returns TRUE when the editor is in fullscreen', function () {
+    editor.load();
+    editor.enterFullscreen();
+    expect(editor.is('fullscreen')).to(beTrue);
+  });
+
+  it('check that the fullscreen state returns FALSE when the editor goes from fullscreen to exit fullscreen', function () {
+    editor.load();
+    editor.enterFullscreen();
+    editor.exitFullscreen();
+    expect(editor.is('fullscreen')).to(beFalse);
+  });
+
+  it('check that a state that doesn\'t exist returns false', function () {
+    cleanup = false;
+    expect(editor.is('ballsdeep')).to(beFalse);
+  });
+});
 
 describe('EpicEditor.getFiles', function () {
   var testEl, editor, fooFile, barFile;
@@ -592,7 +675,7 @@ describe('EpicEditor.enterFullscreen', function () {
   // TODO: Figure out some way to actually test if fullscreen opened
   it('check that calling enterFullscreen opens fullscreen', function () {
     editor.enterFullscreen();
-    expect(editor.eeState.fullscreen).to(beTrue);
+    expect(editor._eeState.fullscreen).to(beTrue);
   });
 
   it('check that the fullscreen event is fired', function () {
@@ -631,7 +714,7 @@ describe('EpicEditor.exitFullscreen', function () {
   it('check that calling exitFullscreen closes fullscreen', function () {
     editor.enterFullscreen();
     editor.exitFullscreen();
-    expect(editor.eeState.fullscreen).to(beFalse);
+    expect(editor._eeState.fullscreen).to(beFalse);
   });
 
   it('check that the exit fullscreen event is fired', function () {

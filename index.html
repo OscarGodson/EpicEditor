@@ -198,6 +198,21 @@ var editor = new EpicEditor(opts);</code></pre>
 <pre><code class="lang-javascript">someBtn.onclick = function () {
   console.log(editor.getElement(&#39;editor&#39;).body.innerHTML); // Returns the editor&#39;s content
 }</code></pre>
+<h3>is(<em>state</em>)</h3>
+<p>Returns a boolean for the requested state. Useful when you need to know if the editor is loaded yet for example. Below is a list of supported states:
+
+</p>
+<ul>
+<li><code>loaded</code></li>
+<li><code>unloaded</code></li>
+<li><code>edit</code></li>
+<li><code>preview</code></li>
+<li><code>fullscreen</code></li>
+</ul>
+<pre><code class="lang-javascript">fullscreenBtn.onclick = function () {
+  if (!editor.is(&#39;loaded&#39;)) { return; }
+  editor.enterFullscreen();
+}</code></pre>
 <h3>open(<em>filename</em>)</h3>
 <p>Opens a file into the editor.
 
