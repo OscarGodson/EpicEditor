@@ -624,7 +624,7 @@ describe('EpicEditor.preview and EpicEditor.edit', function () {
   });
 
   it('check that the editor is currently displayed and not the previewer', function () {
-    expect(editor.getElement('editorIframe').style.display).to(be, '');
+    expect(editor.getElement('editorIframe').style.display).to(be, 'block');
   });
 
   it('check that the previewer can be tested to be hidden', function () {
