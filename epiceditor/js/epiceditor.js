@@ -120,7 +120,7 @@
     id = id || '';
     var headID = context.getElementsByTagName("head")[0]
       , cssNode = context.createElement('link');
-    
+
     _applyAttrs(cssNode, {
       type: 'text/css'
     , id: id
@@ -132,6 +132,74 @@
 
     headID.appendChild(cssNode);
   }
+
+
+  // Find offset
+  function findOffset(root, ss) {
+    if (!root) {
+      return null;
+    }
+
+    var offset = 0,
+      element = root,
+      container;
+
+    do {
+      container = element;
+      element = element.firstChild;
+
+      if (element) {
+        do {
+          var len = element.textContent.length;
+
+          if (offset <= ss && offset + len > ss) {
+            break;
+          }
+
+          offset += len;
+        } while (element = element.nextSibling);
+      }
+
+      if (!element) {
+        // It's the container's lastChild
+        break;
+      }
+    } while (element && element.hasChildNodes() && element.nodeType != 3);
+
+    if (element) {
+      return {
+        element: element,
+        offset: ss - offset
+      };
+    }
+    else if (container) {
+      element = container;
+
+      while (element && element.lastChild) {
+        element = element.lastChild;
+      }
+
+      if (element.nodeType === 3) {
+        return {
+          element: element,
+          offset: element.textContent.length
+        };
+      }
+      else {
+        return {
+          element: element,
+          offset: 0
+        };
+      }
+    }
+
+    return {
+      element: root,
+      offset: 0,
+      error: true
+    };
+  }
+
 
   // Simply replaces a class (o), to a new class (n) on an element provided (e)
   function _replaceClass(e, o, n) {
@@ -145,29 +213,11 @@
 
   // Grabs the text from an element and preserves whitespace
   function _getText(el) {
-    var theText;
-    if (document.body.innerText) {
-      theText = el.innerText;
-    }
-    else {
-      // First replace <br>s before replacing the rest of the HTML
-      theText = el.innerHTML.replace(/<br>/gi, "\n");
-      // Now we can clean the HTML
-      theText = theText.replace(/<(?:.|\n)*?>/gm, '');
-      // Now fix HTML entities
-      theText = theText.replace(/&lt;/gi, '<');
-      theText = theText.replace(/&gt;/gi, '>');
-    }
-    return theText;
+    return el.textContent;
   }
 
   function _setText(el, content) {
-    if (document.body.innerText) {
-      el.innerText = content;
-    }
-    else {
-      el.innerHTML = content.replace(/\n/g, "<br>");
-    }
+    el.textContent = content;
     return true;
   }
 
@@ -317,7 +367,7 @@
     else if (typeof self.settings.container == 'object') {
       self.element = self.settings.container;
     }
-    
+
     // Figure out the file name. If no file name is given we'll use the ID.
     // If there's no ID either we'll use a namespaced file name that's incremented
     // based on the calling order. As long as it doesn't change, drafts will be saved.
@@ -434,7 +484,7 @@
                     '<img width="30" src="' + this.settings.basePath + '/images/fullscreen.png" title="Enter Fullscreen" class="epiceditor-fullscreen-btn">' +
                   '</div>' +
                 '</div>'
-    
+
     // The previewer is just an empty box for the generated HTML to go into
     , previewer: '<div id="epiceditor-preview"></div>'
     };
@@ -457,7 +507,7 @@
     // Write an iframe and then select it for the editor
     self.element.innerHTML = '<iframe scrolling="no" frameborder="0" id= "' + self._instanceId + '"></iframe>';
     iframeElement = document.getElementById(self._instanceId);
-    
+
     // Store a reference to the iframeElement itself
     self.iframeElement = iframeElement;
 
@@ -477,7 +527,7 @@
     // Need something for... you guessed it, Firefox
     self.editorIframeDocument.write('');
     self.editorIframeDocument.close();
-    
+
     // Setup the previewer iframe
     self.previewerIframeDocument = _getIframeInnards(self.previewerIframe);
     self.previewerIframeDocument.open();
@@ -494,15 +544,15 @@
     widthDiff = _outerWidth(self.element) - self.element.offsetWidth;
     heightDiff = _outerHeight(self.element) - self.element.offsetHeight;
     elementsToResize = [self.iframeElement, self.editorIframe, self.previewerIframe];
-     
+
     setupIframeStyles(elementsToResize);
 
     // Insert Base Stylesheet
     _insertCSSLink(self.settings.basePath + self.settings.theme.base, self.iframe, 'theme');
-    
+
     // Insert Editor Stylesheet
     _insertCSSLink(self.settings.basePath + self.settings.theme.editor, self.editorIframeDocument, 'theme');
-    
+
     // Insert Previewer Stylesheet
     _insertCSSLink(self.settings.basePath + self.settings.theme.preview, self.previewerIframeDocument, 'theme');
 
@@ -512,9 +562,9 @@
     // Now grab the editor and previewer for later use
     self.editor = self.editorIframeDocument.body;
     self.previewer = self.previewerIframeDocument.getElementById('epiceditor-preview');
-   
+
     self.editor.contentEditable = true;
- 
+
     // Firefox's <body> gets all fucked up so, to be sure, we need to hardcode it
     self.iframe.body.style.height = this.element.offsetHeight + 'px';
 
@@ -543,7 +593,7 @@
 
     _elementStates = {}
     self._goFullscreen = function (el) {
-      
+
       if (self.eeState.fullscreen) {
         self._exitFullscreen(el);
         return;
@@ -676,7 +726,7 @@
         }
       }, 250);
     });
-    
+
     fsElement = self.iframeElement;
 
     // Sets up the onclick event on utility buttons
@@ -733,11 +783,20 @@
       }
       mousePos = { y: e.pageY, x: e.pageX };
     }
- 
+
     // Add keyboard shortcuts for convenience.
     function shortcutHandler(e) {
       if (e.keyCode == self.settings.shortcut.modifier) { isMod = true } // check for modifier press(default is alt key), save to var
       if (e.keyCode == 17) { isCtrl = true } // check for ctrl/cmnd press, in order to catch ctrl/cmnd + s
+
+      // Handle enter key for newlines. Don't let browsers handle it.
+      if (e.keyCode == 13) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        self.newline();
+        shortcutUpHandler();
+      }
 
       // Check for alt+p and make sure were not in fullscreen - default shortcut to switch to preview
       if (isMod === true && e.keyCode == self.settings.shortcut.preview && !self.eeState.fullscreen) {
@@ -778,17 +837,42 @@
         self.save();
         e.preventDefault();
       }
-
     }
-    
+
     function shortcutUpHandler(e) {
-      if (e.keyCode == self.settings.shortcut.modifier) { isMod = false }
-      if (e.keyCode == 17) { isCtrl = false }
+      var keyCode = e && e.keyCode || 0;
+
+      if ([
+        9, 91, 93, 16, 17, 18,
+        20, // caps lock
+        13, // Enter (handled by keydown)
+        112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, // F[0-12]
+        27 // Esc
+      ].indexOf(keyCode) > -1) {
+        return;
+      }
+
+      if (keyCode == self.settings.shortcut.modifier) { isMod = false }
+      if (keyCode == 17) { isCtrl = false }
+
+      if (keyCode !== 37 && keyCode !== 39) {
+        var content = _getText(self.editorIframeDocument.body);
+        var ss = self.selectionStart;
+        var se = self.selectionEnd;
+
+        if (!/\n$/.test(content)) {
+          self.editorIframeDocument.body.innerHTML = self.editorIframeDocument.body.innerHTML + '\n';
+        }
+
+        if (ss != null || se !== null) {
+          self.setSelectionRange(ss, se);
+        }
+      }
     }
 
     // Hide and show the util bar based on mouse movements
     eventableIframes = [self.previewerIframeDocument, self.editorIframeDocument];
-    
+
     for (i = 0; i < eventableIframes.length; i++) {
       eventableIframes[i].addEventListener('mousemove', function (e) {
         utilBarHandler(e);
@@ -800,7 +884,7 @@
         shortcutUpHandler(e);
       });
       eventableIframes[i].addEventListener('keydown', function (e) {
-        shortcutHandler(e);
+        return shortcutHandler(e);
       });
     }
 
@@ -870,11 +954,11 @@
     self.eeState.loaded = false;
     self.eeState.unloaded = true;
     callback = callback || function () {};
-    
+
     if (self.saveInterval) {
       window.clearInterval(self.saveInterval);
     }
-    
+
     callback.call(this);
     self.emit('unload');
     return self;
@@ -887,7 +971,7 @@
    */
   EpicEditor.prototype.preview = function (theme) {
     var self = this;
-    
+
     theme = theme || self.settings.basePath + self.settings.theme.preview;
 
     _replaceClass(self.getElement('wrapper'), 'epiceditor-edit-mode', 'epiceditor-preview-mode');
@@ -899,10 +983,10 @@
     else if (self.previewerIframeDocument.getElementById('theme').name !== theme) {
       self.previewerIframeDocument.getElementById('theme').href = theme;
     }
-    
+
     // Add the generated HTML into the previewer
     self.previewer.innerHTML = self.exportFile(null, 'html');
-    
+
     // Hide the editor and display the previewer
     if (!self.eeState.fullscreen) {
       self.editorIframe.style.display = 'none';
@@ -911,7 +995,7 @@
       self.eeState.edit = false;
       self.previewerIframe.focus();
     }
-    
+
     self.emit('preview');
     return self;
   }
@@ -950,6 +1034,127 @@
     self.editorIframe.focus();
     self.emit('edit');
     return this;
+  }
+
+  /**
+   * Get index of current selection start
+   * @returns {Number}
+   */
+  Object.defineProperty(EpicEditor.prototype, 'selectionStart', {
+    get: function () {
+      var iframeDocument = this.editorIframeDocument;
+      var body = this.editorIframeDocument.body;
+      var selection = this.getSelection();
+
+      if (selection.rangeCount) {
+        var range = selection.getRangeAt(0);
+        var element = range.startContainer;
+        var container = element;
+        var offset = range.startOffset;
+
+        if (!(body.compareDocumentPosition(element) & 0x10)) {
+          return 0;
+        }
+
+        do {
+          while (element = element.previousSibling) {
+            if (element.textContent) {
+              offset += element.textContent.length;
+            }
+          }
+
+          element = container = container.parentNode;
+        } while (element && element != body);
+
+        return offset;
+      } else {
+        return 0;
+      }
+    },
+
+    enumerable: true,
+    configurable: true
+  });
+
+  /**
+   * Get index of current selection end
+   * @returns {Number}
+   */
+  Object.defineProperty(EpicEditor.prototype, 'selectionEnd', {
+    get: function () {
+      var selection = this.getSelection();
+
+      if (selection.rangeCount) {
+        return this.selectionStart + (selection.getRangeAt(0) + '').length;
+      }
+
+      return 0;
+    },
+
+    enumerable: true,
+    configurable: true
+  });
+
+  /**
+   * Get current selection
+   * @returns {Object|Null}
+   */
+  EpicEditor.prototype.getSelection = function () {
+    return this.editorIframeDocument.getSelection();
+  }
+
+  /**
+   * Set selection range
+   * @param {number} selection start
+   * @param {number} selection end
+   */
+  EpicEditor.prototype.setSelectionRange = function (ss, se) {
+    var iframeDocument = this.editorIframeDocument;
+    var body = iframeDocument.body;
+    var range = iframeDocument.createRange();
+    var offset = findOffset(body, ss);
+
+    range.setStart(offset.element, offset.offset);
+
+    // When there's an actual range of selection
+    if (se && se != ss) {
+      offset = findOffset(body, se);
+    }
+
+    range.setEnd(offset.element, offset.offset);
+
+    var selection = this.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
+
+  /**
+   * Insert newline at the current cursor position
+   */
+  EpicEditor.prototype.newline = function () {
+    var body = this.editorIframeDocument.body;
+    var text = _getText(body);
+    var ss = this.selectionStart;
+    var se = this.selectionEnd;
+    var before = text.slice(0, ss);
+    var after = text.slice(se);
+    var selection = text.slice(ss, se);
+    var lf = before.lastIndexOf('\n') + 1;
+    var indent = (before.slice(lf).match(/^\s+/) || [''])[0];
+
+    // Insert newline, and remember indentation
+    before += '\n' + indent;
+    selection = '';
+
+    // The effect here is:
+    //  delete selection, add newline and indentation
+    _setText(body, before + selection + after);
+
+    // Restore the cursor position
+    ss += indent.length + 1;
+    se = ss;
+
+    this.setSelectionRange(ss, se);
   }
 
   /**
@@ -1101,7 +1306,7 @@
     content = content || '';
     kind = kind || 'md';
     meta = meta || {};
-  
+
     if (JSON.parse(this._storage[self.settings.localStorageName])[name] === undefined) {
       isNew = true;
     }
@@ -1136,7 +1341,7 @@
 
     name = name || self.settings.file.name;
     kind = kind || 'text';
-   
+
     file = self.getFiles(name);
 
     // If the file doesn't exist just return early with undefined
@@ -1145,7 +1350,7 @@
     }
 
     content = file.content;
-   
+
     switch (kind) {
     case 'html':
       // Get this, 2 spaces in a content editable actually converts to:

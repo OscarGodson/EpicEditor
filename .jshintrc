@@ -1,6 +1,6 @@
 {
     "asi"             : true      // if automatic semicolon insertion should be tolerated
-  , "bitwise"         : true      // if bitwise operators should not be allowed
+  , "bitwise"         : false     // if bitwise operators should not be allowed
   , "boss"            : true      // if advanced usage of assignments should be allowed
   , "browser"         : true      // if the standard browser globals should be predefined
   , "couch"           : false     // if CouchDB globals should be predefined

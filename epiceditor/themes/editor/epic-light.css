@@ -7,6 +7,9 @@ body {
   font-size:14px;
   padding:10px;
   line-height:1.35em;
+  white-space: pre;
+  word-wrap: normal
+  overflow: visible;
   margin:0;
   padding:0;
 }
