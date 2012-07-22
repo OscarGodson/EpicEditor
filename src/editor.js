@@ -1279,7 +1279,7 @@
 
   EpicEditor.version = '@VERSION';
 
-  // Used to store information to be shared acrossed editors
+  // Used to store information to be shared across editors
   EpicEditor._data = {};
 
   window.EpicEditor = EpicEditor;
