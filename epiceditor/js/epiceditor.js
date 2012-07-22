@@ -392,6 +392,10 @@
    * @returns {object} EpicEditor will be returned
    */
   EpicEditor.prototype.load = function (callback) {
+
+    // Get out early if it's already loaded
+    if (this.is('loaded')) { return this; }
+
     // TODO: Gotta get the privates with underscores!
     // TODO: Gotta document what these are for...
     var self = this
