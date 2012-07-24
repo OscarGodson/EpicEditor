@@ -922,8 +922,10 @@
    * @returns {object} EpicEditor will be returned
    */
   EpicEditor.prototype.preview = function (theme) {
-    var self = this;
-    
+    var self = this
+      , x
+      , anchors;
+
     theme = theme || self.settings.basePath + self.settings.theme.preview;
 
     _replaceClass(self.getElement('wrapper'), 'epiceditor-edit-mode', 'epiceditor-preview-mode');
@@ -935,10 +937,21 @@
     else if (self.previewerIframeDocument.getElementById('theme').name !== theme) {
       self.previewerIframeDocument.getElementById('theme').href = theme;
     }
-    
+
     // Add the generated HTML into the previewer
     self.previewer.innerHTML = self.exportFile(null, 'html');
-    
+
+    // Because we have a <base> tag so all links open in a new window we
+    // need to prevent hash links from opening in a new window
+    anchors = self.previewer.getElementsByTagName('a');
+    for (x in anchors) {
+      // If the link is a hash AND the links hostname is the same as the
+      // current window's hostname (same page) then set the target to self
+      if (anchors[x].hash && anchors[x].hostname == window.location.hostname) {
+        anchors[x].target = '_self';
+      }
+    }
+
     // Hide the editor and display the previewer
     if (!self.is('fullscreen')) {
       self.editorIframe.style.display = 'none';
