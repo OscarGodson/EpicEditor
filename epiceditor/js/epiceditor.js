@@ -190,6 +190,18 @@
   }
 
   /**
+   * Same as the isIE(), but simply returns a boolean
+   * THIS IS TERRIBLE AND IS ONLY USED BECAUSE FULLSCREEN IN SAFARI IS BORKED
+   * If some other engine uses WebKit and has support for fullscreen they
+   * probably wont get native fullscreen until Safari's fullscreen is fixed
+   * @returns {Boolean} true if Safari
+   */
+  function _isSafari() {
+    var n = window.navigator;
+    return n.userAgent.indexOf('Safari') > -1 && n.userAgent.indexOf('Chrome') == -1;
+  }
+
+  /**
    * Determines if supplied value is a function
    * @param {object} object to determine type
    */
@@ -421,6 +433,12 @@
 
     if (self.settings.useNativeFullscreen) {
       nativeFs = document.body.webkitRequestFullScreen ? true : false
+    }
+
+    // Fucking Safari's native fullscreen works terribly
+    // REMOVE THIS IF SAFARI 6 WORKS BETTER
+    if (_isSafari()) {
+      nativeFs = false;
     }
 
     // It opens edit mode by default (for now);
@@ -1279,7 +1297,7 @@
 
   EpicEditor.version = '0.1.1';
 
-  // Used to store information to be shared acrossed editors
+  // Used to store information to be shared across editors
   EpicEditor._data = {};
 
   window.EpicEditor = EpicEditor;
