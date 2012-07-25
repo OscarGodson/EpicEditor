@@ -341,6 +341,7 @@
           , editor: '/themes/editor/epic-dark.css'
           }
         , focusOnLoad: false
+        , smartIndent: true
         , shortcut: { modifier: 18 // alt keycode
           , fullscreen: 70 // f keycode
           , preview: 80 // p keycode
@@ -794,7 +795,7 @@
         e.preventDefault();
         e.stopPropagation();
 
-        self.newline();
+        self.insertNewLine();
         shortcutUpHandler();
       }
 
@@ -1119,29 +1120,54 @@
   }
 
   /**
-   * Insert newline at the current cursor position
+   * Insert new line and respect smart indentation if the option is present
    */
-  EpicEditor.prototype.newline = function () {
+  EpicEditor.prototype.insertNewLine = function () {
+    if (this.settings.smartIndent === false) {
+      this.insertText('\n');
+    }
+    else {
+      var body = this.editorIframeDocument.body;
+      var content = _getText(body);
+      var ss = this.selectionStart();
+      var before = content.slice(0, ss);
+      var lf = before.lastIndexOf('\n') + 1;
+      var indent = (before.slice(lf).match(/^\s+/) || [''])[0];
+
+      this.insertText('\n' + indent);
+    }
+  }
+
+  /**
+   * Insert text at the current cursor position. If selection is not empty, it
+   * will replace the selected text.
+   * @param {string} Text to insert
+   */
+  EpicEditor.prototype.insertText = function (text) {
+    if (!text || text.length === 0) {
+      return;
+    }
+
     var body = this.editorIframeDocument.body;
-    var text = _getText(body);
+    var content = _getText(body);
     var ss = this.selectionStart();
     var se = this.selectionEnd();
-    var before = text.slice(0, ss);
-    var after = text.slice(se);
-    var selection = text.slice(ss, se);
+    var before = content.slice(0, ss);
+    var after = content.slice(se);
+    var selection = content.slice(ss, se);
     var lf = before.lastIndexOf('\n') + 1;
     var indent = (before.slice(lf).match(/^\s+/) || [''])[0];
 
-    // Insert newline, and remember indentation
-    before += '\n' + indent;
+    // Insert text at selection
+    before += text;
     selection = '';
 
     // The effect here is:
-    //  delete selection, add newline and indentation
+    //  delete selection, add new text
     _setText(body, before + selection + after);
 
     // Restore the cursor position
-    ss += indent.length + 1;
+    ss += indent.length + text.length;
     se = ss;
 
     this.setSelectionRange(ss, se);
