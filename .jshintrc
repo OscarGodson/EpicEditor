@@ -35,7 +35,7 @@
   , "nonstandard"     : true      // if non-standard (but widely adopted) globals should be predefined
   , "nomen"           : false     // if names should be checked
   , "onecase"         : true      // if one case switch statements should be allowed
-  , "onevar"          : false     // if only one var statement per function should be allowed
+  , "onevar"          : true      // if only one var statement per function should be allowed
   , "passfail"        : false     // if the scan should stop on first error
   , "plusplus"        : false     // if increment/decrement should not be allowed
   , "proto"           : false     // if the `__proto__` property should be allowed

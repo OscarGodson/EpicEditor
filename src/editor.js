@@ -140,9 +140,10 @@
       return null;
     }
 
-    var offset = 0,
-      element = root,
-      container;
+    var offset = 0
+      , element = root
+      , container
+      , len;
 
     do {
       container = element;
@@ -150,7 +151,7 @@
 
       if (element) {
         do {
-          var len = element.textContent.length;
+          len = element.textContent.length;
 
           if (offset <= ss && offset + len > ss) {
             break;
@@ -841,7 +842,10 @@
     }
 
     function shortcutUpHandler(e) {
-      var keyCode = e && e.keyCode || 0;
+      var keyCode = e && e.keyCode || 0
+        , content
+        , ss
+        , se;
 
       if ([
         9, 91, 93, 16, 17, 18,
@@ -857,9 +861,9 @@
       if (keyCode == 17) { isCtrl = false }
 
       if (keyCode !== 37 && keyCode !== 39) {
-        var content = _getText(self.editorIframeDocument.body);
-        var ss = self.selectionStart();
-        var se = self.selectionEnd();
+        content = _getText(self.editorIframeDocument.body);
+        ss = self.selectionStart();
+        se = self.selectionEnd();
 
         if (!/\n$/.test(content)) {
           self.editorIframeDocument.body.innerHTML = self.editorIframeDocument.body.innerHTML + '\n';
@@ -1042,15 +1046,19 @@
    * @returns {Number}
    */
   EpicEditor.prototype.selectionStart = function () {
-    var iframeDocument = this.editorIframeDocument;
-    var body = this.editorIframeDocument.body;
-    var selection = this.getSelection();
+    var iframeDocument = this.editorIframeDocument
+      , body = this.editorIframeDocument.body
+      , selection = this.getSelection()
+      , range
+      , element
+      , container
+      , offset;
 
     if (selection.rangeCount) {
-      var range = selection.getRangeAt(0);
-      var element = range.startContainer;
-      var container = element;
-      var offset = range.startOffset;
+      range = selection.getRangeAt(0);
+      element = range.startContainer;
+      container = element;
+      offset = range.startOffset;
 
       if (!(body.compareDocumentPosition(element) & 0x10)) {
         return 0;
@@ -1100,10 +1108,11 @@
    * @param {number} selection end
    */
   EpicEditor.prototype.setSelectionRange = function (ss, se) {
-    var iframeDocument = this.editorIframeDocument;
-    var body = iframeDocument.body;
-    var range = iframeDocument.createRange();
-    var offset = findOffset(body, ss);
+    var iframeDocument = this.editorIframeDocument
+      , body = iframeDocument.body
+      , range = iframeDocument.createRange()
+      , offset = findOffset(body, ss)
+      , selection;
 
     range.setStart(offset.element, offset.offset);
 
@@ -1114,7 +1123,7 @@
 
     range.setEnd(offset.element, offset.offset);
 
-    var selection = this.getSelection();
+    selection = this.getSelection();
     selection.removeAllRanges();
     selection.addRange(range);
   }
@@ -1127,12 +1136,12 @@
       this.insertText('\n');
     }
     else {
-      var body = this.editorIframeDocument.body;
-      var content = _getText(body);
-      var ss = this.selectionStart();
-      var before = content.slice(0, ss);
-      var lf = before.lastIndexOf('\n') + 1;
-      var indent = (before.slice(lf).match(/^\s+/) || [''])[0];
+      var body = this.editorIframeDocument.body
+        , content = _getText(body)
+        , ss = this.selectionStart()
+        , before = content.slice(0, ss)
+        , lf = before.lastIndexOf('\n') + 1
+        , indent = (before.slice(lf).match(/^\s+/) || [''])[0];
 
       this.insertText('\n' + indent);
     }
@@ -1148,15 +1157,15 @@
       return;
     }
 
-    var body = this.editorIframeDocument.body;
-    var content = _getText(body);
-    var ss = this.selectionStart();
-    var se = this.selectionEnd();
-    var before = content.slice(0, ss);
-    var after = content.slice(se);
-    var selection = content.slice(ss, se);
-    var lf = before.lastIndexOf('\n') + 1;
-    var indent = (before.slice(lf).match(/^\s+/) || [''])[0];
+    var body = this.editorIframeDocument.body
+      , content = _getText(body)
+      , ss = this.selectionStart()
+      , se = this.selectionEnd()
+      , before = content.slice(0, ss)
+      , after = content.slice(se)
+      , selection = content.slice(ss, se)
+      , lf = before.lastIndexOf('\n') + 1
+      , indent = (before.slice(lf).match(/^\s+/) || [''])[0];
 
     // Insert text at selection
     before += text;

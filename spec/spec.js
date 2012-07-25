@@ -10,7 +10,7 @@ function _getIframeInnards(el) {
 function _createTestElement() {
   var testEl = document.createElement('div')
     , testId = 'epiceditor-' + (new Date().getTime()) + '-' + (Math.round(Math.random() * 1000));
-  
+
   testEl.id = testId;
   document.body.appendChild(testEl);
   return testId;
@@ -55,7 +55,7 @@ describe('EpicEditor.load', function () {
     it('make sure there\'s one wrapping iframe', function () {
       expect(editorIframe.length).to(be, 1);
     });
-    
+
     it('make sure there\'s two inner iframes', function () {
       expect(editorInnards.getElementsByTagName('iframe').length).to(be, 2);
     });
@@ -93,7 +93,7 @@ describe('EpicEditor.load.options', function () {
         , container: testEl
         }
       ).load();
-      
+
       expect(document.getElementById(testEl).getElementsByTagName('iframe').length).to(be, 1);
     });
 
@@ -115,7 +115,7 @@ describe('EpicEditor.load.options', function () {
     });
 
     it('check that the localStorage key is correctly named for DOM elements by using the ID of the element', function () {
-      
+
       // This is all for a one off test. Creates an element with a different class name and ID
       // and we need to be able to get the name of the ID and class later
       var tempEl = document.createElement('div')
@@ -241,8 +241,10 @@ describe('EpicEditor.getFiles', function () {
   });
 
   it('check to see if the correct number of files is returned when asking for all files', function () {
-    var fileCount = 0;
-    for (var x in editor.getFiles()) {
+    var fileCount = 0
+      , x;
+
+    for (x in editor.getFiles()) {
       if (editor.getFiles().hasOwnProperty(x)) {
         fileCount++;
       }
@@ -266,7 +268,7 @@ describe('EpicEditor.open', function () {
     openMeLaterFile = 'openMeLater' + _randomNum();
     editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
     editor.importFile(openMeLaterFile, 'open me later').importFile(openMeFile, 'open this file');
-   
+
     createEventWasFired = false;
     fooFile = 'foo' + _randomNum();
 
@@ -287,7 +289,7 @@ describe('EpicEditor.open', function () {
   it('check that the openMeLater file was created successfully', function () {
     expect(editor.exportFile(openMeLaterFile)).to(be, 'open me later');
   });
-  
+
   it('check that the file is open in the editor', function () {
     expect(editor.getElement('editor').body.innerHTML).to(be, 'open this file');
   });
@@ -328,7 +330,7 @@ describe('EpicEditor.open', function () {
     });
 
     editor.open(fooFile); // change the file (should fired create)
-    
+
     editor.open(testEl); // this one should fire read
 
     expect(eventWasFired).to(be, true);
@@ -367,7 +369,7 @@ describe('EpicEditor.importFile', function () {
     editor.importFile(null, 'foo');
     expect(editor.exportFile(testEl)).to(be, 'foo');
   });
-  
+
   it('check that importFile fires a create an event when importing a new file', function () {
     editor.on('create', function () {
       eventWasFired = true;
@@ -406,7 +408,7 @@ describe('EpicEditor.exportFile', function () {
 
   before(function () {
     testEl = _createTestElement();
-    
+
     editor = new EpicEditor(
       { basePath: '/epiceditor/'
       , file: { defaultContent: '#foo\n\n##bar' }
@@ -474,7 +476,7 @@ describe('EpicEditor.rename', function () {
 
 
 describe('EpicEditor.remove', function () {
-  
+
   var testEl, editor, removeMeFile, dontRemoveMeFile, eventWasFired;
 
   before(function () {
@@ -484,7 +486,7 @@ describe('EpicEditor.remove', function () {
     dontRemoveMeFile = 'dontRemoveMe' + _randomNum();
     editor.importFile(removeMeFile, 'hello world').importFile(dontRemoveMeFile, 'foo bar');
   });
- 
+
   after(function () {
     editor.unload();
   });
@@ -515,20 +517,20 @@ describe('EpicEditor.remove', function () {
 });
 
 describe('EpicEditor.preview and EpicEditor.edit', function () {
-  
+
   var testEl, editor, previewEventWasCalled, editEventWasCalled;
 
   before(function () {
     testEl = _createTestElement();
     editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
-    
+
     previewEventWasCalled = false;
     editEventWasCalled = false;
-    
+
     editor.on('preview', function () {
       previewEventWasCalled = true;
     });
-    
+
     editor.on('edit', function () {
       editEventWasCalled = true;
     });
@@ -562,7 +564,7 @@ describe('EpicEditor.preview and EpicEditor.edit', function () {
     editor.edit();
     expect(editEventWasCalled).to(be, true);
   });
-  
+
   it('check that switching from preview back to edit makes the editor visible', function () {
     editor.preview();
     editor.edit();
@@ -708,9 +710,9 @@ describe('EpicEditor.unload', function () {
 });
 
 describe('EpicEditor.save', function () {
-  
+
   var testEl, editor, eventWasFired;
-  
+
   before(function () {
     testEl = _createTestElement();
     editor = new EpicEditor(
@@ -778,7 +780,7 @@ describe('EpicEditor.save', function () {
 });
 
 describe('EpicEditor.on', function () {
-  
+
   var testEl, editor, hasBeenFired;
 
   before(function () {
@@ -811,7 +813,7 @@ describe('EpicEditor.on', function () {
 });
 
 describe('EpicEditor.emit', function () {
-   
+
   var testEl, editor, hasBeenFired;
 
   before(function () {
