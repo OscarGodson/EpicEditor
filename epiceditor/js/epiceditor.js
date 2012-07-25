@@ -857,8 +857,8 @@
 
       if (keyCode !== 37 && keyCode !== 39) {
         var content = _getText(self.editorIframeDocument.body);
-        var ss = self.selectionStart;
-        var se = self.selectionEnd;
+        var ss = self.selectionStart();
+        var se = self.selectionEnd();
 
         if (!/\n$/.test(content)) {
           self.editorIframeDocument.body.innerHTML = self.editorIframeDocument.body.innerHTML + '\n';
@@ -1040,60 +1040,50 @@
    * Get index of current selection start
    * @returns {Number}
    */
-  Object.defineProperty(EpicEditor.prototype, 'selectionStart', {
-    get: function () {
-      var iframeDocument = this.editorIframeDocument;
-      var body = this.editorIframeDocument.body;
-      var selection = this.getSelection();
+  EpicEditor.prototype.selectionStart = function () {
+    var iframeDocument = this.editorIframeDocument;
+    var body = this.editorIframeDocument.body;
+    var selection = this.getSelection();
 
-      if (selection.rangeCount) {
-        var range = selection.getRangeAt(0);
-        var element = range.startContainer;
-        var container = element;
-        var offset = range.startOffset;
+    if (selection.rangeCount) {
+      var range = selection.getRangeAt(0);
+      var element = range.startContainer;
+      var container = element;
+      var offset = range.startOffset;
 
-        if (!(body.compareDocumentPosition(element) & 0x10)) {
-          return 0;
-        }
-
-        do {
-          while (element = element.previousSibling) {
-            if (element.textContent) {
-              offset += element.textContent.length;
-            }
-          }
-
-          element = container = container.parentNode;
-        } while (element && element != body);
-
-        return offset;
-      } else {
+      if (!(body.compareDocumentPosition(element) & 0x10)) {
         return 0;
       }
-    },
 
-    enumerable: true,
-    configurable: true
-  });
+      do {
+        while (element = element.previousSibling) {
+          if (element.textContent) {
+            offset += element.textContent.length;
+          }
+        }
+
+        element = container = container.parentNode;
+      } while (element && element != body);
+
+      return offset;
+    } else {
+      return 0;
+    }
+  }
 
   /**
    * Get index of current selection end
    * @returns {Number}
    */
-  Object.defineProperty(EpicEditor.prototype, 'selectionEnd', {
-    get: function () {
-      var selection = this.getSelection();
+  EpicEditor.prototype.selectionEnd = function () {
+    var selection = this.getSelection();
 
-      if (selection.rangeCount) {
-        return this.selectionStart + (selection.getRangeAt(0) + '').length;
-      }
+    if (selection.rangeCount) {
+      return this.selectionStart() + (selection.getRangeAt(0) + '').length;
+    }
 
-      return 0;
-    },
-
-    enumerable: true,
-    configurable: true
-  });
+    return 0;
+  }
 
   /**
    * Get current selection
@@ -1134,8 +1124,8 @@
   EpicEditor.prototype.newline = function () {
     var body = this.editorIframeDocument.body;
     var text = _getText(body);
-    var ss = this.selectionStart;
-    var se = this.selectionEnd;
+    var ss = this.selectionStart();
+    var se = this.selectionEnd();
     var before = text.slice(0, ss);
     var after = text.slice(se);
     var selection = text.slice(ss, se);
