@@ -111,7 +111,7 @@ task('build', ['build:init', 'lint:editor'], function () {
   // If the destination directory does not exist, create it
   jake.mkdirP('epiceditor/js')
   
-  if (!path.existsSync(parser)) {
+  if (!fs.existsSync(parser)) {
     fail("Parser path not found.")
   }
   
