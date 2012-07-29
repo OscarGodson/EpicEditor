@@ -214,7 +214,25 @@
 
   // Grabs the text from an element and preserves whitespace
   function _getText(el) {
-    return el.textContent;
+    var node
+      , nodeType = el.nodeType
+      , i = 0
+      , text;
+
+    // ELEMENT_NODE || DOCUMENT_NODE || DOCUMENT_FRAGMENT_NODE
+    if (nodeType === 1 || nodeType === 9 || nodeType === 11) {
+      if (typeof el.textContent === 'string') {
+        return el.textContent;
+      }
+      else {
+        // textContent can be null, in which case we walk the element tree
+        for (el = el.firstChild; el; el = el.nextSibling) {
+          text += _getText(el);
+        }
+      }
+    }
+
+    return text;
   }
 
   function _setText(el, content) {
