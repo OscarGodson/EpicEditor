@@ -769,13 +769,86 @@
       else {
         var body = self.editorIframeDocument.body
           , content = _getText(body)
-          , ss = self.selectionStart()
+          , ss = self._getSelectionStart()
           , before = content.slice(0, ss)
           , lf = before.lastIndexOf('\n') + 1
           , indent = (before.slice(lf).match(/^\s+/) || [''])[0];
 
         self.insertText('\n' + indent);
       }
+    }
+
+    // Get index of current selection start
+    self._getSelectionStart = function () {
+      var iframeDocument = self.editorIframeDocument
+        , body = self.editorIframeDocument.body
+        , selection = self.getSelection()
+        , range
+        , element
+        , container
+        , offset;
+
+      if (selection.rangeCount) {
+        range = selection.getRangeAt(0);
+        element = range.startContainer;
+        container = element;
+        offset = range.startOffset;
+
+        if (!(body.compareDocumentPosition(element) & 0x10)) {
+          return 0;
+        }
+
+        do {
+          while (element = element.previousSibling) {
+            if (element.textContent) {
+              offset += element.textContent.length;
+            }
+          }
+
+          element = container = container.parentNode;
+        } while (element && element != body);
+
+        return offset;
+      } else {
+        return 0;
+      }
+    }
+
+    // Get index of current selection end
+    self._getSelectionEnd = function () {
+      var selection = self.getSelection();
+
+      if (selection.rangeCount) {
+        return self._getSelectionStart() + (selection.getRangeAt(0) + '').length;
+      }
+
+      return 0;
+    }
+
+    /**
+     * Set selection range
+     * @param {number} selection start
+     * @param {number} selection end
+     */
+    self._setSelectionRange = function (ss, se) {
+      var iframeDocument = self.editorIframeDocument
+        , body = iframeDocument.body
+        , range = iframeDocument.createRange()
+        , offset = findOffset(body, ss)
+        , selection;
+
+      range.setStart(offset.element, offset.offset);
+
+      // When there's an actual range of selection
+      if (se && se != ss) {
+        offset = findOffset(body, se);
+      }
+
+      range.setEnd(offset.element, offset.offset);
+
+      selection = self.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
     }
 
     // This setups up live previews by triggering preview() IF in fullscreen on keyup
@@ -923,15 +996,15 @@
 
       if (keyCode !== 37 && keyCode !== 39) {
         content = _getText(self.editorIframeDocument.body);
-        ss = self.selectionStart();
-        se = self.selectionEnd();
+        ss = self._getSelectionStart();
+        se = self._getSelectionEnd();
 
         if (!/\n$/.test(content)) {
           self.editorIframeDocument.body.innerHTML = self.editorIframeDocument.body.innerHTML + '\n';
         }
 
         if (ss != null || se !== null) {
-          self.setSelectionRange(ss, se);
+          self._setSelectionRange(ss, se);
         }
       }
     }
@@ -1125,59 +1198,6 @@
   }
 
   /**
-   * Get index of current selection start
-   * @returns {Number}
-   */
-  EpicEditor.prototype.selectionStart = function () {
-    var iframeDocument = this.editorIframeDocument
-      , body = this.editorIframeDocument.body
-      , selection = this.getSelection()
-      , range
-      , element
-      , container
-      , offset;
-
-    if (selection.rangeCount) {
-      range = selection.getRangeAt(0);
-      element = range.startContainer;
-      container = element;
-      offset = range.startOffset;
-
-      if (!(body.compareDocumentPosition(element) & 0x10)) {
-        return 0;
-      }
-
-      do {
-        while (element = element.previousSibling) {
-          if (element.textContent) {
-            offset += element.textContent.length;
-          }
-        }
-
-        element = container = container.parentNode;
-      } while (element && element != body);
-
-      return offset;
-    } else {
-      return 0;
-    }
-  }
-
-  /**
-   * Get index of current selection end
-   * @returns {Number}
-   */
-  EpicEditor.prototype.selectionEnd = function () {
-    var selection = this.getSelection();
-
-    if (selection.rangeCount) {
-      return this.selectionStart() + (selection.getRangeAt(0) + '').length;
-    }
-
-    return 0;
-  }
-
-  /**
    * Get current selection
    * @returns {Object|Null}
    */
@@ -1185,31 +1205,6 @@
     return this.editorIframeDocument.getSelection();
   }
 
-  /**
-   * Set selection range
-   * @param {number} selection start
-   * @param {number} selection end
-   */
-  EpicEditor.prototype.setSelectionRange = function (ss, se) {
-    var iframeDocument = this.editorIframeDocument
-      , body = iframeDocument.body
-      , range = iframeDocument.createRange()
-      , offset = findOffset(body, ss)
-      , selection;
-
-    range.setStart(offset.element, offset.offset);
-
-    // When there's an actual range of selection
-    if (se && se != ss) {
-      offset = findOffset(body, se);
-    }
-
-    range.setEnd(offset.element, offset.offset);
-
-    selection = this.getSelection();
-    selection.removeAllRanges();
-    selection.addRange(range);
-  }
 
   EpicEditor.prototype.getText = function () {
     var body = this.editorIframeDocument.body;
@@ -1228,8 +1223,8 @@
 
     var body = this.editorIframeDocument.body
       , content = _getText(body)
-      , ss = this.selectionStart()
-      , se = this.selectionEnd()
+      , ss = this._getSelectionStart()
+      , se = this._getSelectionEnd()
       , before = content.slice(0, ss)
       , after = content.slice(se)
       , selection = content.slice(ss, se)
@@ -1248,7 +1243,7 @@
     ss += indent.length + text.length;
     se = ss;
 
-    this.setSelectionRange(ss, se);
+    this._setSelectionRange(ss, se);
   }
 
   /**
