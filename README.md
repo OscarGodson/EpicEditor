@@ -203,6 +203,23 @@ someBtn.onclick = function () {
 }
 ```
 
+### is(_state_)
+
+Returns a boolean for the requested state. Useful when you need to know if the editor is loaded yet for example. Below is a list of supported states:
+
+* `loaded`
+* `unloaded`
+* `edit`
+* `preview`
+* `fullscreen`
+
+```javascript
+fullscreenBtn.onclick = function () {
+  if (!editor.is('loaded')) { return; }
+  editor.enterFullscreen();
+}
+```
+
 ### open(_filename_)
 
 Opens a file into the editor.

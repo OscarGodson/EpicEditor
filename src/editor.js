@@ -259,6 +259,18 @@
   }
 
   /**
+   * Same as the isIE(), but simply returns a boolean
+   * THIS IS TERRIBLE AND IS ONLY USED BECAUSE FULLSCREEN IN SAFARI IS BORKED
+   * If some other engine uses WebKit and has support for fullscreen they
+   * probably wont get native fullscreen until Safari's fullscreen is fixed
+   * @returns {Boolean} true if Safari
+   */
+  function _isSafari() {
+    var n = window.navigator;
+    return n.userAgent.indexOf('Safari') > -1 && n.userAgent.indexOf('Chrome') == -1;
+  }
+
+  /**
    * Determines if supplied value is a function
    * @param {object} object to determine type
    */
@@ -440,6 +452,15 @@
       this._storage[self.settings.localStorageName] = defaultStorage;
     }
 
+    // This needs to replace the use of classes to check the state of EE
+    self._eeState = {
+      fullscreen: false
+    , preview: false
+    , edit: false
+    , loaded: false
+    , unloaded: false
+    }
+
     // Now that it exists, allow binding of events if it doesn't exist yet
     if (!self.events) {
       self.events = {};
@@ -453,6 +474,10 @@
    * @returns {object} EpicEditor will be returned
    */
   EpicEditor.prototype.load = function (callback) {
+
+    // Get out early if it's already loaded
+    if (this.is('loaded')) { return this; }
+
     // TODO: Gotta get the privates with underscores!
     // TODO: Gotta document what these are for...
     var self = this
@@ -480,16 +505,18 @@
       nativeFs = document.body.webkitRequestFullScreen ? true : false
     }
 
-    callback = callback || function () {};
-
-    // This needs to replace the use of classes to check the state of EE
-    self.eeState = {
-      fullscreen: false
-    , preview: false
-    , edit: true
-    , loaded: false
-    , unloaded: false
+    // Fucking Safari's native fullscreen works terribly
+    // REMOVE THIS IF SAFARI 6 WORKS BETTER
+    if (_isSafari()) {
+      nativeFs = false;
     }
+
+    // It opens edit mode by default (for now);
+    if (!self.is('edit') && !self.is('preview')) {
+      self._eeState.edit = true;
+    }
+
+    callback = callback || function () {};
 
     // The editor HTML
     // TODO: edit-mode class should be dynamically added
@@ -613,8 +640,7 @@
 
     _elementStates = {}
     self._goFullscreen = function (el) {
-
-      if (self.eeState.fullscreen) {
+      if (self.is('fullscreen')) {
         self._exitFullscreen(el);
         return;
       }
@@ -623,14 +649,14 @@
         el.webkitRequestFullScreen();
       }
 
-      _isInEdit = self.eeState.edit;
+      _isInEdit = self.is('edit');
 
       // Set the state of EE in fullscreen
       // We set edit and preview to true also because they're visible
       // we might want to allow fullscreen edit mode without preview (like a "zen" mode)
-      self.eeState.fullscreen = true;
-      self.eeState.edit = true;
-      self.eeState.preview = true;
+      self._eeState.fullscreen = true;
+      self._eeState.edit = true;
+      self._eeState.preview = true;
 
       // Cache calculations
       var windowInnerWidth = window.innerWidth
@@ -721,7 +747,7 @@
       }
       // Put the editor back in the right state
       // TODO: This is ugly... how do we make this nicer?
-      self.eeState.fullscreen = false;
+      self._eeState.fullscreen = false;
 
       if (_isInEdit) {
         self.edit();
@@ -741,7 +767,7 @@
         window.clearTimeout(keypressTimer);
       }
       keypressTimer = window.setTimeout(function () {
-        if (self.eeState.fullscreen) {
+        if (self.is('fullscreen')) {
           self.preview();
         }
       }, 250);
@@ -819,9 +845,9 @@
       }
 
       // Check for alt+p and make sure were not in fullscreen - default shortcut to switch to preview
-      if (isMod === true && e.keyCode == self.settings.shortcut.preview && !self.eeState.fullscreen) {
+      if (isMod === true && e.keyCode == self.settings.shortcut.preview && !self.is('fullscreen')) {
         e.preventDefault();
-        if (self.eeState.edit) {
+        if (self.is('edit')) {
           self.preview();
         }
         else {
@@ -841,7 +867,7 @@
       }
 
       // When a user presses "esc", revert everything!
-      if (e.keyCode == 27 && self.eeState.fullscreen) {
+      if (e.keyCode == 27 && self.is('fullscreen')) {
         self._exitFullscreen(fsElement);
       }
 
@@ -924,7 +950,7 @@
     window.addEventListener('resize', function () {
       // If NOT webkit, and in fullscreen, we need to account for browser resizing
       // we don't care about webkit because you can't resize in webkit's fullscreen
-      if (!self.iframe.webkitRequestFullScreen && self.eeState.fullscreen) {
+      if (!self.iframe.webkitRequestFullScreen && self.is('fullscreen')) {
         _applyStyles(self.iframeElement, {
           'width': window.outerWidth + 'px'
         , 'height': window.innerHeight + 'px'
@@ -945,14 +971,23 @@
         });
       }
       // Makes the editor support fluid width when not in fullscreen mode
-      else if (!self.eeState.fullscreen) {
+      else if (!self.is('fullscreen')) {
         resetWidth(elementsToResize);
       }
     });
 
+    // Set states before flipping edit and preview modes
+    self._eeState.loaded = true;
+    self._eeState.unloaded = false;
+
+    if (self.is('preview')) {
+      self.preview();
+    }
+    else {
+      self.edit();
+    }
+
     self.iframe.close();
-    self.eeState.loaded = true;
-    self.eeState.unloaded = false;
     // The callback and call are the same thing, but different ways to access them
     callback.call(this);
     this.emit('load');
@@ -966,7 +1001,7 @@
   EpicEditor.prototype.unload = function (callback) {
 
     // Make sure the editor isn't already unloaded.
-    if (this.eeState.unloaded) {
+    if (this.is('unloaded')) {
       throw new Error('Editor isn\'t loaded');
     }
 
@@ -974,8 +1009,8 @@
       , editor = window.parent.document.getElementById(self._instanceId);
 
     editor.parentNode.removeChild(editor);
-    self.eeState.loaded = false;
-    self.eeState.unloaded = true;
+    self._eeState.loaded = false;
+    self._eeState.unloaded = true;
     callback = callback || function () {};
 
     if (self.saveInterval) {
@@ -993,7 +1028,9 @@
    * @returns {object} EpicEditor will be returned
    */
   EpicEditor.prototype.preview = function (theme) {
-    var self = this;
+    var self = this
+      , x
+      , anchors;
 
     theme = theme || self.settings.basePath + self.settings.theme.preview;
 
@@ -1010,12 +1047,23 @@
     // Add the generated HTML into the previewer
     self.previewer.innerHTML = self.exportFile(null, 'html');
 
+    // Because we have a <base> tag so all links open in a new window we
+    // need to prevent hash links from opening in a new window
+    anchors = self.previewer.getElementsByTagName('a');
+    for (x in anchors) {
+      // If the link is a hash AND the links hostname is the same as the
+      // current window's hostname (same page) then set the target to self
+      if (anchors[x].hash && anchors[x].hostname == window.location.hostname) {
+        anchors[x].target = '_self';
+      }
+    }
+
     // Hide the editor and display the previewer
-    if (!self.eeState.fullscreen) {
+    if (!self.is('fullscreen')) {
       self.editorIframe.style.display = 'none';
       self.previewerIframe.style.display = 'block';
-      self.eeState.preview = true;
-      self.eeState.edit = false;
+      self._eeState.preview = true;
+      self._eeState.edit = false;
       self.previewerIframe.focus();
     }
 
@@ -1028,7 +1076,7 @@
    * @returns {object} EpicEditor will be returned
    */
   EpicEditor.prototype.enterFullscreen = function () {
-    if (this.eeState.fullscreen) { return this; }
+    if (this.is('fullscreen')) { return this; }
     this._goFullscreen(this.iframeElement);
     return this;
   }
@@ -1038,7 +1086,7 @@
    * @returns {object} EpicEditor will be returned
    */
   EpicEditor.prototype.exitFullscreen = function () {
-    if (!this.eeState.fullscreen) { return this; }
+    if (!this.is('fullscreen')) { return this; }
     this._exitFullscreen(this.iframeElement);
     return this;
   }
@@ -1050,8 +1098,8 @@
   EpicEditor.prototype.edit = function () {
     var self = this;
     _replaceClass(self.getElement('wrapper'), 'epiceditor-preview-mode', 'epiceditor-edit-mode');
-    self.eeState.preview = false;
-    self.eeState.edit = true;
+    self._eeState.preview = false;
+    self._eeState.edit = true;
     self.editorIframe.style.display = 'block';
     self.previewerIframe.style.display = 'none';
     self.editorIframe.focus();
@@ -1218,11 +1266,34 @@
 
     // Check that the given string is a possible option and verify the editor isn't unloaded
     // without this, you'd be given a reference to an object that no longer exists in the DOM
-    if (!available[name] || this.eeState.unloaded) {
+    if (!available[name] || this.is('unloaded')) {
       return null;
     }
     else {
       return available[name];
+    }
+  }
+
+  /**
+   * Returns a boolean of each "state" of the editor. For example "editor.is('loaded')" // returns true/false
+   * @param {String} what the state you want to check for
+   * @returns {Boolean}
+   */
+  EpicEditor.prototype.is = function (what) {
+    var self = this;
+    switch (what) {
+    case 'loaded':
+      return self._eeState.loaded;
+    case 'unloaded':
+      return self._eeState.unloaded
+    case 'preview':
+      return self._eeState.preview
+    case 'edit':
+      return self._eeState.edit;
+    case 'fullscreen':
+      return self._eeState.fullscreen;
+    default:
+      return false;
     }
   }
 
@@ -1364,7 +1435,7 @@
 
     self.save();
 
-    if (self.eeState.fullscreen) {
+    if (self.is('fullscreen')) {
       self.preview();
     }
 
@@ -1486,7 +1557,7 @@
 
   EpicEditor.version = '@VERSION';
 
-  // Used to store information to be shared acrossed editors
+  // Used to store information to be shared across editors
   EpicEditor._data = {};
 
   window.EpicEditor = EpicEditor;
