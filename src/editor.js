@@ -1215,6 +1215,7 @@
    * Insert text at the current cursor position. If selection is not empty, it
    * will replace the selected text.
    * @param {string} Text to insert
+   * @returns {object} EpicEditor will be returned
    */
   EpicEditor.prototype.insertText = function (text) {
     if (!text || text.length === 0) {
@@ -1244,6 +1245,7 @@
     se = ss;
 
     this._setSelectionRange(ss, se);
+    return this;
   }
 
   /**
