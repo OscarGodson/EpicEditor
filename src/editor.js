@@ -761,6 +761,23 @@
       self.emit('fullscreenexit');
     };
 
+    // Insert new line and respect smart indentation if the option is present
+    self._insertNewLine = function () {
+      if (self.settings.smartIndent === false) {
+        self.insertText('\n');
+      }
+      else {
+        var body = self.editorIframeDocument.body
+          , content = _getText(body)
+          , ss = self.selectionStart()
+          , before = content.slice(0, ss)
+          , lf = before.lastIndexOf('\n') + 1
+          , indent = (before.slice(lf).match(/^\s+/) || [''])[0];
+
+        self.insertText('\n' + indent);
+      }
+    }
+
     // This setups up live previews by triggering preview() IF in fullscreen on keyup
     self.editor.addEventListener('keyup', function () {
       if (keypressTimer) {
@@ -840,7 +857,7 @@
         e.preventDefault();
         e.stopPropagation();
 
-        self.insertNewLine();
+        self._insertNewLine();
         shortcutUpHandler();
       }
 
@@ -1194,23 +1211,9 @@
     selection.addRange(range);
   }
 
-  /**
-   * Insert new line and respect smart indentation if the option is present
-   */
-  EpicEditor.prototype.insertNewLine = function () {
-    if (this.settings.smartIndent === false) {
-      this.insertText('\n');
-    }
-    else {
-      var body = this.editorIframeDocument.body
-        , content = _getText(body)
-        , ss = this.selectionStart()
-        , before = content.slice(0, ss)
-        , lf = before.lastIndexOf('\n') + 1
-        , indent = (before.slice(lf).match(/^\s+/) || [''])[0];
-
-      this.insertText('\n' + indent);
-    }
+  EpicEditor.prototype.getText = function () {
+    var body = this.editorIframeDocument.body;
+    return _getText(body);
   }
 
   /**
