@@ -236,7 +236,12 @@
   }
 
   function _setText(el, content) {
-    el.textContent = content;
+    if (document.body.innerText) {
+      el.innerText = content;
+    }
+    else {
+      el.innerHTML = content;
+    }
     return true;
   }
 
@@ -1203,12 +1208,6 @@
    */
   EpicEditor.prototype.getSelection = function () {
     return this.editorIframeDocument.getSelection();
-  }
-
-
-  EpicEditor.prototype.getText = function () {
-    var body = this.editorIframeDocument.body;
-    return _getText(body);
   }
 
   /**

@@ -557,26 +557,6 @@ describe('EpicEditor.rename', function () {
   });
 });
 
-describe('EpicEditor.getText', function () {
-
-  var testEl, editor, testFile;
-
-  before(function () {
-    testEl = _createTestElement();
-    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
-    testFile = 'testFile' + _randomNum();
-    editor.importFile(testFile, 'testing...');
-  });
-
-  after(function () {
-    editor.unload();
-  });
-
-  it('check to see if getText returns correct text', function () {
-    expect(editor.getText()).to(be, 'testing...');
-  });
-});
-
 describe('EpicEditor.insertText', function () {
 
   var testEl, editor, emptyFile;
@@ -594,12 +574,14 @@ describe('EpicEditor.insertText', function () {
 
   it('check to see if insertText inserts correctly', function () {
     editor.insertText('Hello World!');
-    expect(editor.getText()).to(be, 'Hello World!');
+    editor.save();
+    expect(editor.exportFile()).to(be, 'Hello World!');
   });
 
   it('check to see if insertText inserts newline characters correctly', function () {
     editor.insertText('Hello World!\nWe are testing!');
-    expect(editor.getText()).to(be, 'Hello World!\nWe are testing!');
+    editor.save();
+    expect(editor.exportFile()).to(be, 'Hello World!\nWe are testing!');
   });
 });
 
