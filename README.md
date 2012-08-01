@@ -67,6 +67,7 @@ var opts = {
     editor:'/themes/editor/epic-dark.css'
   },
   focusOnLoad: false,
+  smartIndent: true,
   shortcut: {
     modifier: 18,
     fullscreen: 70,
@@ -228,6 +229,20 @@ Opens a file into the editor.
 openFileBtn.onclick = function () {
   editor.open('some-file'); // Opens a file when the user clicks this button
 }
+```
+
+### getSelection()
+
+Get current selection from the editor. Object returned is same type as `window.getSelection()`.
+
+### insertText(_text_)
+
+Inserts given string of text into the editor. Any selected text will be replaced with the new text. Otherwise text is inserted at the current caret position.
+
+Use `\t` for tab, and `\n` for newline.
+
+```javascript
+editor.insertText('Hello World!\n\nWelcome to EpicEditor!');
 ```
 
 ### importFile([_filename_],[_content_])
