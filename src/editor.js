@@ -330,7 +330,7 @@
     // ELEMENT_NODE || DOCUMENT_NODE || DOCUMENT_FRAGMENT_NODE
     if (nodeType === 1 || nodeType === 9 || nodeType === 11) {
       if (typeof el.textContent === 'string') {
-        return el.textContent;
+        text = el.textContent;
       }
       else {
         // textContent can be null, in which case we walk the element tree
@@ -343,13 +343,18 @@
     return text;
   }
 
+  // Remove all child nodes
+  function _empty(el) {
+    while (el.hasChildNodes()) {
+      el.removeChild(el.lastChild);
+    }
+  }
+
   function _setText(el, content) {
-    if (typeof el.innerText == 'string') {
-      el.innerText = content;
-    }
-    else {
-      el.innerHTML = content;
-    }
+    var textNode = (el.ownerDocument || document).createTextNode(content);
+
+    _empty(el);
+    el.appendChild(textNode);
     return true;
   }
 
