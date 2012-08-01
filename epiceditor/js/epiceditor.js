@@ -133,9 +133,8 @@
     headID.appendChild(cssNode);
   }
 
-
   // Find offset
-  function findOffset(root, ss) {
+  function _findOffset(root, ss) {
     if (!root) {
       return null;
     }
@@ -212,6 +211,115 @@
     return el.contentDocument || el.contentWindow.document;
   }
 
+    // Get index of current selection start
+  function _getSelectionStart(iframeDocument) {
+    var body = iframeDocument.body
+      , selection = _getSelection(iframeDocument)
+      , range
+      , element
+      , container
+      , offset;
+
+    if (selection.rangeCount) {
+      range = selection.getRangeAt(0);
+      element = range.startContainer;
+      container = element;
+      offset = range.startOffset;
+
+      if (!(body.compareDocumentPosition(element) & 0x10)) {
+        return 0;
+      }
+
+      do {
+        while (element = element.previousSibling) {
+          if (element.textContent) {
+            offset += element.textContent.length;
+          }
+        }
+
+        element = container = container.parentNode;
+      } while (element && element != body);
+
+      return offset;
+    } else {
+      return 0;
+    }
+  }
+
+  // Get index of current selection end
+  function _getSelectionEnd(iframeDocument) {
+    var selection = _getSelection(iframeDocument);
+
+    if (selection.rangeCount) {
+      return _getSelectionStart(iframeDocument) + (selection.getRangeAt(0) + '').length;
+    }
+
+    return 0;
+  }
+
+  // Insert new line and respect smart indentation if the option is present
+  function _insertNewLine(iframeDocument, smartIndent) {
+    var body = iframeDocument.body
+      , content
+      , ss
+      , before
+      , lf
+      , indent;
+
+    if (!smartIndent) {
+      _insertText(iframeDocument, '\n');
+    }
+    else {
+      content = _getText(body);
+      ss = _getSelectionStart(iframeDocument);
+      before = content.slice(0, ss);
+      lf = before.lastIndexOf('\n') + 1;
+      indent = (before.slice(lf).match(/^\s+/) || [''])[0];
+
+      _insertText(iframeDocument, '\n' + indent);
+    }
+  }
+
+  /**
+   * Set selection range
+   * @param {HTMLIFrameElement} iframe document
+   * @param {number} selection start
+   * @param {number} selection end
+   */
+  function _setSelectionRange(iframeDocument, ss, se) {
+    var body = iframeDocument.body
+      , range = iframeDocument.createRange()
+      , offset = _findOffset(body, ss)
+      , selection;
+
+    range.setStart(offset.element, offset.offset);
+
+    // When there's an actual range of selection
+    if (se && se != ss) {
+      offset = _findOffset(body, se);
+    }
+
+    range.setEnd(offset.element, offset.offset);
+
+    selection = _getSelection(iframeDocument);
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
+
+  /**
+   * Get selection range
+   * @param {HTMLDocument} Document container
+   * @returns {Selection|undefined} Selection
+   */
+  function _getSelection(iframeDocument) {
+    if (iframeDocument.getSelection) {
+      return iframeDocument.getSelection();
+    }
+    else if (iframeDocument.selection) {
+      return iframeDocument.selection.createRange();
+    }
+  }
+
   // Grabs the text from an element and preserves whitespace
   function _getText(el) {
     var node
@@ -236,13 +344,42 @@
   }
 
   function _setText(el, content) {
-    if (document.body.innerText) {
+    if (typeof el.innerText == 'string') {
       el.innerText = content;
     }
     else {
       el.innerHTML = content;
     }
     return true;
+  }
+
+  // Insert text to given iframe document
+  function _insertText(iframeDocument, text) {
+    if (!text || text.length === 0) {
+      return;
+    }
+
+    var el = iframeDocument.body
+      , content = _getText(el)
+      , ss = _getSelectionStart(iframeDocument)
+      , se = _getSelectionEnd(iframeDocument)
+      , before = content.slice(0, ss)
+      , after = content.slice(se)
+      , selection = content.slice(ss, se)
+      , lf = before.lastIndexOf('\n') + 1
+      , indent = (before.slice(lf).match(/^\s+/) || [''])[0];
+
+    // Insert text at selection
+    before += text;
+    selection = '';
+
+    // The effect here is: remove selection, add text
+    _setText(el, before + selection + after);
+
+    // Restore the cursor position
+    ss += indent.length + text.length;
+    se = ss;
+    _setSelectionRange(iframeDocument, ss, se);
   }
 
   /**
@@ -766,96 +903,6 @@
       self.emit('fullscreenexit');
     };
 
-    // Insert new line and respect smart indentation if the option is present
-    self._insertNewLine = function () {
-      if (self.settings.smartIndent === false) {
-        self.insertText('\n');
-      }
-      else {
-        var body = self.editorIframeDocument.body
-          , content = _getText(body)
-          , ss = self._getSelectionStart()
-          , before = content.slice(0, ss)
-          , lf = before.lastIndexOf('\n') + 1
-          , indent = (before.slice(lf).match(/^\s+/) || [''])[0];
-
-        self.insertText('\n' + indent);
-      }
-    }
-
-    // Get index of current selection start
-    self._getSelectionStart = function () {
-      var iframeDocument = self.editorIframeDocument
-        , body = self.editorIframeDocument.body
-        , selection = self.getSelection()
-        , range
-        , element
-        , container
-        , offset;
-
-      if (selection.rangeCount) {
-        range = selection.getRangeAt(0);
-        element = range.startContainer;
-        container = element;
-        offset = range.startOffset;
-
-        if (!(body.compareDocumentPosition(element) & 0x10)) {
-          return 0;
-        }
-
-        do {
-          while (element = element.previousSibling) {
-            if (element.textContent) {
-              offset += element.textContent.length;
-            }
-          }
-
-          element = container = container.parentNode;
-        } while (element && element != body);
-
-        return offset;
-      } else {
-        return 0;
-      }
-    }
-
-    // Get index of current selection end
-    self._getSelectionEnd = function () {
-      var selection = self.getSelection();
-
-      if (selection.rangeCount) {
-        return self._getSelectionStart() + (selection.getRangeAt(0) + '').length;
-      }
-
-      return 0;
-    }
-
-    /**
-     * Set selection range
-     * @param {number} selection start
-     * @param {number} selection end
-     */
-    self._setSelectionRange = function (ss, se) {
-      var iframeDocument = self.editorIframeDocument
-        , body = iframeDocument.body
-        , range = iframeDocument.createRange()
-        , offset = findOffset(body, ss)
-        , selection;
-
-      range.setStart(offset.element, offset.offset);
-
-      // When there's an actual range of selection
-      if (se && se != ss) {
-        offset = findOffset(body, se);
-      }
-
-      range.setEnd(offset.element, offset.offset);
-
-      selection = self.getSelection();
-      selection.removeAllRanges();
-      selection.addRange(range);
-    }
-
     // This setups up live previews by triggering preview() IF in fullscreen on keyup
     self.editor.addEventListener('keyup', function () {
       if (keypressTimer) {
@@ -935,7 +982,7 @@
         e.preventDefault();
         e.stopPropagation();
 
-        self._insertNewLine();
+        _insertNewLine(self.editorIframeDocument, self.settings.smartIndent);
         shortcutUpHandler();
       }
 
@@ -1000,16 +1047,16 @@
       if (keyCode == 17) { isCtrl = false }
 
       if (keyCode !== 37 && keyCode !== 39) {
-        content = _getText(self.editorIframeDocument.body);
-        ss = self._getSelectionStart();
-        se = self._getSelectionEnd();
+        content = _getText(self.editor);
+        ss = _getSelectionStart(self.editorIframeDocument);
+        se = _getSelectionEnd(self.editorIframeDocument);
 
         if (!/\n$/.test(content)) {
           self.editorIframeDocument.body.innerHTML = self.editorIframeDocument.body.innerHTML + '\n';
         }
 
         if (ss != null || se !== null) {
-          self._setSelectionRange(ss, se);
+          _setSelectionRange(self.editorIframeDocument, ss, se);
         }
       }
     }
@@ -1207,7 +1254,7 @@
    * @returns {Object|Null}
    */
   EpicEditor.prototype.getSelection = function () {
-    return this.editorIframeDocument.getSelection();
+    return _getSelection(this.editorIframeDocument);
   }
 
   /**
@@ -1217,33 +1264,7 @@
    * @returns {object} EpicEditor will be returned
    */
   EpicEditor.prototype.insertText = function (text) {
-    if (!text || text.length === 0) {
-      return;
-    }
-
-    var body = this.editorIframeDocument.body
-      , content = _getText(body)
-      , ss = this._getSelectionStart()
-      , se = this._getSelectionEnd()
-      , before = content.slice(0, ss)
-      , after = content.slice(se)
-      , selection = content.slice(ss, se)
-      , lf = before.lastIndexOf('\n') + 1
-      , indent = (before.slice(lf).match(/^\s+/) || [''])[0];
-
-    // Insert text at selection
-    before += text;
-    selection = '';
-
-    // The effect here is:
-    //  delete selection, add new text
-    _setText(body, before + selection + after);
-
-    // Restore the cursor position
-    ss += indent.length + text.length;
-    se = ss;
-
-    this._setSelectionRange(ss, se);
+    _insertText(this.editorIframeDocument, text);
     return this;
   }
 
