@@ -142,7 +142,7 @@
     var offset = 0
       , element = root
       , container
-      , len;
+      , len = 0;
 
     do {
       container = element;
@@ -150,7 +150,7 @@
 
       if (element) {
         do {
-          len = element.textContent.length;
+          len = _getText(element).length;
 
           if (offset <= ss && offset + len > ss) {
             break;
@@ -211,7 +211,7 @@
     return el.contentDocument || el.contentWindow.document;
   }
 
-    // Get index of current selection start
+  // Get index of current selection start
   function _getSelectionStart(iframeDocument) {
     var body = iframeDocument.body
       , selection = _getSelection(iframeDocument)
@@ -264,7 +264,7 @@
       , ss
       , before
       , lf
-      , indent;
+      , indent = '';
 
     if (!smartIndent) {
       _insertText(iframeDocument, '\n');
@@ -282,7 +282,7 @@
 
   /**
    * Set selection range
-   * @param {HTMLIFrameElement} iframe document
+   * @param {HTMLDocument} iframe document
    * @param {number} selection start
    * @param {number} selection end
    */
@@ -308,14 +308,17 @@
 
   /**
    * Get selection range
-   * @param {HTMLDocument} Document container
-   * @returns {Selection|undefined} Selection
+   * @param {HTMLDocument} HTMLDocument container
+   * @returns {Selection|TextRange|undefined} Selection
    */
   function _getSelection(iframeDocument) {
-    if (iframeDocument.getSelection) {
-      return iframeDocument.getSelection();
+    var contentWindow = iframeDocument.defaultView;
+    if (contentWindow) {
+      // Most modern browsers
+      return contentWindow.getSelection();
     }
     else if (iframeDocument.selection) {
+      // IE returns TextRange object
       return iframeDocument.selection.createRange();
     }
   }
@@ -325,18 +328,26 @@
     var node
       , nodeType = el.nodeType
       , i = 0
-      , text;
+      , text = '';
 
     // ELEMENT_NODE || DOCUMENT_NODE || DOCUMENT_FRAGMENT_NODE
     if (nodeType === 1 || nodeType === 9 || nodeType === 11) {
       if (typeof el.textContent === 'string') {
-        text = el.textContent;
+        return el.textContent;
       }
       else {
         // textContent can be null, in which case we walk the element tree
         for (el = el.firstChild; el; el = el.nextSibling) {
           text += _getText(el);
         }
+      }
+    }
+    else if (nodeType === 3 || nodeType === 4) {
+      return el.nodeValue;
+    }
+    else {
+      for (; (node = el[i]); i++) {
+        text += _getText(node);
       }
     }
 
@@ -348,13 +359,13 @@
     while (el.hasChildNodes()) {
       el.removeChild(el.lastChild);
     }
+
+    return el;
   }
 
   function _setText(el, content) {
     var textNode = (el.ownerDocument || document).createTextNode(content);
-
-    _empty(el);
-    el.appendChild(textNode);
+    _empty(el).appendChild(textNode);
     return true;
   }
 
@@ -370,9 +381,7 @@
       , se = _getSelectionEnd(iframeDocument)
       , before = content.slice(0, ss)
       , after = content.slice(se)
-      , selection = content.slice(ss, se)
-      , lf = before.lastIndexOf('\n') + 1
-      , indent = (before.slice(lf).match(/^\s+/) || [''])[0];
+      , selection = content.slice(ss, se);
 
     // Insert text at selection
     before += text;
@@ -382,7 +391,7 @@
     _setText(el, before + selection + after);
 
     // Restore the cursor position
-    ss += indent.length + text.length;
+    ss += text.length;
     se = ss;
     _setSelectionRange(iframeDocument, ss, se);
   }
@@ -1057,7 +1066,7 @@
         se = _getSelectionEnd(self.editorIframeDocument);
 
         if (!/\n$/.test(content)) {
-          self.editorIframeDocument.body.innerHTML = self.editorIframeDocument.body.innerHTML + '\n';
+          self.editor.innerHTML = self.editor.innerHTML + '\n';
         }
 
         if (ss != null || se !== null) {
