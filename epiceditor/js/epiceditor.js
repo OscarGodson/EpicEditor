@@ -364,8 +364,13 @@
   }
 
   function _setText(el, content) {
-    var textNode = (el.ownerDocument || document).createTextNode(content);
-    _empty(el).appendChild(textNode);
+    var textNode = el.firstChild;
+    if (textNode == null || textNode.nodeType !== 3) {
+      textNode = (el.ownerDocument || document).createTextNode(content);
+      _empty(el).appendChild(textNode);
+    }
+
+    textNode.nodeValue = content;
     return true;
   }
 
