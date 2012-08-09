@@ -89,6 +89,7 @@
       , t;
     // For IE in case no border is set and it defaults to "medium"
     if (isNaN(b)) { b = 0; }
+    if (isNaN(p)) { p = 0; }
     t = b + p + w;
     return t;
   }
@@ -105,6 +106,7 @@
       , t;
     // For IE in case no border is set and it defaults to "medium"
     if (isNaN(b)) { b = 0; }
+    if (isNaN(p)) { p = 0; }
     t = b + p + w;
     return t;
   }
@@ -546,11 +548,6 @@
 
     // Should actually check what mode it's in!
     this.previewerIframe.style.display = 'none';
-
-    // FIXME figure out why it needs +2 px
-    if (_isIE() > -1) {
-      this.previewer.style.height = parseInt(_getStyle(this.previewer, 'height'), 10) + 2;
-    }
 
     // If there is a file to be opened with that filename and it has content...
     this.open(self.settings.file.name);
