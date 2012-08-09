@@ -509,13 +509,12 @@
     self.previewerIframeDocument = _getIframeInnards(self.previewerIframe);
     self.previewerIframeDocument.open();
     self.previewerIframeDocument.write(_HtmlTemplates.previewer);
+    self.previewerIframeDocument.close();
 
     // Base tag is added so that links will open a new tab and not inside of the iframes
     baseTag = self.previewerIframeDocument.createElement('base');
     baseTag.target = '_blank';
     self.previewerIframeDocument.getElementsByTagName('head')[0].appendChild(baseTag);
-
-    self.previewerIframeDocument.close();
 
     // Set the default styles for the iframe
     widthDiff = _outerWidth(self.element) - self.element.offsetWidth;
