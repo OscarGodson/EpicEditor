@@ -1,3 +1,5 @@
+/*global createContainer:false, removeContainer:false, rnd:false */
+
 describe('.preview()', function () {
   var testEl
     , id

@@ -1,3 +1,5 @@
+/*global createContainer:false, removeContainer:false, rnd:false */
+
 describe('.on(event, handler)', function () {
   var testEl
     , id

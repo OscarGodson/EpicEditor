@@ -1,3 +1,5 @@
+/*global createContainer:false, removeContainer:false, rnd:false */
+
 describe('.edit()', function () {
   var testEl
     , id

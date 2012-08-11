@@ -1,3 +1,5 @@
+/*global createContainer:false, removeContainer:false, rnd:false, getIframeDoc:false */
+
 describe('.getElement(element)', function () {
   var testEl
     , id

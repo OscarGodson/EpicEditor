@@ -1,3 +1,5 @@
+/*global createContainer:false, removeContainer:false, rnd:false */
+
 describe('.is(state)', function () {
   var testEl
     , id

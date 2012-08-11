@@ -1,3 +1,5 @@
+/*global createContainer:false, removeContainer:false, rnd:false, getIframeDoc:false, getContainer:false */
+
 describe(".load([callback])", function () {
   var editor
     , isLoaded

@@ -1,3 +1,5 @@
+/*global createContainer:false, removeContainer:false, rnd:false */
+
 describe('EpicEditor([options])', function () {
   var editor
     , id
@@ -17,7 +19,9 @@ describe('EpicEditor([options])', function () {
 
   afterEach(function (done) {
     editor.unload();
-    el.id === '' && (el.id = id); // to reset in the case where the id is removed
+    if (!el.id) {
+      (el.id = id); // to reset in the case where the id is removed
+    }
     removeContainer(id);
     done();
   })

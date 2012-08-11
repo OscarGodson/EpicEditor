@@ -1,3 +1,5 @@
+/*global createContainer:false, removeContainer:false, rnd:false */
+
 describe('.rename(oldName, newName)', function () {
   var testEl
     , id

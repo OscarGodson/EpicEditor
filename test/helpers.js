@@ -12,7 +12,9 @@ function createContainer(id) {
 
 function removeContainer(id) {
   var el = document.getElementById(id);
-  el && (el.parentNode.removeChild(el));
+  if (el) {
+    el.parentNode.removeChild(el);
+  }
 }
 
 function getContainer(id) {

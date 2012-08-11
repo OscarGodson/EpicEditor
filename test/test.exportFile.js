@@ -1,3 +1,5 @@
+/*global createContainer:false, removeContainer:false, rnd:false */
+
 describe('.exportFile([fileName], [type])', function () {
   var testEl
     , id
@@ -39,7 +41,7 @@ describe('.exportFile([fileName], [type])', function () {
   });
 
   it('should be able to open non-currently open files', function () {
-    var exportFileTest = 'exportFileTest' + id; 
+    var exportFileTest = 'exportFileTest' + id;
     editor.importFile(exportFileTest, 'hello world'); // import and open a file
     editor.open(id); // open the original again
     expect(editor.exportFile(exportFileTest)).to.be('hello world');

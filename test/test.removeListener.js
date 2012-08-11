@@ -1,3 +1,5 @@
+/*global createContainer:false, removeContainer:false, rnd:false */
+
 describe('.removeListener(event, [handler])', function () {
   var testEl
     , id

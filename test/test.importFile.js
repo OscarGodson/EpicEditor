@@ -1,3 +1,5 @@
+/*global createContainer:false, removeContainer:false, rnd:false */
+
 describe('.importFile([fileName],[content])', function () {
   var testEl
     , id
