@@ -159,7 +159,7 @@ task('docs', ['lint:docs'], function () {
 desc('Test code against tests')
 task('test', ['lint:tests'], function () {
   console.log(colorize('--> Test suite is now running (CTRL+C to quit)', 'magenta'))
-  console.log(colorize('--> http://localhost:8888/tests/tests.html', 'yellow'))
+  console.log(colorize('--> http://localhost:8888/test/tests.html', 'yellow'))
   jake.exec(['node test/server.js'], function () {
     complete()
   }, {stdout: false})
