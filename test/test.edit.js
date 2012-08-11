@@ -1,11 +1,10 @@
-describe('#edit()', function () {
+describe('.edit()', function () {
   var testEl
     , id
     , editor
-    , editEventFired
-    ;
+    , editEventFired;
 
-  beforeEach(function (done) {
+  before(function (done) {
     id = rnd();
     testEl = createContainer(id);
     editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl });
@@ -16,20 +15,15 @@ describe('#edit()', function () {
       editEventFired = true;
     });
 
-    editor.load(function () {
-      done();
-    });
+    editor.load();
+    done();
   });
 
-  afterEach(function (done) {
+  after(function (done) {
     editor.removeListener('edit');
-    editor.unload(function () {
-      done();
-    });
-  });
-
-  it('should display the editor', function () {
-    expect(editor.getElement('editorIframe').style.display).to.be('block');
+    editor.unload();
+    removeContainer(id);
+    done();
   });
 
   it('should fire the edit event', function () {
@@ -37,7 +31,7 @@ describe('#edit()', function () {
     expect(editEventFired).to.be(true);
   });
 
-  it('should make the editor visible if switched from preview back to edit', function () {
+  it('should make the editor visible when switching from preview back to edit', function () {
     editor.preview();
     editor.edit();
     expect(editor.getElement('editorIframe').style.display).to.be('block');

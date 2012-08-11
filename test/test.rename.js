@@ -1,34 +1,33 @@
-describe('#rename(oldName, newName)', function () {
+describe('.rename(oldName, newName)', function () {
   var testEl
     , id
     , editor
     , oldName
-    , newName
-    ;
+    , newName;
 
-  before(function () {
+  before(function (done) {
     id = rnd();
+    oldName = 'foo' + id;
+    newName = 'bar' + id;
     testEl = createContainer(id)
-    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
-    oldName = 'foo' + rnd();
-    newName = 'bar' + rnd();
+    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl });
+    editor.load();
     editor.importFile(oldName, 'testing...');
+    done();
   });
 
-  after(function () {
+  after(function (done) {
     editor.unload();
+    removeContainer(id);
+    done();
   });
 
-  it('check to see if the foo file exists before trying to rename', function () {
-    expect(editor.exportFile(oldName)).to.be('testing...');
-  });
-
-  it('check that renaming a file actually renames the file by exporting by the new files name', function () {
+  it('should rename a file', function () {
     editor.rename(oldName, newName);
     expect(editor.exportFile(newName)).to.be('testing...');
   });
 
-  it('check that foo no longer exists', function () {
+  it('should replace an old file name', function () {
     editor.rename(oldName, newName);
     expect(editor.exportFile(oldName)).to.be(undefined);
   });

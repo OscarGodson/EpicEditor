@@ -1,48 +1,48 @@
-describe('#remove(name)', function () {
+describe('.remove(name)', function () {
   var testEl
     , id
     , editor
     , removeMeFile
     , dontRemoveMeFile
-    , eventWasFired
-    ;
+    , eventFired;
 
   before(function (done) {
-    id = rnd()
+    id = rnd();
     testEl = createContainer(id);
-    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
-    removeMeFile = 'removeMe' + rnd();
-    dontRemoveMeFile = 'dontRemoveMe' + rnd();
+    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl });
+    removeMeFile = 'removeMe' + id;
+    dontRemoveMeFile = 'dontRemoveMe' + id;
+    editor.load();
     editor.importFile(removeMeFile, 'hello world').importFile(dontRemoveMeFile, 'foo bar');
     done();
   });
 
   after(function (done) {
     editor.unload();
+    removeContainer(id);
     done();
   });
 
-  it('check that the foo file was imported', function () {
+  it('should begin with the foo file imported correctly', function () {
     expect(editor.exportFile(removeMeFile)).to.be('hello world');
   });
 
-  it('check that after removing the file exportFile returns false', function () {
+  it('should cause exportFile to return false after removing the foo file', function () {
     editor.remove(removeMeFile);
     expect(editor.exportFile(removeMeFile)).to.be(undefined);
   });
 
-  it('check that other files weren\'t removed', function () {
+  it('should not remove any file other than the fileName passed', function () {
     expect(editor.exportFile(dontRemoveMeFile)).to.be('foo bar');
   });
 
-
-  it('check that the remove event fires when a file is deleted', function () {
+  it('should fire the remove event', function () {
     editor.on('remove', function () {
-      eventWasFired = true;
+      eventFired = true;
     });
 
     editor.open(removeMeFile);
     editor.remove(removeMeFile);
-    expect(eventWasFired).to.be(true);
+    expect(eventFired).to.be(true);
   });
 });

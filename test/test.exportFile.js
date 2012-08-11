@@ -1,9 +1,8 @@
-describe('#exportFile([fileName], [type])', function () {
+describe('.exportFile([fileName], [type])', function () {
   var testEl
     , id
     , contents
-    , editor
-    ;
+    , editor;
 
   before(function (done) {
     id = rnd();
@@ -14,15 +13,14 @@ describe('#exportFile([fileName], [type])', function () {
       , container: testEl
       })
 
-    editor.load(function () {
-      done();
-    })
+    editor.load();
+    done();
   });
 
   after(function (done) {
-    editor.unload(function () {
-      done();
-    });
+    editor.unload();
+    removeContainer(id);
+    done();
   });
 
   it('should work without parameters by outputting the current file as raw text', function () {
@@ -36,12 +34,12 @@ describe('#exportFile([fileName], [type])', function () {
   });
 
   it('should return undefined when a file doesn\'t exist', function () {
-    contents = editor.exportFile('doesntExist' + rnd());
+    contents = editor.exportFile('doesntExist' + id);
     expect(contents).to.be(undefined);
   });
 
   it('should be able to open non-currently open files', function () {
-    var exportFileTest = 'exportFileTest' + rnd();
+    var exportFileTest = 'exportFileTest' + id; 
     editor.importFile(exportFileTest, 'hello world'); // import and open a file
     editor.open(id); // open the original again
     expect(editor.exportFile(exportFileTest)).to.be('hello world');

@@ -1,16 +1,14 @@
-describe('#preview()', function () {
-
+describe('.preview()', function () {
   var testEl
     , id
     , editor
     , previewEventWasCalled
-    , editEventWasCalled
-    ;
+    , editEventWasCalled;
 
   before(function (done) {
     id = rnd();
     testEl = createContainer(id);
-    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl });
 
     previewEventWasCalled = false;
     editEventWasCalled = false;
@@ -19,53 +17,34 @@ describe('#preview()', function () {
       previewEventWasCalled = true;
     });
 
-    editor.on('edit', function () {
-      editEventWasCalled = true;
-    });
+    editor.load();
     done();
   });
 
   after(function (done) {
     editor.removeListener('preview');
-    editor.removeListener('edit');
     editor.unload();
-    editor = null;
+    removeContainer(id);
     done();
   });
 
-  it('check that the editor is currently displayed and not the previewer', function () {
-    expect(editor.getElement('editorIframe').style.display).to.be('block');
-  });
-
-  it('check that the previewer can be tested to be hidden', function () {
+  it('should not initially be in previewer mode when loaded', function () {
     expect(editor.getElement('previewerIframe').style.display).to.be('none');
   });
 
-  it('check that calling .preview() displays the previewer', function () {
+  it('should display the previewer when the preview method is called', function () {
     editor.preview();
     expect(editor.getElement('previewerIframe').style.display).to.be('block');
   });
 
-  it('check that the preview event fires when the preview method is called', function () {
+  it('should fire the preview event when the preview method is called', function () {
     editor.preview();
     expect(previewEventWasCalled).to.be(true);
   });
 
-  it('check that the edit event fires when the edit method is called', function () {
-    editor.edit();
-    expect(editEventWasCalled).to.be(true);
-  });
-
-  it('check that switching from preview back to edit makes the editor visible', function () {
-    editor.preview();
-    editor.edit();
-    expect(editor.getElement('editorIframe').style.display).to.be('block');
-  });
-
-  it('check that switching from preview back to edit doesn\'t keep the previewer displayed', function () {
+  it('should hide the previewer if switched from preview back to edit', function () {
     editor.preview();
     editor.edit();
     expect(editor.getElement('previewerIframe').style.display).to.be('none');
   });
 });
-

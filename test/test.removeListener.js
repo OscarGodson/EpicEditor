@@ -1,29 +1,28 @@
-describe('#removeListener(event, [handler])', function () {
+describe('.removeListener(event, [handler])', function () {
   var testEl
     , id
     , editor
-    , hasBeenFired
+    , eventFired
     , baz
     , qux
-    , callCount
-    ;
+    , count;
 
   beforeEach(function (done) {
     id = rnd();
     testEl = createContainer(id);
     editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
-    hasBeenFired = false;
-    callCount = 0;
+    eventFired = false;
+    count = 0;
     editor.on('foo', function () {
-      hasBeenFired = true;
+      eventFired = true;
     });
 
     baz = function () {
-      callCount++;
+      count++;
     };
 
     qux = function () {
-      callCount++;
+      count++;
     };
 
     editor.on('bar', baz);
@@ -33,30 +32,30 @@ describe('#removeListener(event, [handler])', function () {
 
   afterEach(function (done) {
     editor.unload();
+    removeContainer(id);
     done();
   });
 
-  it('check that the foo event can be fired', function () {
+  it('should initially fire the foo event', function () {
     editor.emit('foo');
-    expect(hasBeenFired).to.be(true);
+    expect(eventFired).to.be(true);
   });
 
-  it('check that removing the event WITHOUT a handler param, than emitting it doesn\'t trigger the event', function () {
+  it('should not call the handler if it has been removed without a handler param', function () {
     editor.removeListener('foo');
     editor.emit('foo');
-    expect(hasBeenFired).to.be(false);
+    expect(eventFired).to.be(false);
   });
 
-  it('check that removing the event WITH a handler param, than emitting it only triggers one of the two handlers', function () {
+  it('should only remove the passed named handler for a given event', function () {
     editor.removeListener('bar', baz);
     editor.emit('bar');
-    expect(callCount).to.be(1);
+    expect(count).to.be(1);
   });
 
-  it('check that removing an event WITHOUT the param removes ALL handlers of that event', function () {
+  it('should remove all named handlers for a given event when that parameter is NOT passed', function () {
     editor.removeListener('bar');
     editor.emit('bar');
-    expect(callCount).to.be(0);
+    expect(count).to.be(0);
   });
-
 });

@@ -1,19 +1,19 @@
-describe('#is(state)', function () {
+describe('.is(state)', function () {
   var testEl
     , id
-    , editor
-    ;
+    , editor;
 
   before(function (done) {
     id = rnd();
     testEl = createContainer(id);
     editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl });
-    // editor will be loaded on first test
+    // editor will be loaded on second test
     done();
   });
 
   after(function (done) {
     editor.unload(function () {
+      removeContainer(id);
       done();
     });
   });
@@ -27,7 +27,7 @@ describe('#is(state)', function () {
     expect(editor.is('loaded')).to.be(true);
   });
 
-  it('should return unloaded:TRUE when the editor IS unloaded', function () {
+  it('should return unloaded:TRUE when the editor is unloaded', function () {
     editor.unload();
     expect(editor.is('unloaded')).to.be(true);
   });
@@ -37,11 +37,11 @@ describe('#is(state)', function () {
     expect(editor.is('unloaded')).to.be(false);
   });
 
-  it('should return edit:TRUE when the editor is loaded by default', function () {
+  it('should return edit:TRUE when the editor is loaded in edit mode', function () {
     expect(editor.is('edit')).to.be(true);
   });
 
-  it('should return edit:TRUE when the editor is switched from preview to edit again', function () {
+  it('should return edit:TRUE when the editor is switched from preview back to edit', function () {
     editor.preview();
     editor.edit();
     expect(editor.is('edit')).to.be(true);
@@ -52,7 +52,7 @@ describe('#is(state)', function () {
     expect(editor.is('preview')).to.be(true);
   });
 
-  it('should return fullscreen:FALSE when the editor ISN\'T in fullscreen', function () {
+  it('should return fullscreen:FALSE when the editor is not in fullscreen', function () {
     expect(editor.is('fullscreen')).to.be(false);
   });
 
@@ -67,8 +67,8 @@ describe('#is(state)', function () {
     expect(editor.is('fullscreen')).to.be(false);
   });
 
-  it('should return false for undefined states', function () {
-    expect(editor.is('ballsdeep')).to.be(false);
+  it('should return undefined:FALSE for undefined states', function () {
+    expect(editor.is('undefined')).to.be(false);
   });
 });
 

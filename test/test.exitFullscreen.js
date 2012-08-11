@@ -1,47 +1,44 @@
-describe('#exitFullscreen()', function () {
+describe('.exitFullscreen()', function () {
   var testEl
     , id
     , editor
-    , exitEventFired = false
-    , count
-    ;
+    , eventFired
+    , count;
 
-  beforeEach(function (done) {
+  before(function (done) {
     id = rnd();
+    count = 0;
+    eventFired = false;
     testEl = createContainer(id);
     editor = new EpicEditor({basePath: '/epiceditor/', container: testEl})
-    count = 0;
     editor.on('fullscreenexit', function () {
       count++
-      exitEventFired = true;
+      eventFired = true;
     });
-    editor.load(function () {
-      done();
-    });
+    editor.load();
+    editor.enterFullscreen();
+    editor.exitFullscreen();
+    done();
   });
 
-  afterEach(function (done) {
+  after(function (done) {
     editor.removeListener('fullscreenexit');
-    editor.unload(function () {
-      done();
-    });
+    editor.unload();
+    removeContainer(id);
+    done();
   });
 
   // TODO: Figure out some way to actually test if fullscreen opened
   it('should exit fullscreen mode', function () {
-    editor.enterFullscreen();
-    editor.exitFullscreen();
-    expect(editor._eeState.fullscreen).to.be(false);
+    expect(editor.is('fullscreen')).to.be(false);
   });
 
   it('should fire the fullscreenexit event', function () {
-    editor.enterFullscreen();
-    editor.exitFullscreen();
-    expect(exitEventFired).to.be(true);
+    expect(eventFired).to.be(true);
   });
 
-  it('should emit the fullscreenexit event only once regardless of additional exitFullscreen calls', function () {
-    editor.enterFullscreen();
+  // NOTE: This test depends on the counter and for speed we are not using a before/afterEach
+  it('should fire the fullscreenexit event only once regardless of additional exitFullscreen calls', function () {
     editor.exitFullscreen();
     editor.exitFullscreen();
     expect(count).to.be(1);

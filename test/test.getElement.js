@@ -1,4 +1,4 @@
-describe('#getElement(element)', function () {
+describe('.getElement(element)', function () {
   var testEl
     , id
     , editor
@@ -16,42 +16,58 @@ describe('#getElement(element)', function () {
 
   after(function (done) {
     editor.unload(function() {
+      removeContainer(id);
       done();
     });
   })
 
-  it('should return the "container" given at setup', function () {
+  it('should accept "container" and return container el', function () {
     var eId = editor.getElement('container').id;
     expect(eId).to.be(id);
   });
 
-  it('should return the "wrapper" div inside the wrapping iframe containing the other two iframes', function () {
+  it('should accept "wrapper" and return the div inside the wrapping iframe', function () {
     var innerWrapperDiv = innerWrapper.getElementById('epiceditor-wrapper');
     expect(editor.getElement('wrapper').id).to.be(innerWrapperDiv.id);
   });
 
-  it('should return the "wrapperIframe" containing the other two iframes', function () {
+  it('should accept "wrapperIframe" and return containing the other two iframes', function () {
     expect(editor.getElement('wrapperIframe').id).to.be(wrapperIframe.id);
   });
 
-  it('should return the "editor" #document', function () {
-    // Is it good enough to check the nodeType here, the other lookup is costly
-    expect(editor.getElement('editor').nodeType).to.be(9);
+  it('should accept "editor" and return the editor frame #document', function () {
+    // TODO: Is this good enough the original lookup is costly - it might be helpful to put id's on the body for this
     //expect(editor.getElement('editor')).to.be(getIframeDoc(innerWrapper.getElementById('epiceditor-editor-frame')));
+    //expect(editor.getElement('editor').body.id).to.be('epiceditor-editor');
+    expect(editor.getElement('editor').body.contentEditable).to.be('true');
   });
 
-  it('should return the "editorIframe" containing the editor', function () {
+  it('should accept "editorIframe" and return the iframe containing the editor', function () {
     expect(editor.getElement('editorIframe').id).to.be('epiceditor-editor-frame');
   });
 
-  it('should return the "previewer" #document', function () {
-    // Is it good enough to check the nodeType here, the other lookup is costly
-    expect(editor.getElement('previewer').nodeType).to.be(9);
+  it('should accept "previewer" and return the previewer #document', function () {
+    // TODO: Is this good enough the original lookup is costly - it might be helpful to put id's on the body for this
     //expect(editor.getElement('previewer')).to.be(getIframeDoc(innerWrapper.getElementById('epiceditor-previewer-frame')));
+    //expect(editor.getElement('previewer').body.id).to.be('epiceditor-preview');
+    expect(editor.getElement('previewer').body.firstChild.id).to.be('epiceditor-preview');
   });
 
-  it('should return the "previewerIframe" containing the previewer', function () {
+  it('should accept "previewerIframe" and return the iframe containing the previewer', function () {
     expect(editor.getElement('previewerIframe').id).to.be('epiceditor-previewer-frame');
+  });
+
+  it('should return null if the editor has been unloaded', function () {
+    editor.load();
+    editor.unload();
+    expect(editor.getElement('editor')).to.not.be.ok();
+  });
+
+  it('should return the specified element when the editor is reloaded', function () {
+    editor.load();
+    editor.unload();
+    editor.load();
+    expect(editor.getElement('editor')).to.be.ok();
   });
 });
 

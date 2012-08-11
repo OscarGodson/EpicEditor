@@ -1,9 +1,8 @@
-describe('#save()', function () {
+describe('.save()', function () {
   var testEl
     , id
     , editor
-    , eventWasFired
-    ;
+    , eventFired;
 
   beforeEach(function (done) {
     id = rnd();
@@ -15,57 +14,55 @@ describe('#save()', function () {
         { defaultContent: 'foo'
         , autoSave: false
         }
-      }).load();
+      });
 
-    eventWasFired = false;
+    eventFired = false;
+    editor.load();
     done();
   });
 
   afterEach(function (done) {
     editor.unload();
+    removeContainer(id);
     done();
   });
 
-  it('check that foo is the default content in the editor', function () {
-    expect(editor.getElement('editor').body.innerHTML).to.be('foo');
-  });
-
-  it('check to make sure new file contents are saved after value is changed in the editor and save is called', function () {
+  it('should save new content', function () {
     editor.getElement('editor').body.innerHTML = 'bar';
     editor.save();
     expect(JSON.parse(localStorage['epiceditor'])[id].content).to.be('bar');
   });
 
-  it('check that the save event is called when the save method is run', function () {
+  it('should fire the save event', function () {
     editor.on('save', function () {
-      eventWasFired = true;
+      eventFired = true;
     });
     editor.save();
-    expect(eventWasFired).to.be(true);
+    expect(eventFired).to.be(true);
   });
 
-  it('check that the update event fires when the content changes', function () {
+  it('should fire the update event on save when the content has changed', function () {
     editor.on('update', function () {
-      eventWasFired = true;
+      eventFired = true;
     });
     editor.getElement('editor').body.innerHTML = 'bar';
     editor.save();
-    expect(eventWasFired).to.be(true);
+    expect(eventFired).to.be(true);
   });
 
-  it('check that the update event DOES NOT fire when the content is the same', function () {
+  it('should not fire the update event on save when the content has not changed', function () {
     editor.on('update', function () {
-      eventWasFired = true;
+      eventFired = true;
     });
     editor.getElement('editor').body.innerHTML = 'foo';
     editor.save();
-    expect(eventWasFired).to.be(false);
+    expect(eventFired).to.be(false);
   });
 
-  it('check that the timestamp is updated when the content is modified', function () {
+  it('should update the timestamp on save when the content has been updated', function () {
     var currentModifiedDate = JSON.parse(localStorage['epiceditor'])[id].modified;
     editor.on('update', function () {
-      eventWasFired = true;
+      eventFired = true;
     });
     editor.getElement('editor').body.innerHTML = 'bar';
     editor.save();

@@ -1,58 +1,47 @@
-describe('#unload([callback])', function () {
+describe('.unload([callback])', function () {
   var testEl
     , id
     , editor
-    , eventWasCalled
-    ;
+    , eventFired;
 
-  beforeEach(function (done) {
+  before(function (done) {
     id = rnd();
     testEl = createContainer(id)
     editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl });
-    editor.load();
-
-    eventWasCalled = false;
-
+    eventFired = false;
     editor.on('unload', function () {
-      eventWasCalled = true;
+      eventFired = true;
     });
+    done();
+  });
 
+  after(function (done) {
+    editor.removeListener('unload');
+    if (editor.is('loaded')) {
+      editor.unload();
+    }
+    removeContainer(id);
     done();
   });
 
   afterEach(function (done) {
-    editor.removeListener('unload');
+    editor.load();
     done();
   });
 
-  it('check the editor was actually loaded first of all', function () {
-    expect(document.getElementById(id).innerHTML).to.be.ok();
-  });
-
-  it('check that the unload event fires when the editor is unloaded', function () {
+  it('should fire the unload event', function () {
+    editor.load();
     editor.unload();
-    expect(eventWasCalled).to.be(true);
+    expect(eventFired).to.be(true);
   });
 
-  it('check the editor was unloaded properly by checking if the editor HTML is gone from the original element', function () {
+  it('should remove editor HTML from the container element', function () {
     editor.unload();
     expect(document.getElementById(id).innerHTML).to.not.be.ok();
   });
 
-  it('check the editor\'s getElement method returns null for selected elements because they no longer exist', function () {
-    editor.unload();
-    expect(editor.getElement('editor')).to.not.be.ok();
-  });
-
-  it('check that unload can\'t be run twice', function () {
+  it('should throw an error if run multiple times', function () {
     editor.unload();
     expect(function () { editor.unload(); }).to.throwError('Editor isn\'t loaded');
   });
-
-  it('check that unload and reloading and then requesting getElement doesn\'t return null as if it were unloaded', function () {
-    editor.unload();
-    editor.load();
-    expect(editor.getElement('editor')).to.be.ok();
-  });
-
 });
