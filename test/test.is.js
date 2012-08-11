@@ -12,10 +12,9 @@ describe('.is(state)', function () {
   });
 
   after(function (done) {
-    editor.unload(function () {
-      removeContainer(id);
-      done();
-    });
+    editor.unload();
+    removeContainer(id);
+    done();
   });
 
   it('should return loaded:FALSE when the editor has not been loaded', function () {

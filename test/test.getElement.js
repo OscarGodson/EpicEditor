@@ -15,10 +15,11 @@ describe('.getElement(element)', function () {
   });
 
   after(function (done) {
-    editor.unload(function() {
-      removeContainer(id);
-      done();
-    });
+    if (editor.is('loaded')) {
+      editor.unload();
+    }
+    removeContainer(id);
+    done();
   })
 
   it('should accept "container" and return container el', function () {
@@ -62,12 +63,4 @@ describe('.getElement(element)', function () {
     editor.unload();
     expect(editor.getElement('editor')).to.not.be.ok();
   });
-
-  it('should return the specified element when the editor is reloaded', function () {
-    editor.load();
-    editor.unload();
-    editor.load();
-    expect(editor.getElement('editor')).to.be.ok();
-  });
 });
-
