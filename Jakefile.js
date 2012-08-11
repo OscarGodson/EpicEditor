@@ -1,6 +1,5 @@
 var fs = require('fs')
-  , path = require('path')
-  , VERSION = fs.readFileSync(path.join(process.cwd() + '/VERSION'), 'utf-8')
+  , VERSION = fs.readFileSync('VERSION', 'utf-8')
 
 function concat(fileList, destPath) {
   var out = fileList.map(function (filePath) {
@@ -26,26 +25,24 @@ function colorize(str, color) {
 
 desc('Lint all js files')
 task('lint', [], function () {
-  jake.Task['lint:all'].invoke();
+  jake.Task['lint:all'].invoke()
 }, {async: true})
 
 namespace('lint', function () {
-  var cwd = process.cwd()
-    , jakefile = path.join(cwd + '/Jakefile.js')
-    , jshintrc = path.join(cwd + '/.jshintrc')
-    , editor = path.join(cwd + '/src/editor.js')
-    , spec = path.join(cwd + '/spec/spec.js')
-    , docs = path.join(cwd + '/docs/js/main.js')
+  var jakefile = 'Jakefile.js'
+    , jshintrc = '.jshintrc'
+    , editor = 'src/editor.js'
+    , tests = 'test'
+    , docs = 'docs/js/main.js'
 
-  task('all', ['lint:editor', 'lint:docs', 'lint:spec', 'lint:util'], function () {
+  task('all', ['lint:editor', 'lint:docs', 'lint:tests', 'lint:util'], function () {
     complete()
   }, {async: true})
 
   desc('Lint core EpicEditor: src/editor.js')
   task('editor', [], function () {
     console.log(colorize('--> Linting editor', 'yellow'))
-    var cwd = process.cwd()
-      , files = [ editor ]
+    var files = [ editor ]
       , cmds = ['jshint ' + files.join(' ') + ' --config .jshintrc']
 
     jake.exec(cmds, function () {
@@ -57,8 +54,7 @@ namespace('lint', function () {
   desc('Lint doc related js: docs/js/main.js')
   task('docs', [], function () {
     console.log(colorize('--> Linting docs', 'yellow'))
-    var cwd = process.cwd()
-      , files = [ docs ]
+    var files = [ docs ]
       , cmds = ['jshint ' + files.join(' ') + ' --config .jshintrc']
 
     jake.exec(cmds, function () {
@@ -67,11 +63,10 @@ namespace('lint', function () {
     }, {stdout: true})
   }, {async: true})
 
-  desc('Lint test related js: spec/spec.js')
-  task('spec', [], function () {
-    console.log(colorize('--> Linting specs', 'yellow'))
-    var cwd = process.cwd()
-      , files = [ spec ]
+  desc('Lint test related js: test/*')
+  task('tests', [], function () {
+    console.log(colorize('--> Linting tests', 'yellow'))
+    var files = [ tests ]
       , cmds = ['jshint ' + files.join(' ') + ' --config .jshintrc']
 
     jake.exec(cmds, function () {
@@ -83,8 +78,7 @@ namespace('lint', function () {
   desc('Lint utility and config js files')
   task('util', [], function () {
     console.log(colorize('--> Linting utils', 'yellow'))
-    var cwd = process.cwd()
-      , files = [ jshintrc, jakefile ]
+    var files = [ jshintrc, jakefile ]
       , cmds = ['jshint ' + files.join(' ') + ' --config .jshintrc --extra-ext .jshintrc']
 
     jake.exec(cmds, function () {
@@ -97,8 +91,8 @@ namespace('lint', function () {
 desc('Build epiceditor.js and minify to epiceditor.min.js')
 task('build', ['build:init', 'lint:editor'], function () {
   console.log(colorize('--> Building', 'yellow'))
-  var destDir = path.join(process.cwd() + '/epiceditor/js/')
-    , srcDir = path.join(process.cwd() + '/src/')
+  var destDir = 'epiceditor/js/'
+    , srcDir = 'src/'
     , parser = process.env.parser ? process.env.parser : srcDir + 'marked/lib/marked.js'
     , srcPaths =
       [ srcDir + 'editor.js'
@@ -110,13 +104,13 @@ task('build', ['build:init', 'lint:editor'], function () {
 
   // If the destination directory does not exist, create it
   jake.mkdirP('epiceditor/js')
-  
+
   if (!fs.existsSync(parser)) {
     fail("Parser path not found.")
   }
-  
+
   concat(srcPaths, destPath)
-  
+
   // Minify
   jake.exec(cmds, function () {
     console.log(colorize('  √ ok', 'green'))
@@ -130,10 +124,10 @@ namespace('build', function () {
     console.log(colorize('--> Warning: Force build skips build pre-reqs. This build should not be commited.', 'magenta'))
     jake.Task['build'].execute()
   })
-  
+
   task('init', [], function () {
     jake.exec(['git submodule update --init'], function () {
-      complete();
+      complete()
     }, {stdout: true})
   }, {async: true})
 })
@@ -141,8 +135,8 @@ namespace('build', function () {
 desc('Build index.html from the README')
 task('docs', ['lint:docs'], function () {
   console.log(colorize('--> Building docs', 'yellow'))
-  var destDir = path.join(process.cwd() + '/')
-    , srcDir = path.join(process.cwd() + '/docs/')
+  var destDir = './'
+    , srcDir = 'docs/'
     , readmePath = destDir + 'README.md'
     , tempPath = srcDir + 'README.html'
     , destPath = destDir + 'index.html'
@@ -162,11 +156,11 @@ task('docs', ['lint:docs'], function () {
   }, {stdout: true})
 }, {async: true})
 
-desc('Test code against specs')
-task('test', ['lint:spec'], function () {
+desc('Test code against tests')
+task('test', ['lint:tests'], function () {
   console.log(colorize('--> Test suite is now running (CTRL+C to quit)', 'magenta'))
-  console.log(colorize('--> http://localhost:5057/spec/runner.html', 'yellow'))
-  jake.exec(['foounit serve'], function () {
+  console.log(colorize('--> http://localhost:8888/tests/tests.html', 'yellow'))
+  jake.exec(['node test/server.js'], function () {
     complete()
   }, {stdout: false})
 }, {async: true})
@@ -174,8 +168,8 @@ task('test', ['lint:spec'], function () {
 var pkg = new jake.PackageTask('EpicEditor', 'v' + VERSION, function () {
   var fileList = [ 'epiceditor']
   this.packageDir = "docs/downloads"
-  this.packageFiles.include(fileList);
-  this.needZip = true;
+  this.packageFiles.include(fileList)
+  this.needZip = true
 })
 
 desc('Kick out some ascii')
