@@ -279,6 +279,44 @@
     return target;
   }
 
+
+  /**
+   * Cross browser addEventListener shim
+   * @param {Object} obj The element to attach the event to
+   * @param {String} type The event name (click, mouseover, etc)
+   * @param {Function} fn The callback to fire for the event
+   * @returns {Undefined}
+   */
+  function _addEvent(obj, type, fn) {
+    if (obj.attachEvent) {
+      obj['e' + type + fn] = fn;
+      obj[type + fn] = function () {
+        obj['e' + type + fn](window.event);
+      }
+      obj.attachEvent('on' + type, obj[type + fn]);
+    }
+    else {
+      obj.addEventListener(type, fn, false);
+    }
+  }
+
+  /**
+   * Cross browser removeEventListener shim
+   * @param {Object} obj The element to remove the event from
+   * @param {String} type The event name (click, mouseover, etc)
+   * @param {Function} fn The handler reference
+   * @returns {Undefined}
+   */
+  function _removeEvent(obj, type, fn) {
+    if (obj.detachEvent) {
+      obj.detachEvent('on' + type, obj[type + fn]);
+      obj[type + fn] = null;
+    }
+    else {
+      obj.removeEventListener(type, fn, false);
+    }
+  }
+
   /**
    * Initiates the EpicEditor object and sets up offline storage as well
    * @class Represents an EpicEditor instance
@@ -555,7 +593,7 @@
     if (self.settings.focusOnLoad) {
       // We need to wait until all three iframes are done loading by waiting until the parent
       // iframe's ready state == complete, then we can focus on the contenteditable
-      self.iframe.addEventListener('readystatechange', function () {
+      _addEvent(self.iframe, 'readystatechange', function () {
         if (self.iframe.readyState == 'complete') {
           self.editorIframeDocument.body.focus();
         }
@@ -688,8 +726,8 @@
       self.emit('fullscreenexit');
     };
 
-    // This setups up live previews by triggering preview() IF in fullscreen on keyup
-    self.editor.addEventListener('keyup', function () {
+    // This sets up live previews by triggering preview() IF in fullscreen on keyup
+    _addEvent(self.editor, 'keyup', function () {
       if (keypressTimer) {
         window.clearTimeout(keypressTimer);
       }
@@ -703,7 +741,7 @@
     fsElement = self.iframeElement;
 
     // Sets up the onclick event on utility buttons
-    utilBtns.addEventListener('click', function (e) {
+    _addEvent(utilBtns, 'click', function (e) {
       var targetClass = e.target.className;
       if (targetClass.indexOf('epiceditor-toggle-preview-btn') > -1) {
         self.preview();
@@ -730,7 +768,7 @@
     // Hide it at first until they move their mouse
     utilBar.style.display = 'none';
 
-    utilBar.addEventListener('mouseover', function () {
+    _addEvent(utilBar, 'mouseover', function () {
       if (utilBarTimer) {
         clearTimeout(utilBarTimer);
       }
@@ -813,16 +851,16 @@
     eventableIframes = [self.previewerIframeDocument, self.editorIframeDocument];
     
     for (i = 0; i < eventableIframes.length; i++) {
-      eventableIframes[i].addEventListener('mousemove', function (e) {
+      _addEvent(eventableIframes[i], 'mousemove', function (e) {
         utilBarHandler(e);
       });
-      eventableIframes[i].addEventListener('scroll', function (e) {
+      _addEvent(eventableIframes[i], 'scroll', function (e) {
         utilBarHandler(e);
       });
-      eventableIframes[i].addEventListener('keyup', function (e) {
+      _addEvent(eventableIframes[i], 'keyup', function (e) {
         shortcutUpHandler(e);
       });
-      eventableIframes[i].addEventListener('keydown', function (e) {
+      _addEvent(eventableIframes[i], 'keydown', function (e) {
         shortcutHandler(e);
       });
     }
@@ -837,7 +875,7 @@
       }, self.settings.file.autoSave);
     }
 
-    window.addEventListener('resize', function () {
+    _addEvent(window, 'resize', function () {
       // If NOT webkit, and in fullscreen, we need to account for browser resizing
       // we don't care about webkit because you can't resize in webkit's fullscreen
       if (!self.iframe.webkitRequestFullScreen && self.is('fullscreen')) {
