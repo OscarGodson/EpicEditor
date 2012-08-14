@@ -30,7 +30,7 @@ task('lint', [], function () {
 
 namespace('lint', function () {
   var jakefile = 'Jakefile.js'
-    , hint = './node_modules/jshint/bin/hint '
+    , hint = 'node node_modules/jshint/bin/hint '
     , jshintrc = '.jshintrc'
     , editor = 'src/editor.js'
     , tests = 'test'
@@ -101,7 +101,7 @@ task('build', ['lint:editor'], function () {
       ]
     , destPath = destDir + 'epiceditor.js'
     , destPathMin = destDir + 'epiceditor.min.js'
-    , cmds = ['./node_modules/uglify-js/bin/uglifyjs ' + destPath + ' > ' + destPathMin]
+    , cmds = ['node node_modules/uglify-js/bin/uglifyjs ' + destPath + ' > ' + destPathMin]
 
   // If the destination directory does not exist, create it
   jake.mkdirP('epiceditor/js')
@@ -130,7 +130,7 @@ namespace('build', function () {
 desc('Build index.html from the README')
 task('docs', ['lint:docs'], function () {
   console.log(colorize('--> Building docs', 'yellow'))
-  var destDir = './'
+  var destDir = ''
     , srcDir = 'docs/'
     , readmePath = destDir + 'README.md'
     , tempPath = srcDir + 'README.html'
@@ -140,7 +140,7 @@ task('docs', ['lint:docs'], function () {
       , tempPath
       , srcDir + 'footer.html'
       ]
-    , cmds = ['./node_modules/marked/bin/marked -o ' + tempPath + ' -i ' + readmePath + ' --gfm']
+    , cmds = ['node node_modules/marked/bin/marked -o ' + tempPath + ' -i ' + readmePath + ' --gfm']
 
   jake.exec(cmds, function () {
     concat(srcPaths, destPath)
