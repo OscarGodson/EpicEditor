@@ -233,13 +233,21 @@ openFileBtn.onclick = function () {
 
 ### getSelection()
 
-Get current selection from the editor. Object returned is same type as `window.getSelection()`.
+Get current selection from the editor. Use this method instead of `window.getSelection()`. Object returned is same type as `window.getSelection()`. Checkout [Selection API](https://developer.mozilla.org/en-US/docs/DOM/Selection) on Mozilla Developer Network.
+
+```javascript
+// "[object Selection]" in Internet Explorer 9+, Chrome, Firefox and Opera
+Object.prototype.toString.call(editor.getSelection());
+
+// true in Internet Explorer 9+, Chrome, Firefox and Opera
+Object.prototype.toString.call(editor.getSelection()) == Object.prototype.toString.call(window.getSelection());
+```
 
 ### insertText(_text_)
 
 Inserts given string of text into the editor. Any selected text will be replaced with the new text. Otherwise text is inserted at the current caret position.
 
-Use `\t` for tab, and `\n` for newline.
+**Note**: You can use whitespace characters such as `\t` for tab, and `\n` for newline
 
 ```javascript
 editor.insertText('Hello World!\n\nWelcome to EpicEditor!');
