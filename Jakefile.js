@@ -30,6 +30,7 @@ task('lint', [], function () {
 
 namespace('lint', function () {
   var jakefile = 'Jakefile.js'
+    , hint = './node_modules/jshint/bin/hint '
     , jshintrc = '.jshintrc'
     , editor = 'src/editor.js'
     , tests = 'test'
@@ -43,7 +44,7 @@ namespace('lint', function () {
   task('editor', [], function () {
     console.log(colorize('--> Linting editor', 'yellow'))
     var files = [ editor ]
-      , cmds = ['jshint ' + files.join(' ') + ' --config .jshintrc']
+      , cmds = [hint + files.join(' ') + ' --config .jshintrc']
 
     jake.exec(cmds, function () {
       console.log(colorize('  √ ok', 'green'))
@@ -55,7 +56,7 @@ namespace('lint', function () {
   task('docs', [], function () {
     console.log(colorize('--> Linting docs', 'yellow'))
     var files = [ docs ]
-      , cmds = ['jshint ' + files.join(' ') + ' --config .jshintrc']
+      , cmds = [hint + files.join(' ') + ' --config .jshintrc']
 
     jake.exec(cmds, function () {
       console.log(colorize('  √ ok', 'green'))
@@ -67,7 +68,7 @@ namespace('lint', function () {
   task('tests', [], function () {
     console.log(colorize('--> Linting tests', 'yellow'))
     var files = [ tests ]
-      , cmds = ['jshint ' + files.join(' ') + ' --config .jshintrc']
+      , cmds = [hint + files.join(' ') + ' --config .jshintrc']
 
     jake.exec(cmds, function () {
       console.log(colorize('  √ ok', 'green'))
@@ -78,8 +79,8 @@ namespace('lint', function () {
   desc('Lint utility and config js files')
   task('util', [], function () {
     console.log(colorize('--> Linting utils', 'yellow'))
-    var files = [ jshintrc, jakefile ]
-      , cmds = ['jshint ' + files.join(' ') + ' --config .jshintrc --extra-ext .jshintrc']
+    var files = [jshintrc, jakefile]
+      , cmds = [hint + files.join(' ') + ' --config .jshintrc --extra-ext .jshintrc']
 
     jake.exec(cmds, function () {
       console.log(colorize('  √ ok', 'green'))
@@ -89,18 +90,18 @@ namespace('lint', function () {
 })
 
 desc('Build epiceditor.js and minify to epiceditor.min.js')
-task('build', ['build:init', 'lint:editor'], function () {
+task('build', ['lint:editor'], function () {
   console.log(colorize('--> Building', 'yellow'))
   var destDir = 'epiceditor/js/'
     , srcDir = 'src/'
-    , parser = process.env.parser ? process.env.parser : srcDir + 'marked/lib/marked.js'
+    , parser = process.env.parser ? process.env.parser : 'node_modules/marked/lib/marked.js'
     , srcPaths =
       [ srcDir + 'editor.js'
       , parser
       ]
     , destPath = destDir + 'epiceditor.js'
     , destPathMin = destDir + 'epiceditor.min.js'
-    , cmds = ['uglifyjs ' + destPath + ' > ' + destPathMin]
+    , cmds = ['./node_modules/uglify-js/bin/uglifyjs ' + destPath + ' > ' + destPathMin]
 
   // If the destination directory does not exist, create it
   jake.mkdirP('epiceditor/js')
@@ -124,12 +125,6 @@ namespace('build', function () {
     console.log(colorize('--> Warning: Force build skips build pre-reqs. This build should not be commited.', 'magenta'))
     jake.Task['build'].execute()
   })
-
-  task('init', [], function () {
-    jake.exec(['git submodule update --init'], function () {
-      complete()
-    }, {stdout: true})
-  }, {async: true})
 })
 
 desc('Build index.html from the README')
@@ -145,7 +140,7 @@ task('docs', ['lint:docs'], function () {
       , tempPath
       , srcDir + 'footer.html'
       ]
-    , cmds = ['marked -o ' + tempPath + ' -i ' + readmePath + ' --gfm']
+    , cmds = ['./node_modules/marked/bin/marked -o ' + tempPath + ' -i ' + readmePath + ' --gfm']
 
   jake.exec(cmds, function () {
     concat(srcPaths, destPath)
