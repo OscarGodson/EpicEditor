@@ -1,0 +1,31 @@
+{
+  "name": "epiceditor",
+  "version": "0.1.2",
+  "author": "Oscar Godson <fixme@gmail.com> (http://oscargodson.com)",
+  "description": "An Embeddable Markdown Editor",
+  "devDependencies": {
+    "uglify-js": "1.3.3",
+    "jshint": "0.7.2",
+    "mocha": "1.3.2",
+    "expect.js": "0.1.2",
+    "mime": "1.2.7",
+    "marked": "0.2.5"
+  },
+  "keywords": [
+    "embeddable",
+    "markdown",
+    "editor"
+  ],
+  "contributors": [
+    "Oscar Godson <fixme@gmail.com> (http://oscargodson.com)",
+    "John Donahue <johnmdonahue@gmail.com> (http://johnmdonahue.com)"
+  ],
+  "license": {
+    "type": "MIT",
+    "url": "https://raw.github.com/OscarGodson/EpicEditor/master/LICENSE"
+  },
+  "repository": "git@github.com:OscarGodson/EpicEditor.git",
+  "scripts": {
+    "test": "jake test"
+  }
+}
