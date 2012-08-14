@@ -557,6 +557,30 @@ describe('EpicEditor.rename', function () {
   });
 });
 
+describe('EpicEditor.getSelection', function () {
+
+  var testEl, editor, emptyFile, selection, type;
+
+  before(function () {
+    testEl = _createTestElement();
+    editor = new EpicEditor({ basePath: '/epiceditor/', container: testEl }).load();
+    emptyFile = 'emptyFile' + _randomNum();
+    editor.importFile(emptyFile, '');
+  });
+
+  after(function () {
+    editor.unload();
+  });
+
+  it('check to see if getSelection returns Selection object', function () {
+    selection = editor.getSelection();
+    type = Object.prototype.toString.call(selection);
+    expect(selection).toNot(beNull);
+    expect(type).to(match, /selection/i);
+  });
+
+});
+
 describe('EpicEditor.insertText', function () {
 
   var testEl, editor, emptyFile;
