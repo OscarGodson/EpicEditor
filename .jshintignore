@@ -1,6 +1,0 @@
-node_modules
-packages
-.git
-
-test/mocha.js
-test/expect.js
