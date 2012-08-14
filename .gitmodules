@@ -1,3 +1,0 @@
-[submodule "src/marked"]
-	path = src/marked
-	url = git://github.com/chjj/marked.git
