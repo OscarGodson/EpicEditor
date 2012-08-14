@@ -133,74 +133,6 @@
     headID.appendChild(cssNode);
   }
 
-  // Find offset
-  function _findOffset(root, ss) {
-    if (!root) {
-      return null;
-    }
-
-    var offset = 0
-      , element = root
-      , container
-      , len = 0;
-
-    do {
-      container = element;
-      element = element.firstChild;
-
-      if (element) {
-        do {
-          len = _getText(element).length;
-
-          if (offset <= ss && offset + len > ss) {
-            break;
-          }
-
-          offset += len;
-        } while (element = element.nextSibling);
-      }
-
-      if (!element) {
-        // It's the container's lastChild
-        break;
-      }
-    } while (element && element.hasChildNodes() && element.nodeType != 3);
-
-    if (element) {
-      return {
-        element: element,
-        offset: ss - offset
-      };
-    }
-    else if (container) {
-      element = container;
-
-      while (element && element.lastChild) {
-        element = element.lastChild;
-      }
-
-      if (element.nodeType === 3) {
-        return {
-          element: element,
-          offset: element.textContent.length
-        };
-      }
-      else {
-        return {
-          element: element,
-          offset: 0
-        };
-      }
-    }
-
-    return {
-      element: root,
-      offset: 0,
-      error: true
-    };
-  }
-
-
   // Simply replaces a class (o), to a new class (n) on an element provided (e)
   function _replaceClass(e, o, n) {
     e.className = e.className.replace(o, n);
@@ -257,8 +189,8 @@
     return 0;
   }
 
-  // Insert new line and respect smart indentation if the option is present
-  function _insertNewLine(iframeDocument, smartIndent) {
+  // Insert newline and respect smart indentation if the option is present
+  function _insertNewline(iframeDocument, smartIndent) {
     var body = iframeDocument.body
       , content
       , ss
@@ -289,17 +221,11 @@
   function _setSelectionRange(iframeDocument, ss, se) {
     var body = iframeDocument.body
       , range = iframeDocument.createRange()
-      , offset = _findOffset(body, ss)
+      , textNode = body.firstChild
       , selection;
 
-    range.setStart(offset.element, offset.offset);
-
-    // When there's an actual range of selection
-    if (se && se != ss) {
-      offset = _findOffset(body, se);
-    }
-
-    range.setEnd(offset.element, offset.offset);
+    range.setStart(textNode, ss);
+    range.setEnd(textNode, se);
 
     selection = _getSelection(iframeDocument);
     selection.removeAllRanges();
@@ -1001,7 +927,7 @@
         e.preventDefault();
         e.stopPropagation();
 
-        _insertNewLine(self.editorIframeDocument, self.settings.smartIndent);
+        _insertNewline(self.editorIframeDocument, self.settings.smartIndent);
         shortcutUpHandler();
       }
 
