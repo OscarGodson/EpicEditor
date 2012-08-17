@@ -120,7 +120,7 @@
     id = id || '';
     var headID = context.getElementsByTagName("head")[0]
       , cssNode = context.createElement('link');
-    
+
     _applyAttrs(cssNode, {
       type: 'text/css'
     , id: id
@@ -143,32 +143,210 @@
     return el.contentDocument || el.contentWindow.document;
   }
 
-  // Grabs the text from an element and preserves whitespace
-  function _getText(el) {
-    var theText;
-    if (document.body.innerText) {
-      theText = el.innerText;
+  // Get index of current selection start
+  function _getSelectionStart(iframeDocument) {
+    var body = iframeDocument.body
+      , selection = _getSelection(iframeDocument)
+      , range
+      , element
+      , container
+      , offset;
+
+    if (selection != null && selection.rangeCount) {
+      range = selection.getRangeAt(0);
+      element = range.startContainer;
+      container = element;
+      offset = range.startOffset;
+
+      if (!(body.compareDocumentPosition(element) & 0x10)) {
+        return 0;
+      }
+
+      do {
+        while (element = element.previousSibling) {
+          if (element.textContent) {
+            offset += element.textContent.length;
+          }
+        }
+
+        element = container = container.parentNode;
+      } while (element && element != body);
+
+      return offset;
+    } else {
+      return 0;
+    }
+  }
+
+  // Get index of current selection end
+  function _getSelectionEnd(iframeDocument) {
+    var selection = _getSelection(iframeDocument);
+
+    if (selection != null && selection.rangeCount) {
+      return _getSelectionStart(iframeDocument) + (selection.getRangeAt(0) + '').length;
+    }
+
+    return 0;
+  }
+
+  // Insert newline and respect smart indentation if the option is present
+  function _insertNewline(iframeDocument, smartIndent) {
+    var body = iframeDocument.body
+      , content
+      , ss
+      , before
+      , lf
+      , indent = '';
+
+    if (!smartIndent) {
+      _insertText(iframeDocument, '\n');
     }
     else {
-      // First replace <br>s before replacing the rest of the HTML
-      theText = el.innerHTML.replace(/<br>/gi, "\n");
-      // Now we can clean the HTML
-      theText = theText.replace(/<(?:.|\n)*?>/gm, '');
-      // Now fix HTML entities
-      theText = theText.replace(/&lt;/gi, '<');
-      theText = theText.replace(/&gt;/gi, '>');
+      content = _getText(body);
+      ss = _getSelectionStart(iframeDocument);
+      before = content.slice(0, ss);
+      lf = before.lastIndexOf('\n') + 1;
+      indent = (before.slice(lf).match(/^\s+/) || [''])[0];
+
+      _insertText(iframeDocument, '\n' + indent);
     }
-    return theText;
+  }
+
+  /**
+   * Set selection range
+   * @param {HTMLDocument} iframe document
+   * @param {number} selection start
+   * @param {number} selection end
+   */
+  function _setSelectionRange(iframeDocument, ss, se) {
+    var body = iframeDocument.body
+      , range = iframeDocument.createRange()
+      , textNode = body.firstChild
+      , text = _getText(body)
+      , textLength = text.length
+      , selection;
+
+    // Protected against IndexSizeError, which happens when ss or se is bigger
+    // than the length of the text content
+    ss = ss > textLength ? textLength : ss;
+    se = se > textLength ? textLength : se;
+
+    range.setStart(textNode, ss);
+    range.setEnd(textNode, se);
+
+    selection = _getSelection(iframeDocument);
+
+    // Our API strictly states that _getSelection can return null
+    if (selection != null) {
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+  }
+
+  /**
+   * Get selection range
+   *
+   * Note: In older versions of Internet Explorer, this returns TextRange object
+   *
+   * @param {HTMLDocument} HTMLDocument container
+   * @returns {Selection|TextRange|undefined} Selection
+   */
+  function _getSelection(iframeDocument) {
+    var contentWindow = iframeDocument.defaultView;
+    if (contentWindow) {
+      // Most modern browsers
+      return contentWindow.getSelection();
+    }
+    else if (iframeDocument.selection) {
+      // IE returns TextRange object
+      return iframeDocument.selection.createRange();
+    }
+    else {
+      return window.getSelection();
+    }
+  }
+
+  // Grabs the text from an element and preserves whitespace
+  function _getText(el) {
+    var node
+      , nodeType = el.nodeType
+      , i = 0
+      , text = '';
+
+    // ELEMENT_NODE || DOCUMENT_NODE || DOCUMENT_FRAGMENT_NODE
+    if (nodeType === 1 || nodeType === 9 || nodeType === 11) {
+      if (typeof el.textContent === 'string') {
+        return el.textContent;
+      }
+      else {
+        // textContent can be null, in which case we walk the element tree
+        for (el = el.firstChild; el; el = el.nextSibling) {
+          text += _getText(el);
+        }
+      }
+    }
+    else if (nodeType === 3 || nodeType === 4) {
+      return el.nodeValue;
+    }
+    else {
+      for (; (node = el[i]); i++) {
+        text += _getText(node);
+      }
+    }
+
+    return text;
+  }
+
+  // Remove all child nodes
+  function _empty(el) {
+    while (el.hasChildNodes()) {
+      el.removeChild(el.lastChild);
+    }
+
+    return el;
   }
 
   function _setText(el, content) {
-    if (document.body.innerText) {
-      el.innerText = content;
+    var textNode = el.firstChild;
+
+    // If the element does not contain a TextNode, we create one.
+    // Note: on some browsers, namely Firefox – this has potential to lose
+    // undo history. So until we have our own undo manager, there will be
+    // some inconsistent undo behaviour across browsers.
+    if (textNode == null || textNode.nodeType !== 3) {
+      textNode = (el.ownerDocument || document).createTextNode(content);
+      _empty(el).appendChild(textNode);
     }
-    else {
-      el.innerHTML = content.replace(/\n/g, "<br>");
-    }
+
+    textNode.nodeValue = content;
     return true;
+  }
+
+  // Insert text to given iframe document
+  function _insertText(iframeDocument, text) {
+    if (!text || text.length === 0) {
+      return;
+    }
+
+    var el = iframeDocument.body
+      , content = _getText(el)
+      , ss = _getSelectionStart(iframeDocument)
+      , se = _getSelectionEnd(iframeDocument)
+      , before = content.slice(0, ss)
+      , after = content.slice(se)
+      , selection = content.slice(ss, se);
+
+    // Insert text at selection
+    before += text;
+    selection = '';
+
+    // The effect here is: remove selection, add text
+    _setText(el, before + selection + after);
+
+    // Restore the cursor position
+    ss += text.length;
+    se = ss;
+    _setSelectionRange(iframeDocument, ss, se);
   }
 
   /**
@@ -303,6 +481,7 @@
           , editor: '/themes/editor/epic-dark.css'
           }
         , focusOnLoad: false
+        , smartIndent: true
         , shortcut: { modifier: 18 // alt keycode
           , fullscreen: 70 // f keycode
           , preview: 80 // p keycode
@@ -329,7 +508,7 @@
     else if (typeof self.settings.container == 'object') {
       self.element = self.settings.container;
     }
-    
+
     // Figure out the file name. If no file name is given we'll use the ID.
     // If there's no ID either we'll use a namespaced file name that's incremented
     // based on the calling order. As long as it doesn't change, drafts will be saved.
@@ -461,7 +640,7 @@
                     '<img width="30" src="' + this.settings.basePath + '/images/fullscreen.png" title="Enter Fullscreen" class="epiceditor-fullscreen-btn">' +
                   '</div>' +
                 '</div>'
-    
+
     // The previewer is just an empty box for the generated HTML to go into
     , previewer: '<div id="epiceditor-preview"></div>'
     };
@@ -484,7 +663,7 @@
     // Write an iframe and then select it for the editor
     self.element.innerHTML = '<iframe scrolling="no" frameborder="0" id= "' + self._instanceId + '"></iframe>';
     iframeElement = document.getElementById(self._instanceId);
-    
+
     // Store a reference to the iframeElement itself
     self.iframeElement = iframeElement;
 
@@ -504,7 +683,7 @@
     // Need something for... you guessed it, Firefox
     self.editorIframeDocument.write('');
     self.editorIframeDocument.close();
-    
+
     // Setup the previewer iframe
     self.previewerIframeDocument = _getIframeInnards(self.previewerIframe);
     self.previewerIframeDocument.open();
@@ -521,15 +700,15 @@
     widthDiff = _outerWidth(self.element) - self.element.offsetWidth;
     heightDiff = _outerHeight(self.element) - self.element.offsetHeight;
     elementsToResize = [self.iframeElement, self.editorIframe, self.previewerIframe];
-     
+
     setupIframeStyles(elementsToResize);
 
     // Insert Base Stylesheet
     _insertCSSLink(self.settings.basePath + self.settings.theme.base, self.iframe, 'theme');
-    
+
     // Insert Editor Stylesheet
     _insertCSSLink(self.settings.basePath + self.settings.theme.editor, self.editorIframeDocument, 'theme');
-    
+
     // Insert Previewer Stylesheet
     _insertCSSLink(self.settings.basePath + self.settings.theme.preview, self.previewerIframeDocument, 'theme');
 
@@ -539,9 +718,9 @@
     // Now grab the editor and previewer for later use
     self.editor = self.editorIframeDocument.body;
     self.previewer = self.previewerIframeDocument.getElementById('epiceditor-preview');
-   
+
     self.editor.contentEditable = true;
- 
+
     // Firefox's <body> gets all fucked up so, to be sure, we need to hardcode it
     self.iframe.body.style.height = this.element.offsetHeight + 'px';
 
@@ -570,7 +749,6 @@
 
     _elementStates = {}
     self._goFullscreen = function (el) {
-      
       if (self.is('fullscreen')) {
         self._exitFullscreen(el);
         return;
@@ -703,7 +881,7 @@
         }
       }, 250);
     });
-    
+
     fsElement = self.iframeElement;
 
     // Sets up the onclick event on utility buttons
@@ -760,11 +938,20 @@
       }
       mousePos = { y: e.pageY, x: e.pageX };
     }
- 
+
     // Add keyboard shortcuts for convenience.
     function shortcutHandler(e) {
       if (e.keyCode == self.settings.shortcut.modifier) { isMod = true } // check for modifier press(default is alt key), save to var
       if (e.keyCode == 17) { isCtrl = true } // check for ctrl/cmnd press, in order to catch ctrl/cmnd + s
+
+      // Handle enter key for newlines. Don't let browsers handle it.
+      if (e.keyCode == 13) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        _insertNewline(self.editorIframeDocument, self.settings.smartIndent);
+        shortcutUpHandler();
+      }
 
       // Check for alt+p and make sure were not in fullscreen - default shortcut to switch to preview
       if (isMod === true && e.keyCode == self.settings.shortcut.preview && !self.is('fullscreen')) {
@@ -805,17 +992,52 @@
         self.save();
         e.preventDefault();
       }
-
     }
-    
+
     function shortcutUpHandler(e) {
-      if (e.keyCode == self.settings.shortcut.modifier) { isMod = false }
-      if (e.keyCode == 17) { isCtrl = false }
+      var keyCode = e && e.keyCode || 0
+        , content
+        , ss
+        , se;
+
+      if ([
+        9, 91, 93, 16, 17, 18,
+        20, // caps lock
+        13, // Enter (handled by keydown)
+        112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, // F[0-12]
+        27 // Esc
+      ].indexOf(keyCode) > -1) {
+        return;
+      }
+
+      if (keyCode == self.settings.shortcut.modifier) { isMod = false }
+      if (keyCode == 17) { isCtrl = false }
+
+      if (keyCode !== 37 && keyCode !== 39) {
+        content = _getText(self.editor);
+        ss = _getSelectionStart(self.editorIframeDocument);
+        se = _getSelectionEnd(self.editorIframeDocument);
+
+        if (!/\n$/.test(content)) {
+          self.editor.innerHTML = self.editor.innerHTML + '\n';
+        }
+
+        // Firefox adds <br /> in strange cases, so remove it.
+        if (self.editor.childElementCount > 0) {
+          content = _getText(self.editor);
+          _setText(self.editor, content);
+        }
+
+        if (ss !== null || se !== null) {
+          _setSelectionRange(self.editorIframeDocument, ss, se);
+        }
+      }
+
     }
 
     // Hide and show the util bar based on mouse movements
     eventableIframes = [self.previewerIframeDocument, self.editorIframeDocument];
-    
+
     for (i = 0; i < eventableIframes.length; i++) {
       eventableIframes[i].addEventListener('mousemove', function (e) {
         utilBarHandler(e);
@@ -827,7 +1049,7 @@
         shortcutUpHandler(e);
       });
       eventableIframes[i].addEventListener('keydown', function (e) {
-        shortcutHandler(e);
+        return shortcutHandler(e);
       });
     }
 
@@ -906,11 +1128,11 @@
     self._eeState.loaded = false;
     self._eeState.unloaded = true;
     callback = callback || function () {};
-    
+
     if (self.saveInterval) {
       window.clearInterval(self.saveInterval);
     }
-    
+
     callback.call(this);
     self.emit('unload');
     return self;
@@ -960,7 +1182,7 @@
       self._eeState.edit = false;
       self.previewerIframe.focus();
     }
-    
+
     self.emit('preview');
     return self;
   }
@@ -998,6 +1220,25 @@
     self.previewerIframe.style.display = 'none';
     self.editorIframe.focus();
     self.emit('edit');
+    return this;
+  }
+
+  /**
+   * Get current selection
+   * @returns {Object|Null}
+   */
+  EpicEditor.prototype.getSelection = function () {
+    return _getSelection(this.editorIframeDocument);
+  }
+
+  /**
+   * Insert text at the current cursor position. If selection is not empty, it
+   * will replace the selected text.
+   * @param {string} Text to insert
+   * @returns {object} EpicEditor will be returned
+   */
+  EpicEditor.prototype.insertText = function (text) {
+    _insertText(this.editorIframeDocument, text);
     return this;
   }
 
@@ -1173,7 +1414,7 @@
     content = content || '';
     kind = kind || 'md';
     meta = meta || {};
-  
+
     if (JSON.parse(this._storage[self.settings.localStorageName])[name] === undefined) {
       isNew = true;
     }
@@ -1208,7 +1449,7 @@
 
     name = name || self.settings.file.name;
     kind = kind || 'text';
-   
+
     file = self.getFiles(name);
 
     // If the file doesn't exist just return early with undefined
@@ -1217,7 +1458,7 @@
     }
 
     content = file.content;
-   
+
     switch (kind) {
     case 'html':
       // Get this, 2 spaces in a content editable actually converts to:

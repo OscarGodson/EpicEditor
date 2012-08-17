@@ -1,11 +1,20 @@
 /*global $:false, prettyPrint:false */
 
 $(function () {
-  var zipUrl = 'docs/downloads/EpicEditor-v' + EpicEditor.version + '.zip';
-  
+  var zipUrl = 'docs/downloads/EpicEditor-v' + EpicEditor.version + '.zip'
+    , opts =
+      { container: 'example-1'
+      , file: { defaultContent: "#EpicEditor\nThis is some default content. Go ahead, _change me_. " }
+      , focusOnLoad: true
+      }
+    , tryItStatus = false
+    , editor
+    , example
+    , tryItBtn
+
   // TODO: Now that we have automatic ID creation, use element IDs instead of counting DOM elements
   $('#wrapper').before('<div id="toc"><h2><a href="#">EpicEditor</a></h2><ul id="toc-list"></ul></div>');
-  
+
   $("h2, h3").each(function (idx, val) {
     var h = $(this)
       , title = h.text()
@@ -28,21 +37,15 @@ $(function () {
   $('#an-embeddable-javascript-markdown-editor + p').after('<div class="epiceditors" id="example-1"></div>');
   $('#step-1-download + p').html('<a href="#download">Download the latest release (' + EpicEditor.version + ')</a> or clone the repo:');
   $('tr:even').addClass('even');
- 
-  var opts =
-      { container: 'example-1'
-      , file: { defaultContent: "#EpicEditor\nThis is some default content. Go ahead, _change me_. " }
-      , focusOnLoad: true
-      }
-    , editor = new EpicEditor(opts).load()
-    , example = new EpicEditor()
-    , tryItStatus = false
-    , tryItBtn = document.getElementById('try-it');
-    
+
+  editor = new EpicEditor(opts).load();
+  example = new EpicEditor();
+  tryItBtn = document.getElementById('try-it');
+
   // So people can play with it in their console
   window.editor = editor;
   window.example = example;
-  
+
   tryItBtn.onclick = function () {
     if (!tryItStatus) {
       tryItStatus = true;
@@ -64,10 +67,10 @@ $(function () {
   $(['OscarGodson', 'johnmdonahue', 'adam_bickford', 'sebnitu']).each(function (idx, val) {
     var twimg = 'http://twitter.com/api/users/profile_image?screen_name=' + val
       , twlink = 'http://twitter.com/' + val
-      
+
     $('#avatars').append('<a href="' + twlink + '"><img class="avatar" src="' + twimg + '">')
   })
-  
+
   $(window).resize(function () {
     $('#toc').height(window.innerHeight + 'px');
   }).trigger('resize');

@@ -72,6 +72,7 @@
     editor:&#39;/themes/editor/epic-dark.css&#39;
   },
   focusOnLoad: false,
+  smartIndent: true,
   shortcut: {
     modifier: 18,
     fullscreen: 70,
@@ -220,6 +221,30 @@ var editor = new EpicEditor(opts);</code></pre>
 <pre><code class="lang-javascript">openFileBtn.onclick = function () {
   editor.open(&#39;some-file&#39;); // Opens a file when the user clicks this button
 }</code></pre>
+<h3>getSelection()</h3>
+<p>Get current selection from the editor. Use this method instead of <code>window.getSelection()</code>. Object returned is same type as <code>window.getSelection()</code>. Checkout <a href="https://developer.mozilla.org/en-US/docs/DOM/Selection">Selection API</a> on Mozilla Developer Network.
+
+</p>
+<pre><code class="lang-javascript">// &quot;[object Selection]&quot; in Internet Explorer 9+, Chrome, Firefox and Opera
+Object.prototype.toString.call(editor.getSelection());
+
+// true in Internet Explorer 9+, Chrome, Firefox and Opera
+Object.prototype.toString.call(editor.getSelection()) == Object.prototype.toString.call(window.getSelection());</code></pre>
+<h3>insertText(<em>text</em>)</h3>
+<p>Inserts given string of text into the editor. Any selected text will be replaced with the new text. Otherwise text is inserted at the current caret position.
+
+</p>
+<p><strong>Note</strong>: You can use whitespace characters such as <code>\t</code> for tab, and <code>\n</code> for newline
+
+</p>
+<pre><code class="lang-javascript">editor.insertText(&#39;Hello World!\n\nWelcome to EpicEditor!&#39;);</code></pre>
+<p>You can use both <code>getSelection</code> and <code>insertText(text)</code> to edit the contents of the editor. Consider a scenario where you wish to make the selection bold:
+
+</p>
+<pre><code class="lang-javascript">// Assumes user has a selection
+var selection = editor.getSelection();
+var selectedText = selection.toString();
+editor.insertText(&#39;**&#39; + selectedText + &#39;**&#39;);</code></pre>
 <h3>importFile([<em>filename</em>],[<em>content</em>])</h3>
 <p>Imports a string of content into a file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX. Will also run <code>.open()</code> after import automatically.
 

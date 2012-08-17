@@ -67,6 +67,7 @@ var opts = {
     editor:'/themes/editor/epic-dark.css'
   },
   focusOnLoad: false,
+  smartIndent: true,
   shortcut: {
     modifier: 18,
     fullscreen: 70,
@@ -228,6 +229,37 @@ Opens a file into the editor.
 openFileBtn.onclick = function () {
   editor.open('some-file'); // Opens a file when the user clicks this button
 }
+```
+
+### getSelection()
+
+Get current selection from the editor. Use this method instead of `window.getSelection()`. Object returned is same type as `window.getSelection()`. Checkout [Selection API](https://developer.mozilla.org/en-US/docs/DOM/Selection) on Mozilla Developer Network.
+
+```javascript
+// "[object Selection]" in Internet Explorer 9+, Chrome, Firefox and Opera
+Object.prototype.toString.call(editor.getSelection());
+
+// true in Internet Explorer 9+, Chrome, Firefox and Opera
+Object.prototype.toString.call(editor.getSelection()) == Object.prototype.toString.call(window.getSelection());
+```
+
+### insertText(_text_)
+
+Inserts given string of text into the editor. Any selected text will be replaced with the new text. Otherwise text is inserted at the current caret position.
+
+**Note**: You can use whitespace characters such as `\t` for tab, and `\n` for newline
+
+```javascript
+editor.insertText('Hello World!\n\nWelcome to EpicEditor!');
+```
+
+You can use both `getSelection` and `insertText(text)` to edit the contents of the editor. Consider a scenario where you wish to make the selection bold:
+
+```javascript
+// Assumes user has a selection
+var selection = editor.getSelection();
+var selectedText = selection.toString();
+editor.insertText('**' + selectedText + '**');
 ```
 
 ### importFile([_filename_],[_content_])

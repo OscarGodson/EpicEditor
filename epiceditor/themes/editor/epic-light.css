@@ -7,6 +7,13 @@ body {
   font-size:14px;
   padding:10px;
   line-height:1.35em;
+  overflow: visible;
   margin:0;
   padding:0;
+
+  white-space: -moz-pre-wrap;
+  white-space: -o-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
