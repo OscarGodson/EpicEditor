@@ -152,7 +152,7 @@
       , container
       , offset;
 
-    if (selection.rangeCount) {
+    if (selection != null && selection.rangeCount) {
       range = selection.getRangeAt(0);
       element = range.startContainer;
       container = element;
@@ -182,7 +182,7 @@
   function _getSelectionEnd(iframeDocument) {
     var selection = _getSelection(iframeDocument);
 
-    if (selection.rangeCount) {
+    if (selection != null && selection.rangeCount) {
       return _getSelectionStart(iframeDocument) + (selection.getRangeAt(0) + '').length;
     }
 
@@ -222,14 +222,25 @@
     var body = iframeDocument.body
       , range = iframeDocument.createRange()
       , textNode = body.firstChild
+      , text = _getText(body)
+      , textLength = text.length
       , selection;
+
+    // Protected against IndexSizeError, which happens when ss or se is bigger
+    // than the length of the text content
+    ss = ss > textLength ? textLength : ss;
+    se = se > textLength ? textLength : se;
 
     range.setStart(textNode, ss);
     range.setEnd(textNode, se);
 
     selection = _getSelection(iframeDocument);
-    selection.removeAllRanges();
-    selection.addRange(range);
+
+    // Our API strictly states that _getSelection can return null
+    if (selection != null) {
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
   }
 
   /**
@@ -291,6 +302,11 @@
 
   function _setText(el, content) {
     var textNode = el.firstChild;
+
+    // If the element does not contain a TextNode, we create one.
+    // Note: on some browsers, namely Firefox – this has potential to lose
+    // undo history. So until we have our own undo manager, there will be
+    // some inconsistent undo behaviour across browsers.
     if (textNode == null || textNode.nodeType !== 3) {
       textNode = (el.ownerDocument || document).createTextNode(content);
       _empty(el).appendChild(textNode);
