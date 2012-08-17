@@ -253,6 +253,15 @@ Inserts given string of text into the editor. Any selected text will be replaced
 editor.insertText('Hello World!\n\nWelcome to EpicEditor!');
 ```
 
+You can use both `getSelection` and `insertText(text)` to edit the contents of the editor. Consider a scenario where you wish to make the selection bold:
+
+```javascript
+// Assumes user has a selection
+var selection = editor.getSelection();
+var selectedText = selection.toString();
+editor.insertText('**' + selectedText + '**');
+```
+
 ### importFile([_filename_],[_content_])
 
 Imports a string of content into a file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX. Will also run `.open()` after import automatically.

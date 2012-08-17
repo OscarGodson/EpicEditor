@@ -238,6 +238,13 @@ Object.prototype.toString.call(editor.getSelection()) == Object.prototype.toStri
 
 </p>
 <pre><code class="lang-javascript">editor.insertText(&#39;Hello World!\n\nWelcome to EpicEditor!&#39;);</code></pre>
+<p>You can use both <code>getSelection</code> and <code>insertText(text)</code> to edit the contents of the editor. Consider a scenario where you wish to make the selection bold:
+
+</p>
+<pre><code class="lang-javascript">// Assumes user has a selection
+var selection = editor.getSelection();
+var selectedText = selection.toString();
+editor.insertText(&#39;**&#39; + selectedText + &#39;**&#39;);</code></pre>
 <h3>importFile([<em>filename</em>],[<em>content</em>])</h3>
 <p>Imports a string of content into a file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX. Will also run <code>.open()</code> after import automatically.
 
