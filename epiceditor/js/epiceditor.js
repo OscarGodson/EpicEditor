@@ -245,6 +245,9 @@
 
   /**
    * Get selection range
+   *
+   * Note: In older versions of Internet Explorer, this returns TextRange object
+   *
    * @param {HTMLDocument} HTMLDocument container
    * @returns {Selection|TextRange|undefined} Selection
    */
@@ -257,6 +260,9 @@
     else if (iframeDocument.selection) {
       // IE returns TextRange object
       return iframeDocument.selection.createRange();
+    }
+    else {
+      return window.getSelection();
     }
   }
 
@@ -1016,10 +1022,17 @@
           self.editor.innerHTML = self.editor.innerHTML + '\n';
         }
 
-        if (ss != null || se !== null) {
+        // Firefox adds <br /> in strange cases, so remove it.
+        if (self.editor.childElementCount > 0) {
+          content = _getText(self.editor);
+          _setText(self.editor, content);
+        }
+
+        if (ss !== null || se !== null) {
           _setSelectionRange(self.editorIframeDocument, ss, se);
         }
       }
+
     }
 
     // Hide and show the util bar based on mouse movements
