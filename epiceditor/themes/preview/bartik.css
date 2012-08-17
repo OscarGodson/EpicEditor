@@ -7,7 +7,7 @@ body {
   padding: 0;
   border: 0;
   outline: 0;
-  background-color: white;
+  background: #fff;
 }
 
 h1,
@@ -164,4 +164,4 @@ a:active,
 a:focus {
   text-decoration: underline;
 }
-	
+        
