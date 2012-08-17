@@ -59,6 +59,11 @@ pre {
   white-space: pre-wrap;
 }
 
+pre code {
+  font-size: 100%;
+  background-color: transparent;
+}
+
 blockquote {
   background: #f7f7f7;
   border-left: 1px solid #bbb;
