@@ -49,12 +49,12 @@ describe('.open(fileName)', function () {
 
   it('should open the openMe file in the editor', function () {
     editor.open(openMeFile);
-    expect(editor.getElement('editor').body.innerHTML).to.be('open this file');
+    expect(editor.getElement('editor').body.innerHTML).to.match(/open(&nbsp;| )?this(&nbsp;| )?file/g);
   });
 
   it('should open the openMeLater file in the editor after calling .open', function () {
     editor.open(openMeLaterFile);
-    expect(editor.getElement('editor').body.innerHTML).to.be('open me later');
+    expect(editor.getElement('editor').body.innerHTML).to.match(/open(&nbsp;| )?me(&nbsp;| )?later/g);
   });
 
   it('should fire the open event when the open method is called', function () {
