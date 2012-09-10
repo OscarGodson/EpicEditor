@@ -168,7 +168,7 @@
       el.innerText = content;
     }
     else {
-      el.innerHTML = content.replace(/\n/g, "<br>");
+      el.innerHTML = content.replace(/\n/g, "<br>").replace(/ /g, '&nbsp;');
     }
     return true;
   }
