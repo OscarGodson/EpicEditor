@@ -775,6 +775,7 @@
     });
 
     function utilBarHandler(e) {
+      e = e || self.iframeElement.contentWindow;
       // Here we check if the mouse has moves more than 5px in any direction before triggering the mousemove code
       // we do this for 2 reasons:
       // 1. On Mac OS X lion when you scroll and it does the iOS like "jump" when it hits the top/bottom of the page itll fire off
@@ -797,6 +798,7 @@
  
     // Add keyboard shortcuts for convenience.
     function shortcutHandler(e) {
+      e = e || self.iframeElement.contentWindow;
       if (e.keyCode == self.settings.shortcut.modifier) { isMod = true } // check for modifier press(default is alt key), save to var
       if (e.keyCode == 17) { isCtrl = true } // check for ctrl/cmnd press, in order to catch ctrl/cmnd + s
 
@@ -841,15 +843,23 @@
       }
 
     }
-    
+
     function shortcutUpHandler(e) {
+      e = e || self.iframeElement.contentWindow;
       if (e.keyCode == self.settings.shortcut.modifier) { isMod = false }
       if (e.keyCode == 17) { isCtrl = false }
     }
 
     // Hide and show the util bar based on mouse movements
     eventableIframes = [self.previewerIframeDocument, self.editorIframeDocument];
-    
+
+    // In each of the event handlers you'll see some code that looks like:
+    // e = e || self.iframeElement.contentWindow
+    // That code is required for IE8. Removing that code or forgetting to
+    // add it to new handlers will cause IE8 to throw errors about
+    // "Object required" because the event is null.
+    // TODO: move the e = e || self.iframeElement.contentWindow code into
+    //       the actual _addEvent function so it's automatically passed in
     for (i = 0; i < eventableIframes.length; i++) {
       _addEvent(eventableIframes[i], 'mousemove', function (e) {
         utilBarHandler(e);
