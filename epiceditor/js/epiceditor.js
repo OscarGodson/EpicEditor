@@ -166,7 +166,12 @@
       el.innerText = content;
     }
     else {
-      el.innerHTML = content.replace(/\n/g, "<br>");
+      // Don't convert lt/gt characters as HTML when viewing the editor window
+      // TODO: Write a test to catch regressions for this
+      content = content.replace(/</g, '&lt;');
+      content = content.replace(/>/g, '&gt;');
+      content = content.replace(/\n/g, '<br>');
+      el.innerHTML = content;
     }
     return true;
   }
