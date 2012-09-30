@@ -163,6 +163,7 @@
 
   function _setText(el, content) {
     if (document.body.innerText) {
+      content = content.replace(/ /g, '\u00a0');
       el.innerText = content;
     }
     else {
