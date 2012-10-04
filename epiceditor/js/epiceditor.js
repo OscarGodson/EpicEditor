@@ -421,8 +421,6 @@
       , _HtmlTemplates
       , iframeElement
       , baseTag
-      , widthDiff
-      , heightDiff
       , utilBtns
       , utilBar
       , utilBarTimer
@@ -431,7 +429,6 @@
       , _elementStates
       , _isInEdit
       , nativeFs = false
-      , elementsToResize
       , fsElement
       , isMod = false
       , isCtrl = false
@@ -473,21 +470,6 @@
     , previewer: '<div id="epiceditor-preview"></div>'
     };
 
-    // Used to setup the initial size of the iframes
-    function setupIframeStyles(el) {
-      for (var x = 0; x < el.length; x++) {
-        el[x].style.width  = self.element.offsetWidth - widthDiff + 'px';
-        el[x].style.height = self.element.offsetHeight - heightDiff + 'px';
-      }
-    }
-
-    // Used for resetting the width of EE mainly for fluid width containers
-    function resetWidth(el) {
-      widthDiff = _outerWidth(self.element) - self.element.offsetWidth;
-      for (var x = 0; x < el.length; x++) {
-        el[x].style.width  = self.element.offsetWidth - widthDiff + 'px';
-      }
-    }
     // Write an iframe and then select it for the editor
     self.element.innerHTML = '<iframe scrolling="no" frameborder="0" id= "' + self._instanceId + '"></iframe>';
     iframeElement = document.getElementById(self._instanceId);
@@ -524,12 +506,7 @@
 
     self.previewerIframeDocument.close();
 
-    // Set the default styles for the iframe
-    widthDiff = _outerWidth(self.element) - self.element.offsetWidth;
-    heightDiff = _outerHeight(self.element) - self.element.offsetHeight;
-    elementsToResize = [self.iframeElement, self.editorIframe, self.previewerIframe];
-     
-    setupIframeStyles(elementsToResize);
+    self.reflow();
 
     // Insert Base Stylesheet
     _insertCSSLink(self.settings.basePath + self.settings.theme.base, self.iframe, 'theme');
@@ -649,6 +626,8 @@
       , 'height': windowInnerHeight + 'px'
       });
 
+      console.log(_elementStates)
+
       // ...Oh, and hide the buttons and prevent scrolling
       utilBtns.style.visibility = 'hidden';
 
@@ -694,7 +673,7 @@
         self.preview();
       }
 
-      resetWidth(elementsToResize);
+      self.reflow();
 
       self.emit('fullscreenexit');
     };
@@ -873,7 +852,7 @@
       }
       // Makes the editor support fluid width when not in fullscreen mode
       else if (!self.is('fullscreen')) {
-        resetWidth(elementsToResize);
+        self.reflow();
       }
     });
 
