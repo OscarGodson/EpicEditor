@@ -924,6 +924,32 @@
   }
 
   /**
+   * reflow allows you to dynamically re-fit the editor in the parent without
+   * having to unload and then reload the editor again.
+   *
+   * @param {string} kind Can either be 'width' or 'height' or null
+   * if null, both the height and width will be resized
+   *
+   * @returns {object} EpicEditor will be returned
+   */
+  EpicEditor.prototype.reflow = function (kind) {
+    var self = this
+      , widthDiff = _outerWidth(self.element) - self.element.offsetWidth
+      , heightDiff = _outerHeight(self.element) - self.element.offsetHeight
+      , elements = [self.iframeElement, self.editorIframe, self.previewerIframe];
+
+    for (var x = 0; x < elements.length; x++) {
+      if (!kind || kind == 'width') {
+        elements[x].style.width  = self.element.offsetWidth - widthDiff + 'px';
+      }
+      if (!kind || kind == 'height') {
+        elements[x].style.height = self.element.offsetHeight - heightDiff + 'px';
+      }
+    }
+    return self;
+  }
+
+  /**
    * Will take the markdown and generate a preview view based on the theme
    * @param {string} theme The path to the theme you want to preview in
    * @returns {object} EpicEditor will be returned
