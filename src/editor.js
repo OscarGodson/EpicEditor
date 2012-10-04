@@ -626,8 +626,6 @@
       , 'height': windowInnerHeight + 'px'
       });
 
-      console.log(_elementStates)
-
       // ...Oh, and hide the buttons and prevent scrolling
       utilBtns.style.visibility = 'hidden';
 
