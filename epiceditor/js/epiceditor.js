@@ -443,7 +443,7 @@
     }
 
     // Fucking Safari's native fullscreen works terribly
-    // REMOVE THIS IF SAFARI 6 WORKS BETTER
+    // REMOVE THIS IF SAFARI 7 WORKS BETTER
     if (_isSafari()) {
       nativeFs = false;
     }
