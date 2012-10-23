@@ -3,10 +3,6 @@
  * Copyright (c) 2011-2012, Oscar Godson. (MIT Licensed)
  */
 
- /**
- * google-code-pretty
- */
-  
 (function (window, undefined) {
   /**
    * Applies attributes to a DOM object
