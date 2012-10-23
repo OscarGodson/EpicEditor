@@ -132,6 +132,7 @@
 
     headID.appendChild(cssNode);
   }
+  
 
   // Simply replaces a class (o), to a new class (n) on an element provided (e)
   function _replaceClass(e, o, n) {
@@ -308,6 +309,7 @@
         , theme: { base: '/themes/base/epiceditor.css'
           , preview: '/themes/preview/github.css'
           , editor: '/themes/editor/epic-dark.css'
+		  , code : '/themes/code/epiceditor_prettify.css'
           }
         , focusOnLoad: false
         , shortcut: { modifier: 18 // alt keycode
@@ -539,6 +541,9 @@
     
     // Insert Previewer Stylesheet
     _insertCSSLink(self.settings.basePath + self.settings.theme.preview, self.previewerIframeDocument, 'theme');
+	
+	// Insert google code prettify stylesheet
+	_insertCSSLink(self.settings.basePath + self.settings.theme.code, self.previewerIframeDocument, 'theme');
 
     // Add a relative style to the overall wrapper to keep CSS relative to the editor
     self.iframe.getElementById('epiceditor-wrapper').style.position = 'relative';
@@ -969,6 +974,10 @@
     }
     
     self.emit('preview');
+	
+	// Apply google-code-prettify
+	prettyPrintDoc(self.previewer);
+	
     return self;
   }
 
@@ -1872,8 +1881,8 @@ function tok() {
       if (!token.escaped) {
         token.text = escape(token.text, true);
       }
-
-      return '<pre><code'
+	  
+      return '<pre class=\"prettyprint\"><code'
         + (token.lang
         ? ' class="lang-'
         + token.lang
@@ -2114,3 +2123,5 @@ if (typeof module !== 'undefined') {
 }).call(function() {
   return this || (typeof window !== 'undefined' ? window : global);
 }());
+
+

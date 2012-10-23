@@ -47,6 +47,8 @@
 <pre><code class="lang-html">&lt;div id=&quot;epiceditor&quot;&gt;&lt;/div&gt;</code></pre>
 <h3>Step 3: Add the <code>epiceditor.js</code> file</h3>
 <pre><code class="lang-html">&lt;script src=&quot;epiceditor.min.js&quot;&gt;&lt;/script&gt;</code></pre>
+<h3>Step 3.5: Add the <code>epiceditor_prettify.js</code> file</h3>
+<pre><code class="lang-html">&lt;script src=&quot;epiceditor_prettify.js&quot;&gt;&lt;/script&gt;</code></pre>
 <h3>Step 4: Init EpicEditor</h3>
 <pre><code class="lang-javascript">var editor = new EpicEditor().load();</code></pre>
 <h2>API</h2>
@@ -70,6 +72,7 @@
     base:&#39;/themes/base/epiceditor.css&#39;,
     preview:&#39;/themes/preview/preview-dark.css&#39;,
     editor:&#39;/themes/editor/epic-dark.css&#39;
+    code : &#39;/themes/code/epiceditor_prettify.css&#39;
   },
   focusOnLoad: false,
   shortcut: {
@@ -150,6 +153,11 @@ var editor = new EpicEditor(opts);</code></pre>
     <td><code>theme.preview</code></td>
     <td>The theme for the previewer.</td>
     <td><code>themes/preview/github.css</code></td>
+  </tr>
+  <tr>
+    <td><code>theme.code</code></td>
+    <td>The base style for google-code-prettify</td>
+    <td><code>themes/code/epiceditor_prettify.css</code></td>
   </tr>
   <tr>
     <td><code>shortcut.modifier</code></td>
@@ -451,7 +459,7 @@ The editor is the styles for the contents of editor <code>&lt;iframe&gt;</code> 
   <script src="docs/js/jquery.min.js"></script>
   <script src="docs/js/prettify.js"></script>
   <script src="epiceditor/js/epiceditor.js"></script>
+  <script src="epiceditor/js/epiceditor_prettify.js"></script>
   <script src="docs/js/main.js"></script>
-
 </body>
 </html>

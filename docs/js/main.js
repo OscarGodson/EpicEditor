@@ -31,7 +31,16 @@ $(function () {
  
   var opts =
       { container: 'example-1'
-      , file: { defaultContent: "#EpicEditor\nThis is some default content. Go ahead, _change me_. " }
+      , file: { defaultContent: "#EpicEditor\nThis is some default content. Go ahead, _change me_. \n\
+```\n\
+class Voila {\n\
+public:\n\
+  // This is Sample code!\n\
+  static const string VOILA = \"Voila\";\n\
+  // will not interfere with embedded tags.\n\
+};\n\
+```\
+	  " }
       , focusOnLoad: true
       }
     , editor = new EpicEditor(opts).load()
