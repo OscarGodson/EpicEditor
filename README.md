@@ -36,6 +36,12 @@ $ git clone git@github.com:OscarGodson/EpicEditor
 <script src="epiceditor.min.js"></script>
 ```
 
+### Step 3: Add the `epiceditor_prettify.js` file
+
+```html
+<script src="epiceditor.min.js"></script>
+```
+
 ### Step 4: Init EpicEditor
 
 ```javascript
@@ -64,7 +70,8 @@ var opts = {
   theme: {
     base:'/themes/base/epiceditor.css',
     preview:'/themes/preview/preview-dark.css',
-    editor:'/themes/editor/epic-dark.css'
+    editor:'/themes/editor/epic-dark.css',
+	code : '/themes/code/epiceditor_prettify.css'
   },
   focusOnLoad: false,
   shortcut: {
@@ -147,6 +154,11 @@ var editor = new EpicEditor(opts);
     <td><code>theme.preview</code></td>
     <td>The theme for the previewer.</td>
     <td><code>themes/preview/github.css</code></td>
+  </tr>
+  <tr>
+    <td><code>theme.code</code></td>
+    <td>The base style for google-code-prettify</td>
+    <td><code>themes/code/epiceditor_prettify.css</code></td>
   </tr>
   <tr>
     <td><code>shortcut.modifier</code></td>
