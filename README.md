@@ -36,10 +36,10 @@ $ git clone git@github.com:OscarGodson/EpicEditor
 <script src="epiceditor.min.js"></script>
 ```
 
-### Step 3: Add the `epiceditor_prettify.js` file
+### Step 3.5: Add the `epiceditor_prettify.js` file
 
 ```html
-<script src="epiceditor.min.js"></script>
+<script src="epiceditor_prettify.js"></script>
 ```
 
 ### Step 4: Init EpicEditor
