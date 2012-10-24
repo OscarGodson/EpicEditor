@@ -42,6 +42,12 @@ $ git clone git@github.com:OscarGodson/EpicEditor
 var editor = new EpicEditor().load();
 ```
 
+### Step 5 (Optional): If you want more pretty code in preview mode, add the `epiceditor.codeprettify.js` before `epiceditor.js` (Step 3)
+
+```html
+<script src="epiceditor.codeprettify.js"></script>
+```
+
 ## API
 
 ### EpicEditor([_options_])
@@ -64,7 +70,8 @@ var opts = {
   theme: {
     base:'/themes/base/epiceditor.css',
     preview:'/themes/preview/preview-dark.css',
-    editor:'/themes/editor/epic-dark.css'
+    editor:'/themes/editor/epic-dark.css',
+    codepreitty:'/addons/codeprettify.css'
   },
   focusOnLoad: false,
   shortcut: {
@@ -147,6 +154,11 @@ var editor = new EpicEditor(opts);
     <td><code>theme.preview</code></td>
     <td>The theme for the previewer.</td>
     <td><code>themes/preview/github.css</code></td>
+  </tr>
+  <tr>
+    <td><code>theme.code</code></td>
+    <td>The base style for code prettify</td>
+    <td><code>addons/codeprettify.css</code></td>
   </tr>
   <tr>
     <td><code>shortcut.modifier</code></td>

@@ -5,6 +5,12 @@
 
 (function (window, undefined) {
   /**
+   * Addons are implemented another javascript.
+   * To pass JSHint, add global variable/function.
+   */
+  /*global EE_addon_codeprettify, prettyPrintDoc */
+
+  /**
    * Applies attributes to a DOM object
    * @param  {object} context The DOM obj you want to apply the attributes to
    * @param  {object} attrs A key/value pair of attributes you want to apply
@@ -308,6 +314,7 @@
         , theme: { base: '/themes/base/epiceditor.css'
           , preview: '/themes/preview/github.css'
           , editor: '/themes/editor/epic-dark.css'
+          , codeprettify: '/addons/codeprettify.css'
           }
         , focusOnLoad: false
         , shortcut: { modifier: 18 // alt keycode
@@ -539,6 +546,11 @@
     
     // Insert Previewer Stylesheet
     _insertCSSLink(self.settings.basePath + self.settings.theme.preview, self.previewerIframeDocument, 'theme');
+
+    // If use code prettify addons, Insert code preittify Stylesheet
+    if (EE_addon_codeprettify) {
+      _insertCSSLink(self.settings.basePath + self.settings.theme.codeprettify, self.previewerIframeDocument, 'theme');
+    }
 
     // Add a relative style to the overall wrapper to keep CSS relative to the editor
     self.iframe.getElementById('epiceditor-wrapper').style.position = 'relative';
@@ -968,6 +980,11 @@
       self.previewerIframe.focus();
     }
     
+    // If code preittify activated, use
+    if (EE_addon_codeprettify) {
+      prettyPrintDoc(self.previewer);
+    }
+    
     self.emit('preview');
     return self;
   }
@@ -1321,4 +1338,5 @@
   EpicEditor._data = {};
 
   window.EpicEditor = EpicEditor;
+
 })(window);
