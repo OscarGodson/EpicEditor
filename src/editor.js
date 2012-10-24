@@ -548,7 +548,7 @@
     _insertCSSLink(self.settings.basePath + self.settings.theme.preview, self.previewerIframeDocument, 'theme');
 
     // If use code prettify addons, Insert code preittify Stylesheet
-    if (EE_addon_codeprettify) {
+    if (typeof EE_addon_codeprettify != 'undefined' && EE_addon_codeprettify) {
       _insertCSSLink(self.settings.basePath + self.settings.theme.codeprettify, self.previewerIframeDocument, 'theme');
     }
 
@@ -981,7 +981,7 @@
     }
     
     // If code preittify activated, use
-    if (EE_addon_codeprettify) {
+    if (typeof EE_addon_codeprettify != 'undefined' && EE_addon_codeprettify) {
       prettyPrintDoc(self.previewer);
     }
     
