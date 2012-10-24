@@ -102,35 +102,69 @@ namespace('lint', function () {
   }, {async: true})
 })
 
-desc('Build epiceditor.js and minify to epiceditor.min.js')
-task('build', ['lint:editor'], function () {
-  console.log(colorize('--> Building', 'yellow'))
-  var destDir = 'epiceditor/js/'
-    , srcDir = 'src/'
-    , parser = process.env.parser ? process.env.parser : 'node_modules/marked/lib/marked.js'
-    , srcPaths =
-      [ srcDir + 'editor.js'
-      , parser
-      ]
-    , destPath = destDir + 'epiceditor.js'
-    , destPathMin = destDir + 'epiceditor.min.js'
-    , cmds = ['node node_modules/uglify-js/bin/uglifyjs ' + destPath + ' > ' + destPathMin]
-
-  // If the destination directory does not exist, create it
-  jake.mkdirP('epiceditor/js')
-
-  if (!fs.existsSync(parser)) {
-    fail("Parser path not found.")
-  }
-
-  concat(srcPaths, destPath)
-
-  // Minify
-  jake.exec(cmds, function () {
-    console.log(colorize('  √ ok', 'green'))
-    complete()
-  }, {stdout: true})
+desc('Build epiceditor and minify')
+task('build', [], function () {
+  jake.Task['build:all'].invoke()
 }, {async: true})
+
+namespace('build', function () {
+  task('all', ['build:editor', 'build:codeprettify'], function () {
+    complete()
+  }, {async: true})
+  
+  desc('Build epiceditor.js and minify to epiceditor.min.js')
+  task('editor', ['lint:editor'], function () {
+    console.log(colorize('--> Building editor', 'yellow'))
+    var destDir = 'epiceditor/js/'
+      , srcDir = 'src/'
+      , parser = process.env.parser ? process.env.parser : 'node_modules/marked/lib/marked.js'
+      , srcPaths =
+        [ srcDir + 'editor.js'
+        , parser
+        ]
+      , destPath = destDir + 'epiceditor.js'
+      , destPathMin = destDir + 'epiceditor.min.js'
+      , cmds = ['node node_modules/uglify-js/bin/uglifyjs ' + destPath + ' > ' + destPathMin]
+
+    // If the destination directory does not exist, create it
+    jake.mkdirP('epiceditor/js')
+
+    if (!fs.existsSync(parser)) {
+      fail("Parser path not found.")
+    }
+
+    concat(srcPaths, destPath)
+    
+    // Minify
+    jake.exec(cmds, function () {
+      console.log(colorize('  √ ok', 'green'))
+      complete()
+    }, {stdout: true})
+  }, {async: true})
+  
+  desc('Build epiceditor.codeprettify.js and minify to epiceditor.codeprettify.min.js')
+  task('codeprettify', [], function () {
+    console.log(colorize('--> Building addon::codeprettify', 'yellow'))
+    // code prettify plugin
+    var destDir = 'epiceditor/addons/'
+      , srcDir = 'src/'
+      , srcPath = [srcDir + 'codeprettify.js']
+      , destPath = destDir + 'epiceditor.codeprettify.js'
+      , destPathMin = destDir + 'epiceditor.codeprettify.min.js'
+      , cmds = ['node node_modules/uglify-js/bin/uglifyjs ' + srcPath + ' > ' + destPathMin]
+      
+    // If the destination directory does not exist, create it
+    jake.mkdirP('epiceditor/addons')
+    concat(srcPath, destPath)
+    
+    // Minify
+    jake.exec(cmds, function () {
+      console.log(colorize('  √ ok', 'green'))
+      complete()
+    }, {stdout: true})
+  }, {async: true})
+
+})
 
 namespace('build', function () {
   desc('Force build epiceditor.js and epiceditor.min.js skipping pre-reqs')

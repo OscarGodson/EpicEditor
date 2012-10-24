@@ -45,7 +45,7 @@ var editor = new EpicEditor().load();
 ### Step 5 (Optional): If you want more pretty code in preview mode, add the `epiceditor.codeprettify.js` before `epiceditor.js` (Step 3)
 
 ```html
-<script src="epiceditor.codeprettify.js"></script>
+<script src="epiceditor.codeprettify.min.js"></script>
 ```
 
 ## API
@@ -71,7 +71,7 @@ var opts = {
     base:'/themes/base/epiceditor.css',
     preview:'/themes/preview/preview-dark.css',
     editor:'/themes/editor/epic-dark.css',
-    codepreitty:'/addons/codeprettify.css'
+    codeprettify:'/addons/codeprettify.css'
   },
   focusOnLoad: false,
   shortcut: {

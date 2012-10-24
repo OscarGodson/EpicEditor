@@ -50,7 +50,7 @@
 <h3>Step 4: Init EpicEditor</h3>
 <pre><code class="lang-javascript">var editor = new EpicEditor().load();</code></pre>
 <h3>Step 5 (Optional): If you want more pretty code in preview mode, add the <code>epiceditor.codeprettify.js</code> before <code>epiceditor.js</code> (Step 3)</h3>
-<pre><code class="lang-html">&lt;script src=&quot;epiceditor.codeprettify.js&quot;&gt;&lt;/script&gt;</code></pre>
+<pre><code class="lang-html">&lt;script src=&quot;epiceditor.codeprettify.min.js&quot;&gt;&lt;/script&gt;</code></pre>
 <h2>API</h2>
 <h3>EpicEditor([<em>options</em>])</h3>
 <p>The <code>EpicEditor</code> constructor creates a new editor instance. Customize the instance by passing the <code>options</code> parameter. The example below uses all options and their defaults:
@@ -72,7 +72,7 @@
     base:&#39;/themes/base/epiceditor.css&#39;,
     preview:&#39;/themes/preview/preview-dark.css&#39;,
     editor:&#39;/themes/editor/epic-dark.css&#39;,
-    codepreitty:&#39;/addons/codeprettify.css&#39;
+    codeprettify:&#39;/addons/codeprettify.css&#39;
   },
   focusOnLoad: false,
   shortcut: {
