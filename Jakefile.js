@@ -35,6 +35,7 @@ namespace('lint', function () {
     , editor = 'src/editor.js'
     , tests = 'test'
     , docs = 'docs/js/main.js'
+    , codeprettify = 'src/codeprettify.js'
 
   task('all', ['lint:editor', 'lint:docs', 'lint:tests', 'lint:util'], function () {
     complete()
@@ -44,6 +45,18 @@ namespace('lint', function () {
   task('editor', [], function () {
     console.log(colorize('--> Linting editor', 'yellow'))
     var files = [ editor ]
+      , cmds = [hint + files.join(' ') + ' --config .jshintrc']
+
+    jake.exec(cmds, function () {
+      console.log(colorize('  √ ok', 'green'))
+      complete()
+    }, {stdout: true})
+  }, {async: true})
+  
+  desc('Lint core EpicEditor: src/codeprettify.js')
+  task('codeprettify', [], function () {
+    console.log(colorize('--> Linting addon:codeprettify', 'yellow'))
+    var files = [ codeprettify ]
       , cmds = [hint + files.join(' ') + ' --config .jshintrc']
 
     jake.exec(cmds, function () {
