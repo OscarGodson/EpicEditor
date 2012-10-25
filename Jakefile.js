@@ -1,5 +1,12 @@
 var fs = require('fs')
   , VERSION = fs.readFileSync('VERSION', 'utf-8')
+  
+/*
+ * codeprettify.js is based on google-code-prettify.
+ * google-code-prettify is not friendly with JSHint, so pass Lint
+ * Add other addons ignore linting
+ */
+var ignoreLintingAddons = ['codeprettify.js']
 
 function concat(fileList, destPath) {
   var out = fileList.map(function (filePath) {
@@ -35,7 +42,6 @@ namespace('lint', function () {
     , editor = 'src/editor.js'
     , tests = 'test'
     , docs = 'docs/js/main.js'
-    , codeprettify = 'src/codeprettify.js'
 
   task('all', ['lint:editor', 'lint:docs', 'lint:tests', 'lint:util', 'lint:addons'], function () {
     complete()
@@ -92,22 +98,52 @@ namespace('lint', function () {
   desc('Lint addons of epiceditor')
   task('addons', [], function () {
     console.log(colorize('--> Linting addons', 'yellow'))
-    jake.Task['lint:addons:codeprettify'].invoke()
+    
+    var srcDir = 'src/'
+    var fileList = jake.readdirR(srcDir)
+    var ignoreFileList = [ srcDir, srcDir + 'editor.js' ]
+    
+    var lintingList = []
+    var ignoreList = []
+    
+    for (var i = 0 ; i < fileList.length ; ++i) {
+      var filename = fileList[i].replace('\\', '/')
+      if (ignoreFileList.indexOf(filename) >= 0) {
+        continue
+      }
+      
+      // Convert src/addons.js to addons.js
+      var file = filename.substring(filename.indexOf('/') + 1, filename.length)
+    
+      if (ignoreLintingAddons.indexOf(file) >= 0) {
+        ignoreList.push(file)
+      } else {
+        lintingList.push(file)
+      }
+    }
+    
+    for (var j = 0 ; j < ignoreList.length ; ++j) {
+      // Remove extension
+      var ignoreName = ignoreList[j].substring(0, ignoreList[j].length - 3)
+      console.log(colorize('---> Ignore linting addons::' + ignoreName, 'magenta'))
+    }
+    
+    for (var k = 0 ; k < lintingList.length ; ++k) {
+      var lintName = lintingList[k].substring(0, lintingList[k].length - 3)
+      console.log(colorize('---> Linting addon:' + lintName, 'yellow'))
+      
+      // Attach src dir to build cmds
+      lintingList[k] = srcDir + lintingList[k]
+    }
+    
+    var files = lintingList
+      , cmds = [hint + files.join(' ') + ' --config .jshintrc']
+    
+    jake.exec(cmds, function () {
+      console.log(colorize('  √ ok', 'green'))
+      complete()
+    }, {stdout: true})
   }, {async: true})
-
-  namespace('addons', function () {
-    desc('Lint core EpicEditor: src/codeprettify.js')
-    task('codeprettify', [], function () {
-      console.log(colorize('---> Linting addon:codeprettify', 'yellow'))
-      console.log(colorize('----> Pass', 'yellow'))
-      //var files = [ codeprettify ]
-      //  , cmds = [hint + files.join(' ') + ' --config .jshintrc']
-      //jake.exec(cmds, function () {
-      //  console.log(colorize('  √ ok', 'green'))
-      //complete()
-      //}, {stdout: true})
-    }, {async: true})
-  })
 })
 
 desc('Build epiceditor and minify')
@@ -151,39 +187,48 @@ namespace('build', function () {
   }, {async: true})
 
   desc('Build addons and minify')
-  task('addons', [], function () {
+  task('addons',  ['lint:addons'], function () {
     console.log(colorize('--> Building addons', 'yellow'))
-    jake.Task['build:addons:all'].invoke()
-  }, {async: true})
-
-  desc('Build addons and minify')
-  namespace('addons', function () {
-    task('all', ['build:addons:codeprettify'], function () {
-      complete()
-    }, {async: true})
     
-    desc('Build epiceditor.codeprettify.js and minify to epiceditor.codeprettify.min.js')
-    task('codeprettify', [], function () {
-      console.log(colorize('--> Building addons::codeprettify', 'yellow'))
-      // code prettify plugin
-      var destDir = 'epiceditor/addons/'
-        , srcDir = 'src/'
-        , srcPath = [srcDir + 'codeprettify.js']
-        , destPath = destDir + 'epiceditor.codeprettify.js'
-        , destPathMin = destDir + 'epiceditor.codeprettify.min.js'
-        , cmds = ['node node_modules/uglify-js/bin/uglifyjs ' + srcPath + ' > ' + destPathMin]
-        
-      // If the destination directory does not exist, create it
-      jake.mkdirP('epiceditor/addons')
-      concat(srcPath, destPath)
+    var srcDir = 'src/'
+    var fileList = jake.readdirR(srcDir)
+    var ignoreFileList = [ srcDir, srcDir + 'editor.js' ]
+    
+    var buildList = []
+    
+    for (var i = 0 ; i < fileList.length ; ++i) {
+      var filename = fileList[i].replace('\\', '/')
+      if (ignoreFileList.indexOf(filename) >= 0) {
+        continue
+      }
       
-      // Minify
-      jake.exec(cmds, function () {
-        console.log(colorize('  √ ok', 'green'))
-        complete()
-      }, {stdout: true})
-    }, {async: true})
-  })
+      // Convert src/addons.js to addons.js
+      var file = filename.substring(filename.indexOf('/') + 1, filename.length)
+      buildList.push(file)
+    }
+    
+    // If the destination directory does not exist, create it
+    jake.mkdirP('epiceditor/addons')
+    
+    var cmds = []
+    for (var k = 0 ; k < buildList.length ; ++k) {
+      var name = buildList[k].substring(0, buildList[k].length - 3)
+      var destDir = 'epiceditor/addons/'
+      , srcPath = [srcDir + buildList[k]]
+      , destPath = destDir + 'epiceditor.' + buildList[k]
+      , destPathMin = destDir + 'epiceditor.' + name + '.min.js'
+
+      console.log(colorize('---> Building addon:' + name, 'yellow'))
+      concat(srcPath, destPath)
+      cmds.push('node node_modules/uglify-js/bin/uglifyjs ' + srcPath + ' > ' + destPathMin)
+    }
+    
+    // Minify
+    jake.exec(cmds, function () {
+      console.log(colorize('  √ ok', 'green'))
+      complete()
+    }, {stdout: true})
+  }, {async: true})
 })
 
 namespace('build', function () {
