@@ -207,16 +207,14 @@ namespace('build', function () {
       buildList.push(file)
     }
     
-    // If the destination directory does not exist, create it
-    jake.mkdirP('epiceditor/addons')
-    
     var cmds = []
     for (var k = 0 ; k < buildList.length ; ++k) {
       var name = buildList[k].substring(0, buildList[k].length - 3)
-      var destDir = 'epiceditor/addons/'
+      var baseDestDir = 'epiceditor/addons/'
+	  , destDir = baseDestDir + name + '/'
       , srcPath = [srcDir + buildList[k]]
-      , destPath = destDir + 'epiceditor.' + buildList[k]
-      , destPathMin = destDir + 'epiceditor.' + name + '.min.js'
+      , destPath = destDir + buildList[k]
+      , destPathMin = destDir + name + '.min.js'
 
       console.log(colorize('---> Building addon:' + name, 'yellow'))
       concat(srcPath, destPath)
