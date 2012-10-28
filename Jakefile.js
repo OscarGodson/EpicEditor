@@ -6,7 +6,7 @@ var fs = require('fs')
  * google-code-prettify is not friendly with JSHint, so pass Lint
  * Add other addons ignore linting
  */
-var ignoreLintingAddons = ['codeprettify.js']
+var ignoreLintingAddons = ['google-code-prettify.js']
 
 function concat(fileList, destPath) {
   var out = fileList.map(function (filePath) {
