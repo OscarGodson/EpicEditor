@@ -53,7 +53,7 @@
  */
 
 // JSLint declarations
-/*global console, document, navigator, setTimeout, window */
+/*global console, document, navigator, setTimeout, window, alert */
 
 /**
  * Split {@code prettyPrint} into multiple timeouts so as not to interfere with
@@ -1227,10 +1227,8 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|\\!|\\!=|\\!==|\\#|\\%|\\%=|&|&&|&
     }
   }
 
-  function prettyPrintDoc(doc) {
-	var doc = doc;
-	
-    function byTagName(tn) { return doc.getElementsByTagName(tn); }
+  function prettyPrint() {	
+    function byTagName(tn) { return document.getElementsByTagName(tn); }
     // fetch a list of nodes to rewrite
     var codeSegments = [byTagName('pre'), byTagName('code'), byTagName('xmp')];
     var elements = [];
@@ -1308,7 +1306,8 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|\\!|\\!=|\\!==|\\#|\\%|\\%=|&|&&|&
     doWork();
   }
 
-  window['prettyPrintDoc'] = prettyPrintDoc;
+  document['prettyPrint'] = prettyPrint;
+  
    /**
     * Contains functions for creating and registering new language handlers.
     * @type {Object}
@@ -1331,7 +1330,7 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|\\!|\\!=|\\!==|\\#|\\%|\\%=|&|&&|&
         'PR_TAG': PR_TAG,
         'PR_TYPE': PR_TYPE
       };
-
-  // Define constant to attach EpicEditor
-  window['EE_addon_codeprettify'] = true;
+  
+  // Register prettify function to trigger list
+  document['onpostpreview'].push(prettyPrint);
 })();

@@ -2,14 +2,13 @@
  * EpicEditor - An Embeddable JavaScript Markdown Editor (https://github.com/OscarGodson/EpicEditor)
  * Copyright (c) 2011-2012, Oscar Godson. (MIT Licensed)
  */
+/**
+ * Addons are implemented another javascript.
+ * To pass JSHint, add global variable/function.
+ */
+/*global alert, EE_addon_manifest */
 
 (function (window, undefined) {
-  /**
-   * Addons are implemented another javascript.
-   * To pass JSHint, add global variable/function.
-   */
-  /*global EE_addon_codeprettify, prettyPrintDoc */
-
   /**
    * Applies attributes to a DOM object
    * @param  {object} context The DOM obj you want to apply the attributes to
@@ -134,6 +133,28 @@
     , href: path
     , name: path
     , media: 'screen'
+    });
+
+    headID.appendChild(cssNode);
+  }
+  
+  /**
+   * Inserts a <script> tag specifically for Javascript
+   * @param  {string} path The path to the Javascript file
+   * @param  {object} context In what context you want to apply this to (document, iframe, etc)
+   * @param  {string} id An id for you to reference later for changing properties of the <script>
+   * @returns {undefined}
+   */
+  function _insertJSLink(path, context, id) {
+    id = id || '';
+    var headID = context.getElementsByTagName("head")[0]
+      , cssNode = context.createElement('script');
+    
+    _applyAttrs(cssNode, {
+      type: 'text/javascript'
+    , id: id
+    , src: path
+    , name: path
     });
 
     headID.appendChild(cssNode);
@@ -314,7 +335,6 @@
         , theme: { base: '/themes/base/epiceditor.css'
           , preview: '/themes/preview/github.css'
           , editor: '/themes/editor/epic-dark.css'
-          , codeprettify: '/addons/codeprettify.css'
           }
         , focusOnLoad: false
         , shortcut: { modifier: 18 // alt keycode
@@ -322,6 +342,7 @@
           , preview: 80 // p keycode
           }
         , parser: typeof marked == 'function' ? marked : null
+        , addons: [ 'google-code-prettify' ]
         }
       , defaultStorage;
 
@@ -547,11 +568,29 @@
     // Insert Previewer Stylesheet
     _insertCSSLink(self.settings.basePath + self.settings.theme.preview, self.previewerIframeDocument, 'theme');
 
-    // If use code prettify addons, Insert code preittify Stylesheet
-    if (typeof EE_addon_codeprettify != 'undefined' && EE_addon_codeprettify) {
-      _insertCSSLink(self.settings.basePath + self.settings.theme.codeprettify, self.previewerIframeDocument, 'theme');
+    // Trigger Function List. If Addon need trigger function, register here
+    // if need more trigger, create new array
+    self.previewerIframeDocument['onpostpreview'] = [];
+    
+    // Insert addon js/css
+    if (typeof EE_addon_manifest != 'undefined' && EE_addon_manifest) {
+      for (var j = 0 ; j < self.settings.addons.length ; ++j) {
+        var addonName = self.settings.addons[j];
+        var manifest = EE_addon_manifest[addonName];
+        
+        for (var x = 0 ; x < manifest.css.length ; ++x) {
+          var cssFile = manifest.css[x];
+          var cssPath = self.settings.basePath + '/addons/' + addonName + '/' + cssFile;
+          _insertCSSLink(cssPath, self.previewerIframeDocument, '');
+        }
+        for (var y = 0 ; y < manifest.js.length ; ++y) {
+          var jsFile = manifest.js[y];
+          var jsPath = self.settings.basePath + '/addons/' + addonName + '/' + jsFile;
+          _insertJSLink(jsPath, self.previewerIframeDocument, '');
+        }
+      }
     }
-
+    
     // Add a relative style to the overall wrapper to keep CSS relative to the editor
     self.iframe.getElementById('epiceditor-wrapper').style.position = 'relative';
 
@@ -980,9 +1019,9 @@
       self.previewerIframe.focus();
     }
     
-    // If code preittify activated, use
-    if (typeof EE_addon_codeprettify != 'undefined' && EE_addon_codeprettify) {
-      prettyPrintDoc(self.previewer);
+    for (var a = 0 ; a < self.previewerIframeDocument.onpostpreview.length ; ++a) {
+      var func = self.previewerIframeDocument.onpostpreview[a];
+      func();
     }
     
     self.emit('preview');
