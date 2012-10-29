@@ -211,7 +211,7 @@ namespace('build', function () {
     for (var k = 0 ; k < buildList.length ; ++k) {
       var name = buildList[k].substring(0, buildList[k].length - 3)
       var baseDestDir = 'epiceditor/addons/'
-	  , destDir = baseDestDir + name + '/'
+      , destDir = baseDestDir + name + '/'
       , srcPath = [srcDir + buildList[k]]
       , destPath = destDir + buildList[k]
       , destPathMin = destDir + name + '.min.js'

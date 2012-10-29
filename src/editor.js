@@ -551,6 +551,11 @@
     self.previewerIframeDocument.getElementsByTagName('head')[0].appendChild(baseTag);
 
     self.previewerIframeDocument.close();
+    
+    // in previewer, or editor, can access Editor
+    // Addon use this variable to register trigger function
+    self.previewerIframeDocument.editor = self;
+    self.editorIframeDocument.editor = self;
 
     // Set the default styles for the iframe
     widthDiff = _outerWidth(self.element) - self.element.offsetWidth;
@@ -567,10 +572,6 @@
     
     // Insert Previewer Stylesheet
     _insertCSSLink(self.settings.basePath + self.settings.theme.preview, self.previewerIframeDocument, 'theme');
-
-    // Trigger Function List. If Addon need trigger function, register here
-    // if need more trigger, create new array
-    self.previewerIframeDocument['onpostpreview'] = [];
     
     // Insert addon js/css
     if (typeof EE_addon_manifest != 'undefined' && EE_addon_manifest) {
@@ -1017,11 +1018,6 @@
       self._eeState.preview = true;
       self._eeState.edit = false;
       self.previewerIframe.focus();
-    }
-    
-    for (var a = 0 ; a < self.previewerIframeDocument.onpostpreview.length ; ++a) {
-      var func = self.previewerIframeDocument.onpostpreview[a];
-      func();
     }
     
     self.emit('preview');

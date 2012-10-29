@@ -1332,5 +1332,5 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|\\!|\\!=|\\!==|\\#|\\%|\\%=|&|&&|&
       };
   
   // Register prettify function to trigger list
-  document['onpostpreview'].push(prettyPrint);
+  document.editor.on('preview', prettyPrint);
 })();
