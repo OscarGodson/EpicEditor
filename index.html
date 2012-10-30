@@ -49,6 +49,8 @@
 <pre><code class="lang-html">&lt;script src=&quot;epiceditor.min.js&quot;&gt;&lt;/script&gt;</code></pre>
 <h3>Step 4: Init EpicEditor</h3>
 <pre><code class="lang-javascript">var editor = new EpicEditor().load();</code></pre>
+<h3>Step 5 (Optional): If you want more pretty code in preview mode, add the <code>epiceditor.codeprettify.js</code> before <code>epiceditor.js</code> (Step 3)</h3>
+<pre><code class="lang-html">&lt;script src=&quot;epiceditor.codeprettify.min.js&quot;&gt;&lt;/script&gt;</code></pre>
 <h2>API</h2>
 <h3>EpicEditor([<em>options</em>])</h3>
 <p>The <code>EpicEditor</code> constructor creates a new editor instance. Customize the instance by passing the <code>options</code> parameter. The example below uses all options and their defaults:
@@ -69,7 +71,8 @@
   theme: {
     base:&#39;/themes/base/epiceditor.css&#39;,
     preview:&#39;/themes/preview/preview-dark.css&#39;,
-    editor:&#39;/themes/editor/epic-dark.css&#39;
+    editor:&#39;/themes/editor/epic-dark.css&#39;,
+    codeprettify:&#39;/addons/codeprettify.css&#39;
   },
   focusOnLoad: false,
   shortcut: {
@@ -150,6 +153,11 @@ var editor = new EpicEditor(opts);</code></pre>
     <td><code>theme.preview</code></td>
     <td>The theme for the previewer.</td>
     <td><code>themes/preview/github.css</code></td>
+  </tr>
+  <tr>
+    <td><code>theme.code</code></td>
+    <td>The base style for code prettify</td>
+    <td><code>addons/codeprettify.css</code></td>
   </tr>
   <tr>
     <td><code>shortcut.modifier</code></td>
@@ -450,6 +458,7 @@ The editor is the styles for the contents of editor <code>&lt;iframe&gt;</code> 
 
   <script src="docs/js/jquery.min.js"></script>
   <script src="docs/js/prettify.js"></script>
+  <script src="epiceditor/addons/manifest.js"></script>
   <script src="epiceditor/js/epiceditor.js"></script>
   <script src="docs/js/main.js"></script>
 

@@ -2,6 +2,11 @@
  * EpicEditor - An Embeddable JavaScript Markdown Editor (https://github.com/OscarGodson/EpicEditor)
  * Copyright (c) 2011-2012, Oscar Godson. (MIT Licensed)
  */
+/**
+ * Addons are implemented another javascript.
+ * To pass JSHint, add global variable/function.
+ */
+/*global alert, EE_addon_manifest */
 
 (function (window, undefined) {
   /**
@@ -128,6 +133,28 @@
     , href: path
     , name: path
     , media: 'screen'
+    });
+
+    headID.appendChild(cssNode);
+  }
+  
+  /**
+   * Inserts a <script> tag specifically for Javascript
+   * @param  {string} path The path to the Javascript file
+   * @param  {object} context In what context you want to apply this to (document, iframe, etc)
+   * @param  {string} id An id for you to reference later for changing properties of the <script>
+   * @returns {undefined}
+   */
+  function _insertJSLink(path, context, id) {
+    id = id || '';
+    var headID = context.getElementsByTagName("head")[0]
+      , cssNode = context.createElement('script');
+    
+    _applyAttrs(cssNode, {
+      type: 'text/javascript'
+    , id: id
+    , src: path
+    , name: path
     });
 
     headID.appendChild(cssNode);
@@ -315,6 +342,7 @@
           , preview: 80 // p keycode
           }
         , parser: typeof marked == 'function' ? marked : null
+        , addons: [ 'google-code-prettify' ]
         }
       , defaultStorage;
 
@@ -523,6 +551,11 @@
     self.previewerIframeDocument.getElementsByTagName('head')[0].appendChild(baseTag);
 
     self.previewerIframeDocument.close();
+    
+    // in previewer, or editor, can access Editor
+    // Addon use this variable to register trigger function
+    self.previewerIframeDocument.editor = self;
+    self.editorIframeDocument.editor = self;
 
     // Set the default styles for the iframe
     widthDiff = _outerWidth(self.element) - self.element.offsetWidth;
@@ -539,7 +572,26 @@
     
     // Insert Previewer Stylesheet
     _insertCSSLink(self.settings.basePath + self.settings.theme.preview, self.previewerIframeDocument, 'theme');
-
+    
+    // Insert addon js/css
+    if (typeof EE_addon_manifest != 'undefined' && EE_addon_manifest) {
+      for (var j = 0 ; j < self.settings.addons.length ; ++j) {
+        var addonName = self.settings.addons[j];
+        var manifest = EE_addon_manifest[addonName];
+        
+        for (var x = 0 ; x < manifest.css.length ; ++x) {
+          var cssFile = manifest.css[x];
+          var cssPath = self.settings.basePath + '/addons/' + addonName + '/' + cssFile;
+          _insertCSSLink(cssPath, self.previewerIframeDocument, '');
+        }
+        for (var y = 0 ; y < manifest.js.length ; ++y) {
+          var jsFile = manifest.js[y];
+          var jsPath = self.settings.basePath + '/addons/' + addonName + '/' + jsFile;
+          _insertJSLink(jsPath, self.previewerIframeDocument, '');
+        }
+      }
+    }
+    
     // Add a relative style to the overall wrapper to keep CSS relative to the editor
     self.iframe.getElementById('epiceditor-wrapper').style.position = 'relative';
 
@@ -1321,4 +1373,5 @@
   EpicEditor._data = {};
 
   window.EpicEditor = EpicEditor;
+
 })(window);

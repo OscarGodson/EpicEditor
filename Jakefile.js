@@ -1,5 +1,12 @@
 var fs = require('fs')
   , VERSION = fs.readFileSync('VERSION', 'utf-8')
+  
+/*
+ * codeprettify.js is based on google-code-prettify.
+ * google-code-prettify is not friendly with JSHint, so pass Lint
+ * Add other addons ignore linting
+ */
+var ignoreLintingAddons = ['google-code-prettify.js']
 
 function concat(fileList, destPath) {
   var out = fileList.map(function (filePath) {
@@ -36,7 +43,7 @@ namespace('lint', function () {
     , tests = 'test'
     , docs = 'docs/js/main.js'
 
-  task('all', ['lint:editor', 'lint:docs', 'lint:tests', 'lint:util'], function () {
+  task('all', ['lint:editor', 'lint:docs', 'lint:tests', 'lint:util', 'lint:addons'], function () {
     complete()
   }, {async: true})
 
@@ -87,37 +94,140 @@ namespace('lint', function () {
       complete()
     }, {stdout: true})
   }, {async: true})
+  
+  desc('Lint addons of epiceditor')
+  task('addons', [], function () {
+    console.log(colorize('--> Linting addons', 'yellow'))
+    
+    var srcDir = 'src/'
+    var fileList = jake.readdirR(srcDir)
+    var ignoreFileList = [ srcDir, srcDir + 'editor.js' ]
+    
+    var lintingList = []
+    var ignoreList = []
+    
+    for (var i = 0 ; i < fileList.length ; ++i) {
+      var filename = fileList[i].replace('\\', '/')
+      if (ignoreFileList.indexOf(filename) >= 0) {
+        continue
+      }
+      
+      // Convert src/addons.js to addons.js
+      var file = filename.substring(filename.indexOf('/') + 1, filename.length)
+    
+      if (ignoreLintingAddons.indexOf(file) >= 0) {
+        ignoreList.push(file)
+      } else {
+        lintingList.push(file)
+      }
+    }
+    
+    for (var j = 0 ; j < ignoreList.length ; ++j) {
+      // Remove extension
+      var ignoreName = ignoreList[j].substring(0, ignoreList[j].length - 3)
+      console.log(colorize('---> Ignore linting addons::' + ignoreName, 'magenta'))
+    }
+    
+    for (var k = 0 ; k < lintingList.length ; ++k) {
+      var lintName = lintingList[k].substring(0, lintingList[k].length - 3)
+      console.log(colorize('---> Linting addon:' + lintName, 'yellow'))
+      
+      // Attach src dir to build cmds
+      lintingList[k] = srcDir + lintingList[k]
+    }
+    
+    var files = lintingList
+      , cmds = [hint + files.join(' ') + ' --config .jshintrc']
+    
+    jake.exec(cmds, function () {
+      console.log(colorize('  √ ok', 'green'))
+      complete()
+    }, {stdout: true})
+  }, {async: true})
 })
 
-desc('Build epiceditor.js and minify to epiceditor.min.js')
-task('build', ['lint:editor'], function () {
-  console.log(colorize('--> Building', 'yellow'))
-  var destDir = 'epiceditor/js/'
-    , srcDir = 'src/'
-    , parser = process.env.parser ? process.env.parser : 'node_modules/marked/lib/marked.js'
-    , srcPaths =
-      [ srcDir + 'editor.js'
-      , parser
-      ]
-    , destPath = destDir + 'epiceditor.js'
-    , destPathMin = destDir + 'epiceditor.min.js'
-    , cmds = ['node node_modules/uglify-js/bin/uglifyjs ' + destPath + ' > ' + destPathMin]
-
-  // If the destination directory does not exist, create it
-  jake.mkdirP('epiceditor/js')
-
-  if (!fs.existsSync(parser)) {
-    fail("Parser path not found.")
-  }
-
-  concat(srcPaths, destPath)
-
-  // Minify
-  jake.exec(cmds, function () {
-    console.log(colorize('  √ ok', 'green'))
-    complete()
-  }, {stdout: true})
+desc('Build epiceditor and minify')
+task('build', [], function () {
+  jake.Task['build:all'].invoke()
 }, {async: true})
+
+namespace('build', function () {
+  task('all', ['build:editor', 'build:addons'], function () {
+    complete()
+  }, {async: true})
+  
+  desc('Build epiceditor.js and minify to epiceditor.min.js')
+  task('editor', ['lint:editor'], function () {
+    console.log(colorize('--> Building editor', 'yellow'))
+    var destDir = 'epiceditor/js/'
+      , srcDir = 'src/'
+      , parser = process.env.parser ? process.env.parser : 'node_modules/marked/lib/marked.js'
+      , srcPaths =
+        [ srcDir + 'editor.js'
+        , parser
+        ]
+      , destPath = destDir + 'epiceditor.js'
+      , destPathMin = destDir + 'epiceditor.min.js'
+      , cmds = ['node node_modules/uglify-js/bin/uglifyjs ' + destPath + ' > ' + destPathMin]
+
+    // If the destination directory does not exist, create it
+    jake.mkdirP('epiceditor/js')
+
+    if (!fs.existsSync(parser)) {
+      fail("Parser path not found.")
+    }
+
+    concat(srcPaths, destPath)
+    
+    // Minify
+    jake.exec(cmds, function () {
+      console.log(colorize('  √ ok', 'green'))
+      complete()
+    }, {stdout: true})
+  }, {async: true})
+
+  desc('Build addons and minify')
+  task('addons',  ['lint:addons'], function () {
+    console.log(colorize('--> Building addons', 'yellow'))
+    
+    var srcDir = 'src/'
+    var fileList = jake.readdirR(srcDir)
+    var ignoreFileList = [ srcDir, srcDir + 'editor.js' ]
+    
+    var buildList = []
+    
+    for (var i = 0 ; i < fileList.length ; ++i) {
+      var filename = fileList[i].replace('\\', '/')
+      if (ignoreFileList.indexOf(filename) >= 0) {
+        continue
+      }
+      
+      // Convert src/addons.js to addons.js
+      var file = filename.substring(filename.indexOf('/') + 1, filename.length)
+      buildList.push(file)
+    }
+    
+    var cmds = []
+    for (var k = 0 ; k < buildList.length ; ++k) {
+      var name = buildList[k].substring(0, buildList[k].length - 3)
+      var baseDestDir = 'epiceditor/addons/'
+      , destDir = baseDestDir + name + '/'
+      , srcPath = [srcDir + buildList[k]]
+      , destPath = destDir + buildList[k]
+      , destPathMin = destDir + name + '.min.js'
+
+      console.log(colorize('---> Building addon:' + name, 'yellow'))
+      concat(srcPath, destPath)
+      cmds.push('node node_modules/uglify-js/bin/uglifyjs ' + srcPath + ' > ' + destPathMin)
+    }
+    
+    // Minify
+    jake.exec(cmds, function () {
+      console.log(colorize('  √ ok', 'green'))
+      complete()
+    }, {stdout: true})
+  }, {async: true})
+})
 
 namespace('build', function () {
   desc('Force build epiceditor.js and epiceditor.min.js skipping pre-reqs')
