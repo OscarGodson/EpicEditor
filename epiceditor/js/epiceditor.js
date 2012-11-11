@@ -649,8 +649,8 @@
       // We want to always revert back to the original styles in the CSS so,
       // if it's a fluid width container it will expand on resize and not get
       // stuck at a specific width after closing fullscreen.
-      self.element.style.width = '';
-      self.element.style.height = '';
+      self.element.style.width = self._eeState.reflowWidth ? self._eeState.reflowWidth : '';
+      self.element.style.height = self._eeState.reflowHeight ? self._eeState.reflowHeight : '';
 
       utilBtns.style.visibility = 'visible';
 
@@ -913,14 +913,21 @@
     var self = this
       , widthDiff = _outerWidth(self.element) - self.element.offsetWidth
       , heightDiff = _outerHeight(self.element) - self.element.offsetHeight
-      , elements = [self.iframeElement, self.editorIframe, self.previewerIframe];
+      , elements = [self.iframeElement, self.editorIframe, self.previewerIframe]
+      , newWidth
+      , newHeight;
+
 
     for (var x = 0; x < elements.length; x++) {
       if (!kind || kind == 'width') {
-        elements[x].style.width  = self.element.offsetWidth - widthDiff + 'px';
+        newWidth = self.element.offsetWidth - widthDiff + 'px';
+        elements[x].style.width = newWidth;
+        self._eeState.reflowWidth = newWidth;
       }
       if (!kind || kind == 'height') {
-        elements[x].style.height = self.element.offsetHeight - heightDiff + 'px';
+        newHeight = self.element.offsetHeight - heightDiff + 'px';
+        elements[x].style.height = newHeight;
+        self._eeState.reflowHeight = newHeight
       }
     }
     return self;
