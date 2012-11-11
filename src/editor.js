@@ -421,8 +421,6 @@
       , _HtmlTemplates
       , iframeElement
       , baseTag
-      , widthDiff
-      , heightDiff
       , utilBtns
       , utilBar
       , utilBarTimer
@@ -431,7 +429,6 @@
       , _elementStates
       , _isInEdit
       , nativeFs = false
-      , elementsToResize
       , fsElement
       , isMod = false
       , isCtrl = false
@@ -473,21 +470,6 @@
     , previewer: '<div id="epiceditor-preview"></div>'
     };
 
-    // Used to setup the initial size of the iframes
-    function setupIframeStyles(el) {
-      for (var x = 0; x < el.length; x++) {
-        el[x].style.width  = self.element.offsetWidth - widthDiff + 'px';
-        el[x].style.height = self.element.offsetHeight - heightDiff + 'px';
-      }
-    }
-
-    // Used for resetting the width of EE mainly for fluid width containers
-    function resetWidth(el) {
-      widthDiff = _outerWidth(self.element) - self.element.offsetWidth;
-      for (var x = 0; x < el.length; x++) {
-        el[x].style.width  = self.element.offsetWidth - widthDiff + 'px';
-      }
-    }
     // Write an iframe and then select it for the editor
     self.element.innerHTML = '<iframe scrolling="no" frameborder="0" id= "' + self._instanceId + '"></iframe>';
     iframeElement = document.getElementById(self._instanceId);
@@ -524,12 +506,7 @@
 
     self.previewerIframeDocument.close();
 
-    // Set the default styles for the iframe
-    widthDiff = _outerWidth(self.element) - self.element.offsetWidth;
-    heightDiff = _outerHeight(self.element) - self.element.offsetHeight;
-    elementsToResize = [self.iframeElement, self.editorIframe, self.previewerIframe];
-     
-    setupIframeStyles(elementsToResize);
+    self.reflow();
 
     // Insert Base Stylesheet
     _insertCSSLink(self.settings.basePath + self.settings.theme.base, self.iframe, 'theme');
@@ -672,8 +649,8 @@
       // We want to always revert back to the original styles in the CSS so,
       // if it's a fluid width container it will expand on resize and not get
       // stuck at a specific width after closing fullscreen.
-      self.element.style.width = '';
-      self.element.style.height = '';
+      self.element.style.width = self._eeState.reflowWidth ? self._eeState.reflowWidth : '';
+      self.element.style.height = self._eeState.reflowHeight ? self._eeState.reflowHeight : '';
 
       utilBtns.style.visibility = 'visible';
 
@@ -694,7 +671,7 @@
         self.preview();
       }
 
-      resetWidth(elementsToResize);
+      self.reflow();
 
       self.emit('fullscreenexit');
     };
@@ -873,7 +850,7 @@
       }
       // Makes the editor support fluid width when not in fullscreen mode
       else if (!self.is('fullscreen')) {
-        resetWidth(elementsToResize);
+        self.reflow();
       }
     });
 
@@ -920,6 +897,39 @@
     
     callback.call(this);
     self.emit('unload');
+    return self;
+  }
+
+  /**
+   * reflow allows you to dynamically re-fit the editor in the parent without
+   * having to unload and then reload the editor again.
+   *
+   * @param {string} kind Can either be 'width' or 'height' or null
+   * if null, both the height and width will be resized
+   *
+   * @returns {object} EpicEditor will be returned
+   */
+  EpicEditor.prototype.reflow = function (kind) {
+    var self = this
+      , widthDiff = _outerWidth(self.element) - self.element.offsetWidth
+      , heightDiff = _outerHeight(self.element) - self.element.offsetHeight
+      , elements = [self.iframeElement, self.editorIframe, self.previewerIframe]
+      , newWidth
+      , newHeight;
+
+
+    for (var x = 0; x < elements.length; x++) {
+      if (!kind || kind == 'width') {
+        newWidth = self.element.offsetWidth - widthDiff + 'px';
+        elements[x].style.width = newWidth;
+        self._eeState.reflowWidth = newWidth;
+      }
+      if (!kind || kind == 'height') {
+        newHeight = self.element.offsetHeight - heightDiff + 'px';
+        elements[x].style.height = newHeight;
+        self._eeState.reflowHeight = newHeight
+      }
+    }
     return self;
   }
 
