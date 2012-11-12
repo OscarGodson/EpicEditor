@@ -369,7 +369,7 @@ the height of your wrapping element and want the editor to resize too. You could
 and the editor will resize to fit. You can pass it one of two strings as the first parameter to
 constrain the reflow to either `width` or `height`.
 
-**Note: ** If you call `reflow()` or `reflow('width')` and you have a fluid width container
+**Note:** If you call `reflow()` or `reflow('width')` and you have a fluid width container
 EpicEditor will no longer be fluid because doing a reflow on the width sets an inline style on the editor.
 
 ```javascript
