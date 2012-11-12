@@ -146,7 +146,10 @@
   // Grabs the text from an element and preserves whitespace
   function _getText(el) {
     var theText;
-    if (document.body.innerText) {
+    // Make sure to check for type of string because if the body of the page
+    // doesn't have any text it'll be "" which is falsey and will go into
+    // the else which is meant for Firefox and shit will break
+    if (typeof document.body.innerText == 'string') {
       theText = el.innerText;
     }
     else {
@@ -162,7 +165,9 @@
   }
 
   function _setText(el, content) {
-    if (document.body.innerText) {
+    // If you want to know why we check for typeof string, see comment
+    // in the _getText function
+    if (typeof document.body.innerText == 'string') {
       content = content.replace(/ /g, '\u00a0');
       el.innerText = content;
     }
