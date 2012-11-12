@@ -362,6 +362,28 @@ exitFullscreenBtn.onclick = function () {
 }
 ```
 
+### reflow([type])
+
+`reflow()` allows you to "reflow" the editor in it's container. For example, let's say you increased
+the height of your wrapping element and want the editor to resize too. You could simpliy call `reflow`
+and the editor will resize to fit. You can pass it one of two strings as the first parameter to
+constrain the reflow to either `width` or `height`.
+
+**Note: ** If you call `reflow()` or `reflow('width')` and you have a fluid width container
+EpicEditor will no longer be fluid because doing a reflow on the width sets an inline style on the editor.
+
+```javascript
+// For an editor that takes up the whole browser window:
+window.onresize = function () {
+  editor.reflow();
+}
+
+// Constrain the reflow to just height:
+someDiv.resizeHeightHandle = function () {
+  editor.reflow('height');
+}
+```
+
 ## Events
 
 You can hook into specific events in EpicEditor with <a href="#onevent-handler"><code>on()</code></a> such as when a file is
