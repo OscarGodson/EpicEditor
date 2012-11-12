@@ -177,7 +177,10 @@
       content = content.replace(/</g, '&lt;');
       content = content.replace(/>/g, '&gt;');
       content = content.replace(/\n/g, '<br>');
-      content = content.replace(/ /g, '&nbsp;')
+      // Make sure to look for TWO spaces and replace with a space and &nbsp;
+      // If you find and replace every space with a &nbsp; text will not wrap.
+      // Hence the name (Non-Breaking-SPace).
+      content = content.replace(/\s\s/g, ' &nbsp;')
       el.innerHTML = content;
     }
     return true;
