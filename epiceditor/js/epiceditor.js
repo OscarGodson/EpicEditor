@@ -480,6 +480,13 @@
 
     // Write an iframe and then select it for the editor
     self.element.innerHTML = '<iframe scrolling="no" frameborder="0" id= "' + self._instanceId + '"></iframe>';
+
+    // Because browsers add things like invisible padding and margins and stuff
+    // to iframes, we need to set manually set the height so that the height
+    // doesn't keep increasing (by 2px?) every time reflow() is called.
+    // FIXME: Figure out how to fix this without setting this
+    self.element.style.height = self.element.offsetHeight + 'px';
+
     iframeElement = document.getElementById(self._instanceId);
     
     // Store a reference to the iframeElement itself
