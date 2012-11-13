@@ -1,4 +1,7 @@
-html { padding:10px; }
+html {
+  padding:10px;
+  padding: 0\9; /* IE8 Hack */
+}
 
 body {
   border:0;
