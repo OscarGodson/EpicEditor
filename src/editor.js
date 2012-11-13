@@ -148,7 +148,10 @@
   // Grabs the text from an element and preserves whitespace
   function _getText(el) {
     var theText;
-    if (document.body.innerText) {
+    // Make sure to check for type of string because if the body of the page
+    // doesn't have any text it'll be "" which is falsey and will go into
+    // the else which is meant for Firefox and shit will break
+    if (typeof document.body.innerText == 'string') {
       theText = el.innerText;
     }
     else {
@@ -164,11 +167,23 @@
   }
 
   function _setText(el, content) {
-    if (document.body.innerText) {
+    // If you want to know why we check for typeof string, see comment
+    // in the _getText function
+    if (typeof document.body.innerText == 'string') {
+      content = content.replace(/ /g, '\u00a0');
       el.innerText = content;
     }
     else {
-      el.innerHTML = content.replace(/\n/g, "<br>").replace(/ /g, '&nbsp;');
+      // Don't convert lt/gt characters as HTML when viewing the editor window
+      // TODO: Write a test to catch regressions for this
+      content = content.replace(/</g, '&lt;');
+      content = content.replace(/>/g, '&gt;');
+      content = content.replace(/\n/g, '<br>');
+      // Make sure to look for TWO spaces and replace with a space and &nbsp;
+      // If you find and replace every space with a &nbsp; text will not wrap.
+      // Hence the name (Non-Breaking-SPace).
+      content = content.replace(/\s\s/g, ' &nbsp;')
+      el.innerHTML = content;
     }
     return true;
   }
@@ -454,8 +469,6 @@
       , _HtmlTemplates
       , iframeElement
       , baseTag
-      , widthDiff
-      , heightDiff
       , utilBtns
       , utilBar
       , utilBarTimer
@@ -464,7 +477,6 @@
       , _elementStates
       , _isInEdit
       , nativeFs = false
-      , elementsToResize
       , fsElement
       , isMod = false
       , isCtrl = false
@@ -476,7 +488,7 @@
     }
 
     // Fucking Safari's native fullscreen works terribly
-    // REMOVE THIS IF SAFARI 6 WORKS BETTER
+    // REMOVE THIS IF SAFARI 7 WORKS BETTER
     if (_isSafari()) {
       nativeFs = false;
     }
@@ -506,23 +518,15 @@
     , previewer: '<div id="epiceditor-preview"></div>'
     };
 
-    // Used to setup the initial size of the iframes
-    function setupIframeStyles(el) {
-      for (var x = 0; x < el.length; x++) {
-        el[x].style.width  = self.element.offsetWidth - widthDiff + 'px';
-        el[x].style.height = self.element.offsetHeight - heightDiff + 'px';
-      }
-    }
-
-    // Used for resetting the width of EE mainly for fluid width containers
-    function resetWidth(el) {
-      widthDiff = _outerWidth(self.element) - self.element.offsetWidth;
-      for (var x = 0; x < el.length; x++) {
-        el[x].style.width  = self.element.offsetWidth - widthDiff + 'px';
-      }
-    }
     // Write an iframe and then select it for the editor
     self.element.innerHTML = '<iframe scrolling="no" frameborder="0" id= "' + self._instanceId + '"></iframe>';
+
+    // Because browsers add things like invisible padding and margins and stuff
+    // to iframes, we need to set manually set the height so that the height
+    // doesn't keep increasing (by 2px?) every time reflow() is called.
+    // FIXME: Figure out how to fix this without setting this
+    self.element.style.height = self.element.offsetHeight + 'px';
+
     iframeElement = document.getElementById(self._instanceId);
     
     // Store a reference to the iframeElement itself
@@ -556,12 +560,9 @@
     baseTag.target = '_blank';
     self.previewerIframeDocument.getElementsByTagName('head')[0].appendChild(baseTag);
 
-    // Set the default styles for the iframe
-    widthDiff = _outerWidth(self.element) - self.element.offsetWidth;
-    heightDiff = _outerHeight(self.element) - self.element.offsetHeight;
-    elementsToResize = [self.iframeElement, self.editorIframe, self.previewerIframe];
-     
-    setupIframeStyles(elementsToResize);
+    self.previewerIframeDocument.close();
+
+    self.reflow();
 
     // Insert Base Stylesheet
     _insertCSSLink(self.settings.basePath + self.settings.theme.base, self.iframe, 'theme');
@@ -699,8 +700,8 @@
       // We want to always revert back to the original styles in the CSS so,
       // if it's a fluid width container it will expand on resize and not get
       // stuck at a specific width after closing fullscreen.
-      self.element.style.width = '';
-      self.element.style.height = '';
+      self.element.style.width = self._eeState.reflowWidth ? self._eeState.reflowWidth : '';
+      self.element.style.height = self._eeState.reflowHeight ? self._eeState.reflowHeight : '';
 
       utilBtns.style.visibility = 'visible';
 
@@ -721,7 +722,7 @@
         self.preview();
       }
 
-      resetWidth(elementsToResize);
+      self.reflow();
 
       self.emit('fullscreenexit');
     };
@@ -910,7 +911,7 @@
       }
       // Makes the editor support fluid width when not in fullscreen mode
       else if (!self.is('fullscreen')) {
-        resetWidth(elementsToResize);
+        self.reflow();
       }
     });
 
@@ -957,6 +958,39 @@
     
     callback.call(this);
     self.emit('unload');
+    return self;
+  }
+
+  /**
+   * reflow allows you to dynamically re-fit the editor in the parent without
+   * having to unload and then reload the editor again.
+   *
+   * @param {string} kind Can either be 'width' or 'height' or null
+   * if null, both the height and width will be resized
+   *
+   * @returns {object} EpicEditor will be returned
+   */
+  EpicEditor.prototype.reflow = function (kind) {
+    var self = this
+      , widthDiff = _outerWidth(self.element) - self.element.offsetWidth
+      , heightDiff = _outerHeight(self.element) - self.element.offsetHeight
+      , elements = [self.iframeElement, self.editorIframe, self.previewerIframe]
+      , newWidth
+      , newHeight;
+
+
+    for (var x = 0; x < elements.length; x++) {
+      if (!kind || kind == 'width') {
+        newWidth = self.element.offsetWidth - widthDiff + 'px';
+        elements[x].style.width = newWidth;
+        self._eeState.reflowWidth = newWidth;
+      }
+      if (!kind || kind == 'height') {
+        newHeight = self.element.offsetHeight - heightDiff + 'px';
+        elements[x].style.height = newHeight;
+        self._eeState.reflowHeight = newHeight
+      }
+    }
     return self;
   }
 
@@ -1271,7 +1305,7 @@
       content = content.replace(/\u00a0/g, ' ').replace(/&nbsp;/g, ' ');
       return self.settings.parser(content);
     case 'text':
-      content = content.replace(/&nbsp;/g, ' ');
+      content = content.replace(/\u00a0/g, ' ').replace(/&nbsp;/g, ' ');
       return content;
     default:
       return content;

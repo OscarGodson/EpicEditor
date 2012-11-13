@@ -161,7 +161,7 @@ task('test', ['lint:tests'], function () {
 }, {async: true})
 
 var pkg = new jake.PackageTask('EpicEditor', 'v' + VERSION, function () {
-  var fileList = [ 'epiceditor']
+  var fileList = ['epiceditor/**']
   this.packageDir = "docs/downloads"
   this.packageFiles.include(fileList)
   this.needZip = true
