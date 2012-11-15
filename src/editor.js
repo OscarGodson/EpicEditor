@@ -536,7 +536,7 @@
     // TODO: Change self.iframe to self.iframeDocument
     self.iframe = _getIframeInnards(iframeElement);
     self.iframe.open();
-    self.iframe.write(_HtmlTemplates.chrome);
+    self.iframe.write('<!DOCTYPE html><html>' + _HtmlTemplates.chrome + '</html>');
 
     // Now that we got the innards of the iframe, we can grab the other iframes
     self.editorIframe = self.iframe.getElementById('epiceditor-editor-frame')
@@ -546,13 +546,13 @@
     self.editorIframeDocument = _getIframeInnards(self.editorIframe);
     self.editorIframeDocument.open();
     // Need something for... you guessed it, Firefox
-    self.editorIframeDocument.write('');
+    self.editorIframeDocument.write('<!DOCTYPE html><html></html>');
     self.editorIframeDocument.close();
     
     // Setup the previewer iframe
     self.previewerIframeDocument = _getIframeInnards(self.previewerIframe);
     self.previewerIframeDocument.open();
-    self.previewerIframeDocument.write(_HtmlTemplates.previewer);
+    self.previewerIframeDocument.write('<!DOCTYPE html><html>' + _HtmlTemplates.previewer + '</html>');
     self.previewerIframeDocument.close();
 
     // Base tag is added so that links will open a new tab and not inside of the iframes
