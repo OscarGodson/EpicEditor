@@ -317,6 +317,7 @@
           , preview: '/themes/preview/github.css'
           , editor: '/themes/editor/epic-dark.css'
           }
+        , images: '/images/'
         , focusOnLoad: false
         , shortcut: { modifier: 18 // alt keycode
           , fullscreen: 70 // f keycode
@@ -327,6 +328,10 @@
       , defaultStorage;
 
     self.settings = _mergeObjs(true, defaults, opts);
+    
+    if (self.settings.images[self.settings.images.length - 1] != '/') {
+      self.settings.images += '/'
+    }
 
     if (!(typeof self.settings.parser == 'function' && typeof self.settings.parser('TEST') == 'string')) {
       self.settings.parser = function (str) {
@@ -468,9 +473,9 @@
                   '<iframe frameborder="0" id="epiceditor-editor-frame"></iframe>' +
                   '<iframe frameborder="0" id="epiceditor-previewer-frame"></iframe>' +
                   '<div id="epiceditor-utilbar">' +
-                    '<img width="30" src="' + this.settings.basePath + '/images/preview.png" title="Toggle Preview Mode" class="epiceditor-toggle-btn epiceditor-toggle-preview-btn"> ' +
-                    '<img width="30" src="' + this.settings.basePath + '/images/edit.png" title="Toggle Edit Mode" class="epiceditor-toggle-btn epiceditor-toggle-edit-btn"> ' +
-                    '<img width="30" src="' + this.settings.basePath + '/images/fullscreen.png" title="Enter Fullscreen" class="epiceditor-fullscreen-btn">' +
+                    '<img width="30" src="' + this.settings.basePath + this.settings.images + 'preview.png" title="Toggle Preview Mode" class="epiceditor-toggle-btn epiceditor-toggle-preview-btn"> ' +
+                    '<img width="30" src="' + this.settings.basePath + this.settings.images + 'edit.png" title="Toggle Edit Mode" class="epiceditor-toggle-btn epiceditor-toggle-edit-btn"> ' +
+                    '<img width="30" src="' + this.settings.basePath + this.settings.images + 'fullscreen.png" title="Enter Fullscreen" class="epiceditor-fullscreen-btn">' +
                   '</div>' +
                 '</div>'
     

@@ -66,6 +66,7 @@ var opts = {
     preview:'/themes/preview/preview-dark.css',
     editor:'/themes/editor/epic-dark.css'
   },
+  images: '/images/',
   focusOnLoad: false,
   shortcut: {
     modifier: 18,
@@ -147,6 +148,11 @@ var editor = new EpicEditor(opts);
     <td><code>theme.preview</code></td>
     <td>The theme for the previewer.</td>
     <td><code>themes/preview/github.css</code></td>
+  </tr>
+  <tr>
+    <td><code>images</code></td>
+    <td>Path to images.</td>
+    <td><code>/images/</code></td>
   </tr>
   <tr>
     <td><code>shortcut.modifier</code></td>
