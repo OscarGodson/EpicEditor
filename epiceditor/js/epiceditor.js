@@ -324,6 +324,7 @@
           }
         , parser: typeof marked == 'function' ? marked : null
         , speechLanguage: 'en'
+
         }
       , defaultStorage;
 
@@ -731,7 +732,7 @@
     }
 
     // Handles speech input and append its value to the editor
-    speechInput = self.iframe.getElementById('epiceditor-mic');
+    var speechInput = self.iframe.getElementById('epiceditor-mic');
     speechInput.addEventListener('webkitspeechchange', function (e) {
       _setText(self.editor, _getText(self.editor) + e.results[0].utterance);
       return false;
