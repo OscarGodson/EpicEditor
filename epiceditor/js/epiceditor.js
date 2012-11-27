@@ -324,7 +324,6 @@
           }
         , parser: typeof marked == 'function' ? marked : null
         , speechLanguage: 'en'
-
         }
       , defaultStorage;
 
