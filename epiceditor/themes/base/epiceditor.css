@@ -7,6 +7,7 @@ html, body, iframe, div { margin:0; padding:0; }
   padding:5px;
 }
 
+#epiceditor-utilbar #epiceditor-mic,
 #epiceditor-utilbar img {
   display:block;
   float:left;
@@ -14,10 +15,21 @@ html, body, iframe, div { margin:0; padding:0; }
   height: 30px;
 }
 
+#epiceditor-utilbar #epiceditor-mic {
+  -webkit-user-select: none;
+  outline: 0 none;
+  border: 0 none;
+  background: transparent;
+  font-size: 20px;
+  width: 28px;
+  margin-right: 15px;
+}
+
 #epiceditor-utilbar img:last-child {
   margin-left: 15px;
 }
 
+#epiceditor-mic,
 #epiceditor-utilbar img:hover {
   cursor:pointer;
 }

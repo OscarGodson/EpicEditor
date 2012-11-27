@@ -323,6 +323,7 @@
           , preview: 80 // p keycode
           }
         , parser: typeof marked == 'function' ? marked : null
+        , speechLanguage: 'en'
         }
       , defaultStorage;
 
@@ -468,6 +469,7 @@
                   '<iframe frameborder="0" id="epiceditor-editor-frame"></iframe>' +
                   '<iframe frameborder="0" id="epiceditor-previewer-frame"></iframe>' +
                   '<div id="epiceditor-utilbar">' +
+                    '<input id="epiceditor-mic" x-webkit-speech lang="' + this.settings.speechLanguage + '" title="Speech input">' +
                     '<img width="30" src="' + this.settings.basePath + '/images/preview.png" title="Toggle Preview Mode" class="epiceditor-toggle-btn epiceditor-toggle-preview-btn"> ' +
                     '<img width="30" src="' + this.settings.basePath + '/images/edit.png" title="Toggle Edit Mode" class="epiceditor-toggle-btn epiceditor-toggle-edit-btn"> ' +
                     '<img width="30" src="' + this.settings.basePath + '/images/fullscreen.png" title="Enter Fullscreen" class="epiceditor-fullscreen-btn">' +
@@ -727,6 +729,13 @@
         }
       }, false);
     }
+
+    // Handles speech input and append its value to the editor
+    var speechInput = self.iframe.getElementById('epiceditor-mic');
+    speechInput.addEventListener('webkitspeechchange', function (e) {
+      _setText(self.editor, _getText(self.editor) + e.results[0].utterance);
+      return false;
+    });
 
     utilBar = self.iframe.getElementById('epiceditor-utilbar');
 
