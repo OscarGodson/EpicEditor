@@ -68,4 +68,14 @@ describe(".load([callback])", function () {
   it('should initially load in editor mode', function () {
     expect(editor.getElement('editorIframe').style.display).to.be('block');
   });
+
+  it('should open preview mode if preview mode was the last mode it was on before unloading', function () {
+    editor.preview();
+    expect(editor.getElement('editorIframe').style.display).to.be('none');
+    expect(editor.getElement('previewerIframe').style.display).to.be('block');
+    editor.unload();
+    editor.load();
+    expect(editor.getElement('editorIframe').style.display).to.be('none');
+    expect(editor.getElement('previewerIframe').style.display).to.be('block');
+  });
 });
