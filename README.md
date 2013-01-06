@@ -365,7 +365,7 @@ exitFullscreenBtn.onclick = function () {
 ### reflow([type])
 
 `reflow()` allows you to "reflow" the editor in it's container. For example, let's say you increased
-the height of your wrapping element and want the editor to resize too. You could simpliy call `reflow`
+the height of your wrapping element and want the editor to resize too. You could call `reflow`
 and the editor will resize to fit. You can pass it one of two strings as the first parameter to
 constrain the reflow to either `width` or `height`.
 
