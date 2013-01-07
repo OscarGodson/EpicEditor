@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Mocha Tests</title>
+  <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+  <link rel="stylesheet" href="../docs/css/main.css" />
+  <style>
+    h1 a, #mocha h1 { 
+      border-bottom: none;
+      color: #222;
+    }
+    #mocha .test.pass::before {
+      color: green;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+  <script src="/docs/js/jquery.min.js"></script>
+  <script src="../node_modules/expect.js/expect.js"></script>
+  <script src="../node_modules/mocha/mocha.js"></script>
+  <script>mocha.setup({ui: 'bdd', ignoreLeaks: true})</script>
+
+  <script src="/epiceditor/js/epiceditor.js"></script>
+  <script src="helpers.js"></script>
+
+  <script src="test.options.js"></script>
+  <script src="test.edit.js"></script>
+  <script src="test.emit.js"></script>
+  <script src="test.enterFullscreen.js"></script>
+  <script src="test.exitFullscreen.js"></script>
+  <script src="test.exportFile.js"></script>
+  <script src="test.getElement.js"></script>
+  <script src="test.getFiles.js"></script>
+  <script src="test.importFile.js"></script>
+  <script src="test.is.js"></script>
+  <script src="test.load.js"></script>
+  <script src="test.on.js"></script>
+  <script src="test.open.js"></script>
+  <script src="test.preview.js"></script>
+  <script src="test.remove.js"></script>
+  <script src="test.removeListener.js"></script>
+  <script src="test.rename.js"></script>
+  <script src="test.save.js"></script>
+  <script src="test.unload.js"></script>
+  <script src="test.reflow.js"></script>
+
+  <script>
+    $(function() {
+      localStorage.clear();
+      mocha
+        .run()
+    })
+  </script>
+</head>
+<body>
+  <h1><a href="/test/tests.html">EpicEditor</a></h1>
+  <div id="mocha"></div>
+</body>
+</html>

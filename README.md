@@ -54,6 +54,7 @@ var opts = {
   basePath: 'epiceditor',
   clientSideStorage: true,
   localStorageName: 'epiceditor',
+  useNativeFullsreen: true,
   parser: marked,
   file: {
     name: 'epiceditor',
@@ -69,8 +70,7 @@ var opts = {
   shortcut: {
     modifier: 18,
     fullscreen: 70,
-    preview: 80,
-    edit: 79
+    preview: 80
   }
 }
 var editor = new EpicEditor(opts);
@@ -102,6 +102,11 @@ var editor = new EpicEditor(opts);
     <td><code>localStorageName</code></td>
     <td>The name to use for the localStorage object.</td>
     <td><code>epiceditor</code></td>
+  </tr>
+  <tr>
+    <td><code>useNativeFullscreen</code></td>
+    <td>Set to false to always use faux fullscreen (the same as what is used for unsupported browsers).</td>
+    <td><code>true</code></td>
   </tr>
   <tr>
     <td><code>parser</code></td>
@@ -155,13 +160,8 @@ var editor = new EpicEditor(opts);
   </tr>
   <tr>
     <td><code>shortcut.preview</code></td>
-    <td>The shortcut to open the previewer.</td>
+    <td>The shortcut to toggle the previewer.</td>
     <td><code>80</code> (<code>p</code> key)</td>
-  </tr>
-  <tr>
-    <td><code>shortcut.edit</code></td>
-    <td>The shortcut to open the editor.</td>
-    <td><code>79</code> (<code>o</code> key)</td>
   </tr>
 </table>
 
@@ -200,6 +200,23 @@ Grabs an editor element for easy DOM manipulation. See the Themes section below 
 ```javascript
 someBtn.onclick = function () {
   console.log(editor.getElement('editor').body.innerHTML); // Returns the editor's content
+}
+```
+
+### is(_state_)
+
+Returns a boolean for the requested state. Useful when you need to know if the editor is loaded yet for example. Below is a list of supported states:
+
+* `loaded`
+* `unloaded`
+* `edit`
+* `preview`
+* `fullscreen`
+
+```javascript
+fullscreenBtn.onclick = function () {
+  if (!editor.is('loaded')) { return; }
+  editor.enterFullscreen();
 }
 ```
 
@@ -323,6 +340,49 @@ editBtn.onclick = function () {
   editor.edit();
 }
 ```
+### enterFullscreen()
+
+Puts the editor into fullscreen mode.
+
+**Note:** due to browser security restrictions, calling `enterFullscreen` programmatically
+like this will not trigger native fullscreen. Native fullscreen can only be triggered by a user interaction like mousedown or keyup.
+
+```javascript
+enterFullscreenBtn.onclick = function () {
+  editor.enterFullscreen();
+}
+```
+### exitFullscreen()
+
+Closes fullscreen mode.
+
+```javascript
+exitFullscreenBtn.onclick = function () {
+  editor.exitFullscreen();
+}
+```
+
+### reflow([type])
+
+`reflow()` allows you to "reflow" the editor in it's container. For example, let's say you increased
+the height of your wrapping element and want the editor to resize too. You could call `reflow`
+and the editor will resize to fit. You can pass it one of two strings as the first parameter to
+constrain the reflow to either `width` or `height`.
+
+**Note:** If you call `reflow()` or `reflow('width')` and you have a fluid width container
+EpicEditor will no longer be fluid because doing a reflow on the width sets an inline style on the editor.
+
+```javascript
+// For an editor that takes up the whole browser window:
+window.onresize = function () {
+  editor.reflow();
+}
+
+// Constrain the reflow to just height:
+someDiv.resizeHeightHandle = function () {
+  editor.reflow('height');
+}
+```
 
 ## Events
 
@@ -365,6 +425,14 @@ created, removed, or updated. Below is a complete list of currently supported ev
   <tr>
     <td><code>edit</code></td>
     <td>Fires whenever the editor is opened (excluding fullscreen) via <code>edit()</code> or the edit button.</td>
+  </tr>
+  <tr>
+    <td><code>fullscreenenter</code></td>
+    <td>Fires whenever the editor opens in fullscreen via <code>fullscreen()</code> or the fullscreen button.</td>
+  </tr>
+  <tr>
+    <td><code>fullscreenexit</code></td>
+    <td>Fires whenever the editor closes in fullscreen via <code>fullscreen()</code> or the fullscreen button.</td>
   </tr>
   <tr>
     <td><code>save</code></td>
