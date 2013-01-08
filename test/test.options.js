@@ -85,4 +85,31 @@ describe('EpicEditor([options])', function () {
     editor = new EpicEditor(opts).load();
     expect(editor.getElement('editor').body.innerHTML).to.be('foo');
   });
+
+  describe('options.strings', function () {
+    it('should change the title attr of the preview button when the togglePreview string is changed', function () {
+      opts.strings = {
+        togglePreview: 'Foo'
+      }
+      editor = new EpicEditor(opts).load();
+      expect(editor.getElement('wrapper').getElementsByClassName('epiceditor-toggle-preview-btn')[0].title)
+        .to.be('Foo');
+    });
+    it('should change the title attr of the edit button when the toggleEdit string is changed', function () {
+      opts.strings = {
+        toggleEdit: 'Bar'
+      }
+      editor = new EpicEditor(opts).load();
+      expect(editor.getElement('wrapper').getElementsByClassName('epiceditor-toggle-edit-btn')[0].title)
+        .to.be('Bar');
+    });
+    it('should change the title attr of the fullscreen button when the toggleFullscreen string is changed', function () {
+      opts.strings = {
+        toggleFullscreen: 'Qux'
+      }
+      editor = new EpicEditor(opts).load();
+      expect(editor.getElement('wrapper').getElementsByClassName('epiceditor-fullscreen-btn')[0].title)
+        .to.be('Qux');
+    });
+  });
 });

@@ -322,9 +322,9 @@
           , fullscreen: 70 // f keycode
           , preview: 80 // p keycode
           }
-        , strings : { toggle_preview : 'Toggle Preview Mode'
-          , toggle_edit : 'Toggle Edit Mode'
-          , toggle_fullscreen : 'Enter fullscreen'
+        , strings : { togglePreview : 'Toggle Preview Mode'
+          , toggleEdit : 'Toggle Edit Mode'
+          , toggleFullscreen : 'Enter Fullscreen'
           }
         , parser: typeof marked == 'function' ? marked : null
         }
@@ -472,9 +472,9 @@
                   '<iframe frameborder="0" id="epiceditor-editor-frame"></iframe>' +
                   '<iframe frameborder="0" id="epiceditor-previewer-frame"></iframe>' +
                   '<div id="epiceditor-utilbar">' +
-                    '<img width="30" src="' + this.settings.basePath + '/images/preview.png" title="' + this.settings.strings.toggle_preview + '" class="epiceditor-toggle-btn epiceditor-toggle-preview-btn"> ' +
-                    '<img width="30" src="' + this.settings.basePath + '/images/edit.png" title="' + this.settings.strings.toggle_edit + '" class="epiceditor-toggle-btn epiceditor-toggle-edit-btn"> ' +
-                    '<img width="30" src="' + this.settings.basePath + '/images/fullscreen.png" title="' + this.settings.strings.toggle_fullscreen + '" class="epiceditor-fullscreen-btn">' +
+                    '<img width="30" src="' + this.settings.basePath + '/images/preview.png" title="' + this.settings.strings.togglePreview + '" class="epiceditor-toggle-btn epiceditor-toggle-preview-btn"> ' +
+                    '<img width="30" src="' + this.settings.basePath + '/images/edit.png" title="' + this.settings.strings.toggleEdit + '" class="epiceditor-toggle-btn epiceditor-toggle-edit-btn"> ' +
+                    '<img width="30" src="' + this.settings.basePath + '/images/fullscreen.png" title="' + this.settings.strings.toggleFullscreen + '" class="epiceditor-fullscreen-btn">' +
                   '</div>' +
                 '</div>'
     
