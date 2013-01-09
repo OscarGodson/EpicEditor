@@ -401,6 +401,11 @@
       this._storage[self.settings.localStorageName] = defaultStorage;
     }
 
+    // A string to prepend files with to save draft versions of files
+    // and reset all preview drafts on each load!
+    self._previewDraftLocation = '__draft-';
+    self._storage[self._previewDraftLocation + self.settings.localStorageName] = self._storage[self.settings.localStorageName];
+
     // This needs to replace the use of classes to check the state of EE
     self._eeState = {
       fullscreen: false
@@ -974,8 +979,11 @@
       self.previewerIframeDocument.getElementById('theme').href = theme;
     }
 
-    // Add the generated HTML into the previewer
-    self.previewer.innerHTML = self.exportFile(null, 'html');
+    // Save a preview draft since it might not be saved to the real file yet
+    self.save(true);
+
+    // Add the generated draft HTML into the previewer
+    self.previewer.innerHTML = self.exportFile(null, 'html', true);
 
     // Because we have a <base> tag so all links open in a new window we
     // need to prevent hash links from opening in a new window
@@ -1118,18 +1126,23 @@
    * Saves content for offline use
    * @returns {object} EpicEditor will be returned
    */
-  EpicEditor.prototype.save = function () {
+  EpicEditor.prototype.save = function (_isPreviewDraft) {
     var self = this
       , storage
       , isUpdate = false
       , file = self.settings.file.name
+      , previewDraftName = ''
       , content = _getText(this.editor);
+
+    if (_isPreviewDraft) {
+      previewDraftName = self._previewDraftLocation;
+    }
 
     // This could have been false but since we're manually saving
     // we know it's save to start autoSaving again
     this._canSave = true;
 
-    storage = JSON.parse(this._storage[self.settings.localStorageName]);
+    storage = JSON.parse(this._storage[previewDraftName + self.settings.localStorageName]);
 
     // If the file doesn't exist we need to create it
     if (storage[file] === undefined) {
@@ -1144,7 +1157,7 @@
     }
 
     storage[file].content = content;
-    this._storage[self.settings.localStorageName] = JSON.stringify(storage);
+    this._storage[previewDraftName + self.settings.localStorageName] = JSON.stringify(storage);
 
     // After the content is actually changed, emit update so it emits the updated content
     if (isUpdate) {
@@ -1237,7 +1250,7 @@
    * @param   {string} kind Kind of file you want the content in (currently supports html and text)
    * @returns {string|undefined}  The content of the file in the content given or undefined if it doesn't exist
    */
-  EpicEditor.prototype.exportFile = function (name, kind) {
+  EpicEditor.prototype.exportFile = function (name, kind, _isPreviewDraft) {
     var self = this
       , file
       , content;
@@ -1245,7 +1258,7 @@
     name = name || self.settings.file.name;
     kind = kind || 'text';
    
-    file = self.getFiles(name);
+    file = self.getFiles(name, _isPreviewDraft);
 
     // If the file doesn't exist just return early with undefined
     if (file === undefined) {
@@ -1270,8 +1283,12 @@
     }
   }
 
-  EpicEditor.prototype.getFiles = function (name) {
-    var files = JSON.parse(this._storage[this.settings.localStorageName]);
+  EpicEditor.prototype.getFiles = function (name, _isPreviewDraft) {
+    var previewDraftName = '';
+    if (_isPreviewDraft) {
+      previewDraftName = this._previewDraftLocation;
+    }
+    var files = JSON.parse(this._storage[previewDraftName + this.settings.localStorageName]);
     if (name) {
       return files[name];
     }
