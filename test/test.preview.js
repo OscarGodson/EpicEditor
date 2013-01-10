@@ -56,7 +56,9 @@ describe('.preview()', function () {
     var editor = new EpicEditor({
       basePath: '/epiceditor/'
     , container: testEl
-    , autoSave: false
+    , file: {
+        autoSave: false
+      }
     });
 
     editor.load();
