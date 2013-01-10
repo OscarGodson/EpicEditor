@@ -49,4 +49,22 @@ describe('.preview()', function () {
     editor.edit();
     expect(editor.getElement('previewerIframe').style.display).to.be('none');
   });
+
+  it('should preview unsaved changes such as when autoSave is false', function () {
+    var id = rnd();
+    var testEl = createContainer(id);
+    var editor = new EpicEditor({
+      basePath: '/epiceditor/'
+    , container: testEl
+    , autoSave: false
+    });
+
+    editor.load();
+
+    editor.getElement('editor').body.innerHTML = 'XXX';
+    expect(editor.getElement('previewer').body.innerHTML.match('XXX')).to.be(null);
+
+    editor.preview();
+    expect(editor.getElement('previewer').body.innerHTML.match('XXX')).to.not.be(null);
+  });
 });
