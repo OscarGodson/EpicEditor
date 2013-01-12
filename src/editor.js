@@ -965,9 +965,13 @@
   EpicEditor.prototype.preview = function (theme) {
     var self = this
       , x
+      , theme = self.settings.basePath + self.settings.theme.preview
       , anchors;
 
-    theme = theme || self.settings.basePath + self.settings.theme.preview;
+    // If you put an absolute link as the path ignore the basePath
+    if (self.settings.theme.preview.match(/^https?:\/\//)) {
+      theme = self.settings.theme.preview;
+    }
 
     _replaceClass(self.getElement('wrapper'), 'epiceditor-edit-mode', 'epiceditor-preview-mode');
 
