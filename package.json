@@ -1,6 +1,6 @@
 {
   "name": "epiceditor",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "author": "Oscar Godson <oscargodson@gmail.com> (http://oscargodson.com)",
   "description": "An Embeddable Markdown Editor",
   "devDependencies": {
