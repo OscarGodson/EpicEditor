@@ -338,6 +338,19 @@
       }
     }
 
+    // If you put an absolute link as the path of any of the themes ignore the basePath
+    // preview theme
+    if (!self.settings.theme.preview.match(/^https?:\/\//)) {
+      self.settings.theme.preview = self.settings.basePath + self.settings.theme.preview;
+    }
+    // editor theme
+    if (!self.settings.theme.editor.match(/^https?:\/\//)) {
+      self.settings.theme.editor = self.settings.basePath + self.settings.theme.editor;
+    }
+    // base theme
+    if (!self.settings.theme.base.match(/^https?:\/\//)) {
+      self.settings.theme.base = self.settings.basePath + self.settings.theme.base;
+    }
 
     // Grab the container element and save it to self.element
     // if it's a string assume it's an ID and if it's an object
@@ -533,13 +546,13 @@
     self.reflow();
 
     // Insert Base Stylesheet
-    _insertCSSLink(self.settings.basePath + self.settings.theme.base, self.iframe, 'theme');
+    _insertCSSLink(self.settings.theme.base, self.iframe, 'theme');
     
     // Insert Editor Stylesheet
-    _insertCSSLink(self.settings.basePath + self.settings.theme.editor, self.editorIframeDocument, 'theme');
+    _insertCSSLink(self.settings.theme.editor, self.editorIframeDocument, 'theme');
     
     // Insert Previewer Stylesheet
-    _insertCSSLink(self.settings.basePath + self.settings.theme.preview, self.previewerIframeDocument, 'theme');
+    _insertCSSLink(self.settings.theme.preview, self.previewerIframeDocument, 'theme');
 
     // Add a relative style to the overall wrapper to keep CSS relative to the editor
     self.iframe.getElementById('epiceditor-wrapper').style.position = 'relative';
@@ -959,19 +972,13 @@
 
   /**
    * Will take the markdown and generate a preview view based on the theme
-   * @param {string} theme The path to the theme you want to preview in
    * @returns {object} EpicEditor will be returned
    */
-  EpicEditor.prototype.preview = function (theme) {
+  EpicEditor.prototype.preview = function () {
     var self = this
       , x
-      , theme = self.settings.basePath + self.settings.theme.preview
+      , theme = self.settings.theme.preview
       , anchors;
-
-    // If you put an absolute link as the path ignore the basePath
-    if (self.settings.theme.preview.match(/^https?:\/\//)) {
-      theme = self.settings.theme.preview;
-    }
 
     _replaceClass(self.getElement('wrapper'), 'epiceditor-edit-mode', 'epiceditor-preview-mode');
 
