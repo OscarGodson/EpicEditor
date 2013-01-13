@@ -1,4 +1,4 @@
-/*global createContainer:false, removeContainer:false, rnd:false */
+/*global createContainer:false, removeContainer:false, rnd:false, getIframeDoc: false */
 
 describe('EpicEditor([options])', function () {
   var editor
@@ -110,6 +110,72 @@ describe('EpicEditor([options])', function () {
       editor = new EpicEditor(opts).load();
       expect(editor.getElement('wrapper').getElementsByClassName('epiceditor-fullscreen-btn')[0].title)
         .to.be('Qux');
+    });
+  });
+  describe('options.theme', function () {
+    beforeEach(function () {
+      opts.theme = {};
+    });
+    describe('.base', function () {
+      var editorStylesheet;
+      it('should add the basePath path if the theme does not have an absolute link', function () {
+        opts.theme.base = '/foo/';
+        editor = new EpicEditor(opts).load();
+        editorStylesheet = getIframeDoc(editor.getElement('wrapperIframe')).getElementById('theme');
+        expect(editorStylesheet.href).to.contain('/epiceditor');
+      });
+      it('should NOT add the basePath path if the theme DOES have an absolute http link', function () {
+        opts.theme.base = 'http://foo.com';
+        editor = new EpicEditor(opts).load();
+        editorStylesheet = getIframeDoc(editor.getElement('wrapperIframe')).getElementById('theme');
+        expect(editorStylesheet.href).not.to.contain('/epiceditor');
+      });
+      it('should NOT add the basePath path if the theme DOES have an absolute https link', function () {
+        opts.theme.base = 'https://foo.com';
+        editor = new EpicEditor(opts).load();
+        editorStylesheet = getIframeDoc(editor.getElement('wrapperIframe')).getElementById('theme');
+        expect(editorStylesheet.href).not.to.contain('/epiceditor');
+      });
+    });
+    describe('.editor', function () {
+      it('should add the basePath path if the theme does not have an absolute link', function () {
+        opts.theme.editor = '/bar/';
+        editor = new EpicEditor(opts).load();
+        editorStylesheet = editor.getElement('editor').getElementById('theme');
+        expect(editorStylesheet.href).to.contain('/epiceditor');
+      });
+      it('should NOT add the basePath path if the theme DOES have an absolute http link', function () {
+        opts.theme.editor = 'http://bar.com';
+        editor = new EpicEditor(opts).load();
+        editorStylesheet = editor.getElement('editor').getElementById('theme');
+        expect(editorStylesheet.href).not.to.contain('/epiceditor');
+      });
+      it('should NOT add the basePath path if the theme DOES have an absolute https link', function () {
+        opts.theme.editor = 'https://bar.com';
+        editor = new EpicEditor(opts).load();
+        editorStylesheet = editor.getElement('editor').getElementById('theme');
+        expect(editorStylesheet.href).not.to.contain('/epiceditor');
+      });
+    });
+    describe('.preview', function () {
+      it('should add the basePath path if the theme does not have an absolute link', function () {
+        opts.theme.preview = '/baz/';
+        editor = new EpicEditor(opts).load();
+        editorStylesheet = editor.getElement('previewer').getElementById('theme');
+        expect(editorStylesheet.href).to.contain('/epiceditor');
+      });
+      it('should NOT add the basePath path if the theme DOES have an absolute http link', function () {
+        opts.theme.preview = 'http://baz.com';
+        editor = new EpicEditor(opts).load();
+        editorStylesheet = editor.getElement('previewer').getElementById('theme');
+        expect(editorStylesheet.href).not.to.contain('/epiceditor');
+      });
+      it('should NOT add the basePath path if the theme DOES have an absolute https link', function () {
+        opts.theme.preview = 'https://baz.com';
+        editor = new EpicEditor(opts).load();
+        editorStylesheet = editor.getElement('previewer').getElementById('theme');
+        expect(editorStylesheet.href).not.to.contain('/epiceditor');
+      });
     });
   });
 });
