@@ -113,11 +113,11 @@ describe('EpicEditor([options])', function () {
     });
   });
   describe('options.theme', function () {
+    var editorStylesheet;
     beforeEach(function () {
       opts.theme = {};
     });
     describe('.base', function () {
-      var editorStylesheet;
       it('should add the basePath path if the theme does not have an absolute link', function () {
         opts.theme.base = '/foo/';
         editor = new EpicEditor(opts).load();
