@@ -306,6 +306,7 @@
       , _defaultFile
       , defaults = { container: 'epiceditor'
         , basePath: 'epiceditor'
+        , textarea: undefined
         , clientSideStorage: true
         , localStorageName: 'epiceditor'
         , useNativeFullscreen: true
@@ -862,6 +863,26 @@
       }, self.settings.file.autoSave);
     }
 
+    // Update a textarea automatically if a textarea is given so you don't need
+    // AJAX to submit a form and instead fall back to normal form behavior
+    // TODO: Make work with autosave:false
+    if (self.settings.textarea) {
+      if (typeof self.settings.textarea == 'string') {
+        self._textareaElement = document.getElementById(self.settings.textarea);
+      }
+      else if (typeof self.settings.textarea == 'object') {
+        self._textareaElement = self.settings.textarea;
+      }
+
+      // Update the textarea on load...
+      self._textareaElement.value = self.getFiles(self.settings.file.name).content;
+
+      // ... keep it updated whenever there's a change
+      self.on('__update', function (file) {
+        self._textareaElement.value = file.content;
+      });
+    }
+
     window.addEventListener('resize', function () {
       // If NOT webkit, and in fullscreen, we need to account for browser resizing
       // we don't care about webkit because you can't resize in webkit's fullscreen
@@ -927,11 +948,16 @@
     self._eeState.loaded = false;
     self._eeState.unloaded = true;
     callback = callback || function () {};
-    
+
+    if (self.settings.textarea) {
+      self._textareaElement.value = "";
+      self.removeListener('__update');
+    }
+
     if (self.saveInterval) {
       window.clearInterval(self.saveInterval);
     }
-    
+
     callback.call(this);
     self.emit('unload');
     return self;
@@ -1173,6 +1199,8 @@
     // After the content is actually changed, emit update so it emits the updated content
     if (isUpdate) {
       self.emit('update');
+      // Emit a private update event so it can't get accidentally removed
+      self.emit('__update');
     }
 
     this.emit('save');
