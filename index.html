@@ -56,6 +56,7 @@
 </p>
 <pre><code class="lang-javascript">var opts = {
   container: &#39;epiceditor&#39;,
+  textarea: null,
   basePath: &#39;epiceditor&#39;,
   clientSideStorage: true,
   localStorageName: &#39;epiceditor&#39;,
@@ -90,6 +91,11 @@ var editor = new EpicEditor(opts);</code></pre>
     <td><code>container</code></td>
     <td>The ID (string) or element (object) of the target container in which you want the editor to appear.</td>
     <td><code>epiceditor</code></td>
+  </tr>
+  <tr>
+    <td><code>textarea</code></td>
+    <td>The ID (string) or element (object) of a textarea you would like to sync the editor&#39;s content with.</td>
+    <td><code></code></td>
   </tr>
   <tr>
     <td><code>basePath</code></td>

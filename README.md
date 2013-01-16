@@ -51,6 +51,7 @@ The `EpicEditor` constructor creates a new editor instance. Customize the instan
 ```javascript
 var opts = {
   container: 'epiceditor',
+  textarea: null,
   basePath: 'epiceditor',
   clientSideStorage: true,
   localStorageName: 'epiceditor',
@@ -87,6 +88,11 @@ var editor = new EpicEditor(opts);
     <td><code>container</code></td>
     <td>The ID (string) or element (object) of the target container in which you want the editor to appear.</td>
     <td><code>epiceditor</code></td>
+  </tr>
+  <tr>
+    <td><code>textarea</code></td>
+    <td>The ID (string) or element (object) of a textarea you would like to sync the editor's content with.</td>
+    <td><code></code></td>
   </tr>
   <tr>
     <td><code>basePath</code></td>
