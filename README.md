@@ -71,6 +71,11 @@ var opts = {
     modifier: 18,
     fullscreen: 70,
     preview: 80
+  },
+  string: {
+    togglePreview: 'Toggle Preview Mode',
+    toggleEdit: 'Toggle Edit Mode',
+    toggleFullscreen: 'Enter Fullscreen'
   }
 }
 var editor = new EpicEditor(opts);
@@ -162,6 +167,21 @@ var editor = new EpicEditor(opts);
     <td><code>shortcut.preview</code></td>
     <td>The shortcut to toggle the previewer.</td>
     <td><code>80</code> (<code>p</code> key)</td>
+  </tr>
+  <tr>
+    <td><code>string.togglePreview</code></td>
+    <td>The tooltip text that appears when hovering the preview icon.</td>
+    <td><code>Toggle Preview Mode</code></td>
+  </tr>
+  <tr>
+    <td><code>string.toggleEdit</code></td>
+    <td>The tooltip text that appears when hovering the edit icon.</td>
+    <td><code>Toggle Edit Mode</code></td>
+  </tr>
+  <tr>
+    <td><code>string.toggleFullscreen</code></td>
+    <td>The tooltip text that appears when hovering the fullscreen icon.</td>
+    <td><code>Enter Fullscreen</code></td>
   </tr>
 </table>
 
