@@ -92,7 +92,7 @@ var editor = new EpicEditor(opts);
   <tr>
     <td><code>textarea</code></td>
     <td>The ID (string) or element (object) of a textarea you would like to sync the editor's content with.</td>
-    <td><code></code></td>
+    <td></td>
   </tr>
   <tr>
     <td><code>basePath</code></td>
