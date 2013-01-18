@@ -707,7 +707,7 @@
         document.body.style.overflow = 'auto';
       }
       else {
-        (nativeFsWebkit && el.webkitCancelFullScreen()) ||
+        (nativeFsWebkit && document.webkitCancelFullScreen()) ||
         (nativeFsMoz && document.mozCancelFullScreen()) ||
         (nativeFsW3C && document.exitFullscreen());
       }
