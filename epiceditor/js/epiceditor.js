@@ -754,7 +754,7 @@
 
     // Sets up the NATIVE fullscreen editor/previewer for WebKit
     if (nativeFsWebkit) {
-      fsElement.addEventListener('webkitfullscreenchange', function () {
+      document.addEventListener('webkitfullscreenchange', function () {
         if (!document.webkitIsFullScreen && self._eeState.fullscreen) {
           self._exitFullscreen(fsElement);
         }
