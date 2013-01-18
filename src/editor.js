@@ -459,6 +459,9 @@
       , _elementStates
       , _isInEdit
       , nativeFs = false
+      , nativeFsWebkit = false
+      , nativeFsMoz = false
+      , nativeFsW3C = false
       , fsElement
       , isMod = false
       , isCtrl = false
@@ -466,13 +469,17 @@
       , i; // i is reused for loops
 
     if (self.settings.useNativeFullscreen) {
-      nativeFs = document.body.webkitRequestFullScreen ? true : false
+      nativeFsWebkit = document.body.webkitRequestFullScreen ? true : false;
+      nativeFsMoz = document.body.mozRequestFullScreen ? true : false;
+      nativeFsW3C = document.body.requestFullscreen ? true : false;
+      nativeFs = nativeFsWebkit || nativeFsMoz || nativeFsW3C;
     }
 
     // Fucking Safari's native fullscreen works terribly
     // REMOVE THIS IF SAFARI 7 WORKS BETTER
     if (_isSafari()) {
       nativeFs = false;
+      nativeFsWebkit = false;
     }
 
     // It opens edit mode by default (for now);
@@ -598,7 +605,13 @@
       }
 
       if (nativeFs) {
-        el.webkitRequestFullScreen();
+        if (nativeFsWebkit) {
+          el.webkitRequestFullScreen();
+        } else if (nativeFsMoz) {
+          el.mozRequestFullScreen();
+        } else if (nativeFsW3C) {
+          el.requestFullscreen();
+        }
       }
 
       _isInEdit = self.is('edit');
@@ -691,15 +704,24 @@
 
       utilBtns.style.visibility = 'visible';
 
+      // Put the editor back in the right state
+      // TODO: This is ugly... how do we make this nicer?
+      // setting fullscreen to false here prevents the
+      // native fs callback from calling this function again
+      self._eeState.fullscreen = false;
+
       if (!nativeFs) {
         document.body.style.overflow = 'auto';
       }
       else {
-        document.webkitCancelFullScreen();
+        if (nativeFsWebkit) {
+          document.webkitCancelFullScreen();
+        } else if (nativeFsMoz) {
+          document.mozCancelFullScreen();
+        } else if (nativeFsW3C) {
+          document.exitFullscreen();
+        }
       }
-      // Put the editor back in the right state
-      // TODO: This is ugly... how do we make this nicer?
-      self._eeState.fullscreen = false;
 
       if (_isInEdit) {
         self.edit();
@@ -742,9 +764,21 @@
     });
 
     // Sets up the NATIVE fullscreen editor/previewer for WebKit
-    if (document.body.webkitRequestFullScreen) {
-      fsElement.addEventListener('webkitfullscreenchange', function () {
-        if (!document.webkitIsFullScreen) {
+    if (nativeFsWebkit) {
+      document.addEventListener('webkitfullscreenchange', function () {
+        if (!document.webkitIsFullScreen && self._eeState.fullscreen) {
+          self._exitFullscreen(fsElement);
+        }
+      }, false);
+    } else if (nativeFsMoz) {
+      document.addEventListener('mozfullscreenchange', function () {
+        if (!document.mozFullScreen && self._eeState.fullscreen) {
+          self._exitFullscreen(fsElement);
+        }
+      }, false);
+    } else if (nativeFsW3C) {
+      document.addEventListener('fullscreenchange', function () {
+        if (document.fullscreenElement == null && self._eeState.fullscreen) {
           self._exitFullscreen(fsElement);
         }
       }, false);
@@ -865,7 +899,7 @@
     window.addEventListener('resize', function () {
       // If NOT webkit, and in fullscreen, we need to account for browser resizing
       // we don't care about webkit because you can't resize in webkit's fullscreen
-      if (!self.iframe.webkitRequestFullScreen && self.is('fullscreen')) {
+      if (self.is('fullscreen')) {
         _applyStyles(self.iframeElement, {
           'width': window.outerWidth + 'px'
         , 'height': window.innerHeight + 'px'
