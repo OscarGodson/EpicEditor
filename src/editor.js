@@ -464,6 +464,7 @@
       , isMod = false
       , isCtrl = false
       , eventableIframes
+      , textareaFileName
       , i; // i is reused for loops
 
     if (self.settings.useNativeFullscreen) {
@@ -855,7 +856,7 @@
 
     // Save the document every 100ms by default
     if (self.settings.file.autoSave) {
-      self.saveInterval = window.setInterval(function () {
+      self._saveIntervalTimer = window.setInterval(function () {
         if (!self._canSave) {
           return;
         }
@@ -865,8 +866,20 @@
 
     // Update a textarea automatically if a textarea is given so you don't need
     // AJAX to submit a form and instead fall back to normal form behavior
-    // TODO: Make work with autosave:false
     if (self.settings.textarea) {
+
+      // Even if autoSave is false, we want to make sure to keep the textarea synced
+      // with the editor's content. One bad thing about this tho is that we're
+      // creating two timers now in some configurations. We keep the textarea synced
+      // by saving and opening the textarea content from the draft file storage.
+      self._textareaSaveTimer = window.setInterval(function () {
+        if (!self._canSave) {
+          return;
+        }
+        self.save(true);
+      }, 100);
+
+      textareaFileName = self.settings.file.name;
       if (typeof self.settings.textarea == 'string') {
         self._textareaElement = document.getElementById(self.settings.textarea);
       }
@@ -874,12 +887,12 @@
         self._textareaElement = self.settings.textarea;
       }
 
-      // Update the textarea on load...
-      self._textareaElement.value = self.getFiles(self.settings.file.name).content;
+      // Update the textarea on load and pull from drafts
+      self._textareaElement.value = self.getFiles(textareaFileName, true).content;
 
-      // ... keep it updated whenever there's a change
-      self.on('__update', function (file) {
-        self._textareaElement.value = file.content;
+      // Make sure to keep it updated
+      self.on('__update', function () {
+        self._textareaElement.value = self.getFiles(textareaFileName, true).content;
       });
     }
 
@@ -954,8 +967,11 @@
       self.removeListener('__update');
     }
 
-    if (self.saveInterval) {
-      window.clearInterval(self.saveInterval);
+    if (self._saveIntervalTimer) {
+      window.clearInterval(self._saveIntervalTimer);
+    }
+    if (self._textareaSaveTimer) {
+      window.clearInterval(self._textareaSaveTimer);
     }
 
     callback.call(this);
