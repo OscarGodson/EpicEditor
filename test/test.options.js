@@ -18,13 +18,15 @@ describe('EpicEditor([options])', function () {
   });
 
   afterEach(function (done) {
-    editor.unload();
+    if (editor.is('loaded')) {
+      editor.unload();
+    }
     if (!el.id) {
       (el.id = id); // to reset in the case where the id is removed
     }
     removeContainer(id);
     done();
-  })
+  });
 
   it('should allow the container option to be passed as an element ID string', function () {
     opts.container = id;
@@ -176,6 +178,83 @@ describe('EpicEditor([options])', function () {
         editorStylesheet = editor.getElement('previewer').getElementById('theme');
         expect(editorStylesheet.href).not.to.contain('/epiceditor');
       });
+    });
+  });
+  describe('options.textarea', function () {
+    var textareaElement
+    beforeEach(function () {
+      textareaElement = document.createElement('textarea');
+      textareaElement.id = 'temp-textarea';
+      document.body.appendChild(textareaElement);
+
+      opts.textarea = 'temp-textarea';
+
+      // Add content before the editor loads
+      var eeTestStorage = JSON.parse(localStorage['epiceditor']);
+      eeTestStorage[id] = { content: id };
+      localStorage['epiceditor'] = JSON.stringify(eeTestStorage);
+    });
+    afterEach(function () {
+      document.body.removeChild(textareaElement);
+    });
+    it('puts the content of the editor inside of the textarea when first loaded', function () {
+      var editor = new EpicEditor(opts).load();
+      expect(document.getElementById('temp-textarea').value).to.be(id);
+    });
+    it('accepts a string of an ID to find the textarea to sync', function () {
+      var editor = new EpicEditor(opts).load();
+      expect(document.getElementById('temp-textarea').value).to.be(id);
+    });
+    it('accepts a DOM object to find the textarea to sync', function () {
+      opts.textarea = document.getElementById('temp-textarea');
+      var editor = new EpicEditor(opts).load();
+      expect(document.getElementById('temp-textarea').value).to.be(id);
+    });
+    it('should sync the content of the editor when the editor is updated', function (done) {
+      var editor = new EpicEditor(opts).load();
+      expect(document.getElementById('temp-textarea').value).to.be(id);
+
+      editor.getElement('editor').body.innerHTML = 'Manually added';
+      setTimeout(function () {
+        expect(document.getElementById('temp-textarea').value).to.be('Manually added');
+        editor.importFile(id, 'New Text');
+        setTimeout(function () {
+          expect(document.getElementById('temp-textarea').value).to.be('New Text');
+          done();
+        }, 100);
+      }, 100)
+    });
+    it('should sync the content of the editor when the editor is updated AND autoSave is OFF', function (done) {
+      opts.file.autoSave = false;
+      var editor = new EpicEditor(opts).load();
+      editor.getElement('editor').body.innerHTML = 'Should update';
+      setTimeout(function () {
+        expect(document.getElementById('temp-textarea').value).to.be('Should update');
+        done();
+      }, 100);
+    });
+    it('should STOP syncing the content of the editor when the editor is unloaded', function () {
+      var editor = new EpicEditor(opts).load();
+      expect(document.getElementById('temp-textarea').value).to.be(id);
+
+      editor.unload();
+      expect(document.getElementById('temp-textarea').value).to.be('');
+    });
+    it('should start resyncing the content of the editor when the editor is reloaded', function (done) {
+      var editor = new EpicEditor(opts).load();
+      expect(document.getElementById('temp-textarea').value).to.be(id);
+
+      editor.unload();
+      expect(document.getElementById('temp-textarea').value).to.be('');
+
+      editor.load();
+      expect(document.getElementById('temp-textarea').value).to.be(id);
+
+      editor.getElement('editor').body.innerHTML = 'Should update';
+      setTimeout(function () {
+        expect(document.getElementById('temp-textarea').value).to.be('Should update');
+        done();
+      }, 100);
     });
   });
 });
