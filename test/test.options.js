@@ -86,9 +86,9 @@ describe('EpicEditor([options])', function () {
     expect(editor.getElement('editor').body.innerHTML).to.be('foo');
   });
 
-  describe('options.strings', function () {
+  describe('options.string', function () {
     it('should change the title attr of the preview button when the togglePreview string is changed', function () {
-      opts.strings = {
+      opts.string = {
         togglePreview: 'Foo'
       }
       editor = new EpicEditor(opts).load();
@@ -96,7 +96,7 @@ describe('EpicEditor([options])', function () {
         .to.be('Foo');
     });
     it('should change the title attr of the edit button when the toggleEdit string is changed', function () {
-      opts.strings = {
+      opts.string = {
         toggleEdit: 'Bar'
       }
       editor = new EpicEditor(opts).load();
@@ -104,7 +104,7 @@ describe('EpicEditor([options])', function () {
         .to.be('Bar');
     });
     it('should change the title attr of the fullscreen button when the toggleFullscreen string is changed', function () {
-      opts.strings = {
+      opts.string = {
         toggleFullscreen: 'Qux'
       }
       editor = new EpicEditor(opts).load();
@@ -113,11 +113,11 @@ describe('EpicEditor([options])', function () {
     });
   });
   describe('options.theme', function () {
+    var editorStylesheet;
     beforeEach(function () {
       opts.theme = {};
     });
     describe('.base', function () {
-      var editorStylesheet;
       it('should add the basePath path if the theme does not have an absolute link', function () {
         opts.theme.base = '/foo/';
         editor = new EpicEditor(opts).load();
