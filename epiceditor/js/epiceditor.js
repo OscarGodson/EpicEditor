@@ -1225,6 +1225,7 @@
       , isUpdate = false
       , file = self.settings.file.name
       , previewDraftName = ''
+      , data = this._storage[previewDraftName + self.settings.localStorageName]
       , content = _getText(this.editor);
 
     if (_isPreviewDraft) {
@@ -1235,31 +1236,36 @@
     // we know it's save to start autoSaving again
     this._canSave = true;
 
-    storage = JSON.parse(this._storage[previewDraftName + self.settings.localStorageName]);
+    // Guard against storage being wiped out without EpicEditor knowing
+    // TODO: Emit saving error - storage seems to have been wiped
+    if (data) {
+      storage = JSON.parse(this._storage[previewDraftName + self.settings.localStorageName]);
 
-    // If the file doesn't exist we need to create it
-    if (storage[file] === undefined) {
-      storage[file] = self._defaultFileSchema();
+      // If the file doesn't exist we need to create it
+      if (storage[file] === undefined) {
+        storage[file] = self._defaultFileSchema();
+      }
+
+      // If it does, we need to check if the content is different and
+      // if it is, send the update event and update the timestamp
+      else if (content !== storage[file].content) {
+        storage[file].modified = new Date();
+        isUpdate = true;
+      }
+
+      storage[file].content = content;
+      this._storage[previewDraftName + self.settings.localStorageName] = JSON.stringify(storage);
+
+      // After the content is actually changed, emit update so it emits the updated content
+      if (isUpdate) {
+        self.emit('update');
+        // Emit a private update event so it can't get accidentally removed
+        self.emit('__update');
+      }
+
+      this.emit('save');
     }
 
-    // If it does, we need to check if the content is different and
-    // if it is, send the update event and update the timestamp
-    else if (content !== storage[file].content) {
-      storage[file].modified = new Date();
-      isUpdate = true;
-    }
-
-    storage[file].content = content;
-    this._storage[previewDraftName + self.settings.localStorageName] = JSON.stringify(storage);
-
-    // After the content is actually changed, emit update so it emits the updated content
-    if (isUpdate) {
-      self.emit('update');
-      // Emit a private update event so it can't get accidentally removed
-      self.emit('__update');
-    }
-
-    this.emit('save');
     return this;
   }
 

@@ -217,11 +217,17 @@ describe('EpicEditor([options])', function () {
       editor.getElement('editor').body.innerHTML = 'Manually added';
       setTimeout(function () {
         expect(document.getElementById('temp-textarea').value).to.be('Manually added');
-        editor.importFile(id, 'New Text');
-        setTimeout(function () {
-          expect(document.getElementById('temp-textarea').value).to.be('New Text');
-          done();
-        }, 100);
+        done();
+      }, 100)
+    });
+    it('should sync the content of the editor when content is imported', function (done) {
+      var editor = new EpicEditor(opts).load();
+      expect(document.getElementById('temp-textarea').value).to.be(id);
+
+      editor.importFile(null, 'Imported');
+      setTimeout(function () {
+        expect(document.getElementById('temp-textarea').value).to.be('Imported');
+        done();
       }, 100)
     });
     it('should sync the content of the editor when the editor is updated AND autoSave is OFF', function (done) {
