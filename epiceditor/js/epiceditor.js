@@ -120,7 +120,7 @@
     id = id || '';
     var headID = context.getElementsByTagName("head")[0]
       , cssNode = context.createElement('link');
-    
+
     _applyAttrs(cssNode, {
       type: 'text/css'
     , id: id
@@ -362,7 +362,7 @@
     else if (typeof self.settings.container == 'object') {
       self.element = self.settings.container;
     }
-    
+
     // Figure out the file name. If no file name is given we'll use the ID.
     // If there's no ID either we'll use a namespaced file name that's incremented
     // based on the calling order. As long as it doesn't change, drafts will be saved.
@@ -504,7 +504,7 @@
                     '<img width="30" src="' + this.settings.basePath + '/images/fullscreen.png" title="' + this.settings.string.toggleFullscreen + '" class="epiceditor-fullscreen-btn">' +
                   '</div>' +
                 '</div>'
-    
+
     // The previewer is just an empty box for the generated HTML to go into
     , previewer: '<div id="epiceditor-preview"></div>'
     };
@@ -519,7 +519,7 @@
     self.element.style.height = self.element.offsetHeight + 'px';
 
     iframeElement = document.getElementById(self._instanceId);
-    
+
     // Store a reference to the iframeElement itself
     self.iframeElement = iframeElement;
 
@@ -539,7 +539,7 @@
     // Need something for... you guessed it, Firefox
     self.editorIframeDocument.write('');
     self.editorIframeDocument.close();
-    
+
     // Setup the previewer iframe
     self.previewerIframeDocument = _getIframeInnards(self.previewerIframe);
     self.previewerIframeDocument.open();
@@ -556,10 +556,10 @@
 
     // Insert Base Stylesheet
     _insertCSSLink(self.settings.theme.base, self.iframe, 'theme');
-    
+
     // Insert Editor Stylesheet
     _insertCSSLink(self.settings.theme.editor, self.editorIframeDocument, 'theme');
-    
+
     // Insert Previewer Stylesheet
     _insertCSSLink(self.settings.theme.preview, self.previewerIframeDocument, 'theme');
 
@@ -569,9 +569,9 @@
     // Now grab the editor and previewer for later use
     self.editor = self.editorIframeDocument.body;
     self.previewer = self.previewerIframeDocument.getElementById('epiceditor-preview');
-   
+
     self.editor.contentEditable = true;
- 
+
     // Firefox's <body> gets all fucked up so, to be sure, we need to hardcode it
     self.iframe.body.style.height = this.element.offsetHeight + 'px';
 
@@ -752,7 +752,7 @@
         }
       }, 250);
     });
-    
+
     fsElement = self.iframeElement;
 
     // Sets up the onclick event on utility buttons
@@ -823,7 +823,7 @@
       }
       mousePos = { y: e.pageY, x: e.pageX };
     }
- 
+
     // Add keyboard shortcuts for convenience.
     function shortcutHandler(e) {
       if (e.keyCode == self.settings.shortcut.modifier) { isMod = true } // check for modifier press(default is alt key), save to var
@@ -870,7 +870,7 @@
       }
 
     }
-    
+
     function shortcutUpHandler(e) {
       if (e.keyCode == self.settings.shortcut.modifier) { isMod = false }
       if (e.keyCode == 17) { isCtrl = false }
@@ -878,7 +878,7 @@
 
     // Hide and show the util bar based on mouse movements
     eventableIframes = [self.previewerIframeDocument, self.editorIframeDocument];
-    
+
     for (i = 0; i < eventableIframes.length; i++) {
       eventableIframes[i].addEventListener('mousemove', function (e) {
         utilBarHandler(e);
@@ -928,11 +928,11 @@
       }
 
       // Update the textarea on load and pull from drafts
-      self._textareaElement.value = self.getFiles(textareaFileName, true).content;
+      self._textareaElement.value = self.exportFile(textareaFileName, 'text', true);
 
       // Make sure to keep it updated
       self.on('__update', function () {
-        self._textareaElement.value = self.getFiles(textareaFileName, true).content;
+        self._textareaElement.value = self.exportFile(textareaFileName, 'text', true);
       });
     }
 
@@ -1097,7 +1097,7 @@
       self._eeState.edit = false;
       self.previewerIframe.focus();
     }
-    
+
     self.emit('preview');
     return self;
   }
@@ -1323,7 +1323,7 @@
     content = content || '';
     kind = kind || 'md';
     meta = meta || {};
-  
+
     if (JSON.parse(this._storage[self.settings.localStorageName])[name] === undefined) {
       isNew = true;
     }
@@ -1358,7 +1358,7 @@
 
     name = name || self.settings.file.name;
     kind = kind || 'text';
-   
+
     file = self.getFiles(name, _isPreviewDraft);
 
     // If the file doesn't exist just return early with undefined
@@ -1367,7 +1367,7 @@
     }
 
     content = file.content;
-   
+
     switch (kind) {
     case 'html':
       // Get this, 2 spaces in a content editable actually converts to:
@@ -1469,6 +1469,7 @@
 
   window.EpicEditor = EpicEditor;
 })(window);
+
 
 /**
  * marked - a markdown parser
