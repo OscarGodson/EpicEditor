@@ -1469,3 +1469,4 @@
 
   window.EpicEditor = EpicEditor;
 })(window);
+
