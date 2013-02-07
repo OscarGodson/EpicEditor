@@ -928,11 +928,11 @@
       }
 
       // Update the textarea on load and pull from drafts
-      self._textareaElement.value = self.getFiles(textareaFileName, true).content;
+      self._textareaElement.value = self.exportFile(textareaFileName, 'text', true);
 
       // Make sure to keep it updated
       self.on('__update', function () {
-        self._textareaElement.value = self.getFiles(textareaFileName, true).content;
+        self._textareaElement.value = self.exportFile(textareaFileName, 'text', true);
       });
     }
 
