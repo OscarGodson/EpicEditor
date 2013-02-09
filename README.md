@@ -73,7 +73,7 @@ var opts = {
     preview: 80
   }
 }
-var editor = new EpicEditor(opts);
+var editor = new EpicEditor(opts).load();
 ```
 
 ### Options
