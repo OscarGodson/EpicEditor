@@ -342,11 +342,16 @@ like this will not trigger native fullscreen. Native fullscreen can only be trig
 <pre><code class="lang-javascript">exitFullscreenBtn.onclick = function () {
   editor.exitFullscreen();
 }</code></pre>
-<h3>reflow([type])</h3>
+<h3>reflow([type], [callback])</h3>
 <p><code>reflow()</code> allows you to &quot;reflow&quot; the editor in it&#39;s container. For example, let&#39;s say you increased
 the height of your wrapping element and want the editor to resize too. You could call <code>reflow</code>
 and the editor will resize to fit. You can pass it one of two strings as the first parameter to
 constrain the reflow to either <code>width</code> or <code>height</code>.
+
+</p>
+<p>It also provides you with a callback parameter if you&#39;d like to do something after the resize is finished.
+The callback will return the new width and/or height in an object. Additionally, you can also listen for
+the <code>reflow</code> event. This will also give you back the new size.
 
 </p>
 <p><strong>Note:</strong> If you call <code>reflow()</code> or <code>reflow(&#39;width&#39;)</code> and you have a fluid width container
@@ -361,6 +366,13 @@ window.onresize = function () {
 // Constrain the reflow to just height:
 someDiv.resizeHeightHandle = function () {
   editor.reflow(&#39;height&#39;);
+}
+
+// Same as the first example, but this has a callback
+window.onresize = function () {
+  editor.reflow(function (data) {
+    console.log(&#39;width: &#39;, data.width, &#39; &#39;, &#39;height: &#39;, data.height);
+  });
 }</code></pre>
 <h2>Events</h2>
 <p>You can hook into specific events in EpicEditor with <a href="#onevent-handler"><code>on()</code></a> such as when a file is
@@ -419,6 +431,10 @@ created, removed, or updated. Below is a complete list of currently supported ev
   <tr>
     <td><code>open</code></td>
     <td>Fires whenever a file is opened or loads automatically by EpicEditor or when <code>open()</code> is called.</td>
+  </tr>
+  <tr>
+    <td><code>reflow</code></td>
+    <td>Fires whenever <code>reflow()</code> is called. Will return the new dimensions in the callback.</td>
   </tr>
 </table>
 

@@ -388,12 +388,16 @@ exitFullscreenBtn.onclick = function () {
 }
 ```
 
-### reflow([type])
+### reflow([type], [callback])
 
 `reflow()` allows you to "reflow" the editor in it's container. For example, let's say you increased
 the height of your wrapping element and want the editor to resize too. You could call `reflow`
 and the editor will resize to fit. You can pass it one of two strings as the first parameter to
 constrain the reflow to either `width` or `height`.
+
+It also provides you with a callback parameter if you'd like to do something after the resize is finished.
+The callback will return the new width and/or height in an object. Additionally, you can also listen for
+the `reflow` event. This will also give you back the new size.
 
 **Note:** If you call `reflow()` or `reflow('width')` and you have a fluid width container
 EpicEditor will no longer be fluid because doing a reflow on the width sets an inline style on the editor.
@@ -407,6 +411,13 @@ window.onresize = function () {
 // Constrain the reflow to just height:
 someDiv.resizeHeightHandle = function () {
   editor.reflow('height');
+}
+
+// Same as the first example, but this has a callback
+window.onresize = function () {
+  editor.reflow(function (data) {
+    console.log('width: ', data.width, ' ', 'height: ', data.height);
+  });
 }
 ```
 
@@ -467,6 +478,10 @@ created, removed, or updated. Below is a complete list of currently supported ev
   <tr>
     <td><code>open</code></td>
     <td>Fires whenever a file is opened or loads automatically by EpicEditor or when <code>open()</code> is called.</td>
+  </tr>
+  <tr>
+    <td><code>reflow</code></td>
+    <td>Fires whenever <code>reflow()</code> is called. Will return the new dimensions in the callback.</td>
   </tr>
 </table>
 

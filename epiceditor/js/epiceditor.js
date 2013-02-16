@@ -1023,32 +1023,52 @@
    * reflow allows you to dynamically re-fit the editor in the parent without
    * having to unload and then reload the editor again.
    *
-   * @param {string} kind Can either be 'width' or 'height' or null
-   * if null, both the height and width will be resized
+   * reflow will also emit a `reflow` event and will return the new dimensions.
+   * If it's called without params it'll return the new width and height and if
+   * it's called with just width or just height it'll just return the width or
+   * height. It's returned as an object like: { width: '100px', height: '1px' }
    *
+   * @param {string|null} kind Can either be 'width' or 'height' or null
+   * if null, both the height and width will be resized
+   * @param {function} callback A function to fire after the reflow is finished.
+   * Will return the width / height in an obj as the first param of the callback.
    * @returns {object} EpicEditor will be returned
    */
-  EpicEditor.prototype.reflow = function (kind) {
+  EpicEditor.prototype.reflow = function (kind, callback) {
     var self = this
       , widthDiff = _outerWidth(self.element) - self.element.offsetWidth
       , heightDiff = _outerHeight(self.element) - self.element.offsetHeight
       , elements = [self.iframeElement, self.editorIframe, self.previewerIframe]
+      , eventData = {}
       , newWidth
       , newHeight;
 
+    if (typeof kind == 'function') {
+      callback = kind;
+      kind = null;
+    }
+
+    if (!callback) {
+      callback = function () {};
+    }
 
     for (var x = 0; x < elements.length; x++) {
       if (!kind || kind == 'width') {
         newWidth = self.element.offsetWidth - widthDiff + 'px';
         elements[x].style.width = newWidth;
         self._eeState.reflowWidth = newWidth;
+        eventData.width = newWidth;
       }
       if (!kind || kind == 'height') {
         newHeight = self.element.offsetHeight - heightDiff + 'px';
         elements[x].style.height = newHeight;
         self._eeState.reflowHeight = newHeight
+        eventData.height = newHeight;
       }
     }
+
+    self.emit('reflow', eventData);
+    callback.call(this, eventData);
     return self;
   }
 

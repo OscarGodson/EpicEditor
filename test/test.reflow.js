@@ -1,6 +1,6 @@
 /*global createContainer:false, removeContainer:false, rnd:false */
 
-describe('.reflow([type])', function () {
+describe('.reflow([type], [callback])', function () {
   var testEl
     , id
     , editor
@@ -49,5 +49,79 @@ describe('.reflow([type])', function () {
 
     expect(editor.getElement('wrapperIframe').offsetWidth).to.be(existingWidth);
     expect(editor.getElement('wrapperIframe').offsetHeight).to.be(9999);
+  });
+
+  describe('callback', function () {
+    var wasCalled, data;
+
+    beforeEach(function () {
+      wasCalled = false;
+      data = {};
+    });
+    afterEach(function () {
+      editor.removeListener('reflow');
+    });
+    it('fires an event when reflow is called without parameters with two properties in the data', function () {
+      editor.reflow(function (callbackData) {
+        wasCalled = true;
+        data = callbackData;
+      });
+      expect(wasCalled).to.be(true);
+      expect(data.width).to.not.be(undefined);
+      expect(data.height).to.not.be(undefined);
+    });
+    it('fires an event when reflow width is called with only the width property in the data', function () {
+      editor.reflow('width', function (callbackData) {
+        wasCalled = true;
+        data = callbackData;
+      });
+      expect(wasCalled).to.be(true);
+      expect(data.width).to.not.be(undefined);
+      expect(data.height).to.be(undefined);
+    });
+    it('fires an event when reflow height is called with only the height property in the data', function () {
+      editor.reflow('height', function (callbackData) {
+        wasCalled = true;
+        data = callbackData;
+      });
+      editor.reflow('height');
+      expect(wasCalled).to.be(true);
+      expect(data.width).to.be(undefined);
+      expect(data.height).to.not.be(undefined);
+    });
+  });
+
+  describe('Events', function () {
+    var wasCalled, data;
+
+    beforeEach(function () {
+      wasCalled = false;
+      data = {};
+      editor.on('reflow', function (callbackData) {
+        wasCalled = true;
+        data = callbackData;
+      });
+    });
+    afterEach(function () {
+      editor.removeListener('reflow');
+    });
+    it('fires an event when reflow is called without parameters with two properties in the data', function () {
+      editor.reflow();
+      expect(wasCalled).to.be(true);
+      expect(data.width).to.not.be(undefined);
+      expect(data.height).to.not.be(undefined);
+    });
+    it('fires an event when reflow width is called with only the width property in the data', function () {
+      editor.reflow('width');
+      expect(wasCalled).to.be(true);
+      expect(data.width).to.not.be(undefined);
+      expect(data.height).to.be(undefined);
+    });
+    it('fires an event when reflow height is called with only the height property in the data', function () {
+      editor.reflow('height');
+      expect(wasCalled).to.be(true);
+      expect(data.width).to.be(undefined);
+      expect(data.height).to.not.be(undefined);
+    });
   });
 });
