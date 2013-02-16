@@ -51,7 +51,7 @@
   }
 
   /**
-   * Saves the current style state for the styles requested, then applys styles
+   * Saves the current style state for the styles requested, then applies styles
    * to overwrite the existing one. The old styles are returned as an object so
    * you can pass it back in when you want to revert back to the old style
    * @param   {object} el     The element to get the styles of
