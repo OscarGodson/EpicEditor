@@ -51,7 +51,7 @@
   }
 
   /**
-   * Saves the current style state for the styles requested, then applys styles
+   * Saves the current style state for the styles requested, then applies styles
    * to overwrite the existing one. The old styles are returned as an object so
    * you can pass it back in when you want to revert back to the old style
    * @param   {object} el     The element to get the styles of
@@ -328,10 +328,16 @@
           , toggleFullscreen: 'Enter Fullscreen'
           }
         , parser: typeof marked == 'function' ? marked : null
+        , buttons: { fullscreen: true, preview: true }
         }
       , defaultStorage;
 
     self.settings = _mergeObjs(true, defaults, opts);
+    
+    var buttons = self.settings.buttons;
+    self._fullscreenEnabled = typeof(buttons) === 'object' ? typeof buttons.fullscreen === 'undefined' || buttons.fullscreen : buttons === true;
+    self._editEnabled = typeof(buttons) === 'object' ? typeof buttons.edit === 'undefined' || buttons.edit : buttons === true;
+    self._previewEnabled = typeof(buttons) === 'object' ? typeof buttons.preview === 'undefined' || buttons.preview : buttons === true;
 
     if (!(typeof self.settings.parser == 'function' && typeof self.settings.parser('TEST') == 'string')) {
       self.settings.parser = function (str) {
@@ -490,6 +496,8 @@
     }
 
     callback = callback || function () {};
+    
+    var buttons = self.settings.buttons;
 
     // The editor HTML
     // TODO: edit-mode class should be dynamically added
@@ -499,9 +507,9 @@
                   '<iframe frameborder="0" id="epiceditor-editor-frame"></iframe>' +
                   '<iframe frameborder="0" id="epiceditor-previewer-frame"></iframe>' +
                   '<div id="epiceditor-utilbar">' +
-                    '<img width="30" src="' + this.settings.basePath + '/images/preview.png" title="' + this.settings.string.togglePreview + '" class="epiceditor-toggle-btn epiceditor-toggle-preview-btn"> ' +
-                    '<img width="30" src="' + this.settings.basePath + '/images/edit.png" title="' + this.settings.string.toggleEdit + '" class="epiceditor-toggle-btn epiceditor-toggle-edit-btn"> ' +
-                    '<img width="30" src="' + this.settings.basePath + '/images/fullscreen.png" title="' + this.settings.string.toggleFullscreen + '" class="epiceditor-fullscreen-btn">' +
+                    (self._previewEnabled ? '<img width="30" src="' + this.settings.basePath + '/images/preview.png" title="' + this.settings.string.togglePreview + '" class="epiceditor-toggle-btn epiceditor-toggle-preview-btn"> ' : '') +
+                    (self._editEnabled ? '<img width="30" src="' + this.settings.basePath + '/images/edit.png" title="' + this.settings.string.toggleEdit + '" class="epiceditor-toggle-btn epiceditor-toggle-edit-btn"> ' : '') +
+                    (self._fullscreenEnabled ? '<img width="30" src="' + this.settings.basePath + '/images/fullscreen.png" title="' + this.settings.string.toggleFullscreen + '" class="epiceditor-fullscreen-btn">' : '') +
                   '</div>' +
                 '</div>'
     
@@ -832,15 +840,15 @@
       // Check for alt+p and make sure were not in fullscreen - default shortcut to switch to preview
       if (isMod === true && e.keyCode == self.settings.shortcut.preview && !self.is('fullscreen')) {
         e.preventDefault();
-        if (self.is('edit')) {
+        if (self.is('edit') && self._previewEnabled) {
           self.preview();
         }
-        else {
+        else if (self._editEnabled) {
           self.edit();
         }
       }
       // Check for alt+f - default shortcut to make editor fullscreen
-      if (isMod === true && e.keyCode == self.settings.shortcut.fullscreen) {
+      if (isMod === true && e.keyCode == self.settings.shortcut.fullscreen && self._fullscreenEnabled) {
         e.preventDefault();
         self._goFullscreen(fsElement);
       }

@@ -27,6 +27,65 @@ describe('EpicEditor([options])', function () {
     removeContainer(id);
     done();
   });
+  
+  describe('options.buttons', function () {
+    it('should have all buttons enabled by default', function () {
+      editor = new EpicEditor(opts).load();
+      expect(editor._fullscreenEnabled).to.be(true);
+      expect(editor._previewEnabled).to.be(true);
+      expect(editor._editEnabled).to.be(true);
+      var wrapper = editor.getElement('wrapper');
+      expect(wrapper.getElementsByClassName('epiceditor-fullscreen-btn').length)
+        .to.equal(1);
+      expect(wrapper.getElementsByClassName('epiceditor-toggle-preview-btn').length)
+        .to.equal(1);
+      expect(wrapper.getElementsByClassName('epiceditor-toggle-edit-btn').length)
+        .to.equal(1);
+    });
+    it('should disable all buttons if the buttons config is set to false', function () {
+      opts.buttons = false;
+      editor = new EpicEditor(opts).load();
+      expect(editor._fullscreenEnabled).to.be(false);
+      expect(editor._previewEnabled).to.be(false);
+      expect(editor._editEnabled).to.be(false);
+      var wrapper = editor.getElement('wrapper');
+      expect(wrapper.getElementsByClassName('epiceditor-fullscreen-btn').length)
+        .to.equal(0);
+      expect(wrapper.getElementsByClassName('epiceditor-toggle-preview-btn').length)
+        .to.equal(0);
+      expect(wrapper.getElementsByClassName('epiceditor-toggle-edit-btn').length)
+        .to.equal(0);
+    });
+    it('should enable all buttons if the buttons config is set to true', function () {
+      opts.buttons = true;
+      editor = new EpicEditor(opts).load();
+      expect(editor._fullscreenEnabled).to.be(true);
+      expect(editor._previewEnabled).to.be(true);
+      expect(editor._editEnabled).to.be(true);
+      var wrapper = editor.getElement('wrapper');
+      expect(wrapper.getElementsByClassName('epiceditor-fullscreen-btn').length)
+        .to.equal(1);
+      expect(wrapper.getElementsByClassName('epiceditor-toggle-preview-btn').length)
+        .to.equal(1);
+      expect(wrapper.getElementsByClassName('epiceditor-toggle-edit-btn').length)
+        .to.equal(1);
+    });
+    it('should properly merge configs if none are specified', function () {
+      // if no specific value for a button is specified, assume that it is true.
+      opts.buttons = { fullscreen: false };
+      editor = new EpicEditor(opts).load();
+      expect(editor._fullscreenEnabled).to.be(false);
+      expect(editor._previewEnabled).to.be(true);
+      expect(editor._editEnabled).to.be(true);
+      var wrapper = editor.getElement('wrapper');
+      expect(wrapper.getElementsByClassName('epiceditor-fullscreen-btn').length)
+        .to.equal(0);
+      expect(wrapper.getElementsByClassName('epiceditor-toggle-preview-btn').length)
+        .to.equal(1);
+      expect(wrapper.getElementsByClassName('epiceditor-toggle-edit-btn').length)
+        .to.equal(1);
+    });
+  });
 
   it('should allow the container option to be passed as an element ID string', function () {
     opts.container = id;
