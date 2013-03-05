@@ -328,6 +328,7 @@
           , toggleFullscreen: 'Enter Fullscreen'
           }
         , parser: typeof marked == 'function' ? marked : null
+        , fullscreenEnabled: true
         }
       , defaultStorage;
 
@@ -501,7 +502,7 @@
                   '<div id="epiceditor-utilbar">' +
                     '<img width="30" src="' + this.settings.basePath + '/images/preview.png" title="' + this.settings.string.togglePreview + '" class="epiceditor-toggle-btn epiceditor-toggle-preview-btn"> ' +
                     '<img width="30" src="' + this.settings.basePath + '/images/edit.png" title="' + this.settings.string.toggleEdit + '" class="epiceditor-toggle-btn epiceditor-toggle-edit-btn"> ' +
-                    '<img width="30" src="' + this.settings.basePath + '/images/fullscreen.png" title="' + this.settings.string.toggleFullscreen + '" class="epiceditor-fullscreen-btn">' +
+                    (self.settings.fullscreenEnabled ? '<img width="30" src="' + this.settings.basePath + '/images/fullscreen.png" title="' + this.settings.string.toggleFullscreen + '" class="epiceditor-fullscreen-btn">' : '') +
                   '</div>' +
                 '</div>'
     
@@ -840,7 +841,7 @@
         }
       }
       // Check for alt+f - default shortcut to make editor fullscreen
-      if (isMod === true && e.keyCode == self.settings.shortcut.fullscreen) {
+      if (isMod === true && e.keyCode == self.settings.shortcut.fullscreen && self.settings.fullscreenEnabled) {
         e.preventDefault();
         self._goFullscreen(fsElement);
       }
