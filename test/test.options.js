@@ -28,7 +28,7 @@ describe('EpicEditor([options])', function () {
     done();
   });
   
-  describe('options.buttons', function () {
+  describe('options.button', function () {
     it('should have all buttons enabled by default', function () {
       editor = new EpicEditor(opts).load();
       var wrapper = editor.getElement('wrapper');
