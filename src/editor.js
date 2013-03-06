@@ -328,13 +328,13 @@
           , toggleFullscreen: 'Enter Fullscreen'
           }
         , parser: typeof marked == 'function' ? marked : null
-        , buttons: { fullscreen: true, preview: true }
+        , button: { fullscreen: true, preview: true }
         }
       , defaultStorage;
 
     self.settings = _mergeObjs(true, defaults, opts);
     
-    var buttons = self.settings.buttons;
+    var buttons = self.settings.button;
     self._fullscreenEnabled = typeof(buttons) === 'object' ? typeof buttons.fullscreen === 'undefined' || buttons.fullscreen : buttons === true;
     self._editEnabled = typeof(buttons) === 'object' ? typeof buttons.edit === 'undefined' || buttons.edit : buttons === true;
     self._previewEnabled = typeof(buttons) === 'object' ? typeof buttons.preview === 'undefined' || buttons.preview : buttons === true;
@@ -496,8 +496,6 @@
     }
 
     callback = callback || function () {};
-    
-    var buttons = self.settings.buttons;
 
     // The editor HTML
     // TODO: edit-mode class should be dynamically added
