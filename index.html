@@ -68,9 +68,13 @@
     autoSave: 100
   },
   theme: {
-    base:&#39;/themes/base/epiceditor.css&#39;,
-    preview:&#39;/themes/preview/preview-dark.css&#39;,
-    editor:&#39;/themes/editor/epic-dark.css&#39;
+    base: &#39;/themes/base/epiceditor.css&#39;,
+    preview: &#39;/themes/preview/preview-dark.css&#39;,
+    editor: &#39;/themes/editor/epic-dark.css&#39;
+  },
+  button: {
+    preview: true,
+    fullscreen: true
   },
   focusOnLoad: false,
   shortcut: {
@@ -161,6 +165,21 @@ var editor = new EpicEditor(opts);</code></pre>
     <td><code>theme.preview</code></td>
     <td>The theme for the previewer.</td>
     <td><code>themes/preview/github.css</code></td>
+  </tr>
+  <tr>
+    <td><code>button</code></td>
+    <td>If set to <code>false</code> will remove all buttons.</td>
+    <td>All buttons set to <code>true</code>.</td>
+  </tr>
+  <tr>
+    <td><code>button.preview</code></td>
+    <td>If set to <code>false</code> will remove the preview button.</td>
+    <td><code>true</code></td>
+  </tr>
+  <tr>
+    <td><code>button.fullscreen</code></td>
+    <td>If set to <code>false</code> will remove the fullscreen button.</td>
+    <td><code>true</code></td>
   </tr>
   <tr>
     <td><code>shortcut.modifier</code></td>
