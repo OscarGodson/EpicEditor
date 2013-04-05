@@ -464,6 +464,7 @@
       , keypressTimer
       , mousePos = { y: -1, x: -1 }
       , _elementStates
+      , _syncTextarea
       , _isInEdit
       , nativeFs = false
       , nativeFsWebkit = false
@@ -925,7 +926,12 @@
         self.save(true);
       }, 100);
 
+      _syncTextarea = function () {
+        self._textareaElement.value = self.exportFile(textareaFileName, 'text', true);
+      }
+
       textareaFileName = self.settings.file.name;
+      
       if (typeof self.settings.textarea == 'string') {
         self._textareaElement = document.getElementById(self.settings.textarea);
       }
@@ -933,13 +939,28 @@
         self._textareaElement = self.settings.textarea;
       }
 
+      // On page load, if there's content in the textarea that means one of two
+      // different things:
+      //
+      // 1. The editor didn't load and the user was writing in the textarea and
+      // now he refreshed the page or the JS loaded and the textarea now has 
+      // content. If this is the case the user probably expects his content is
+      // moved into the editor and not lose what he typed.
+      //
+      // 2. The developer put content in the textarea from some server side
+      // code. In this case, the textarea will take precedence.
+      //
+      // If the developer wants drafts to be recoverable they should check if
+      // the local file in localStorage's modified date is newer than the server.
+      if (self._textareaElement.value !== '') {
+        self.importFile(textareaFileName, self._textareaElement.value);
+      }
+
       // Update the textarea on load and pull from drafts
-      self._textareaElement.value = self.exportFile(textareaFileName, 'text', true);
+      _syncTextarea();
 
       // Make sure to keep it updated
-      self.on('__update', function () {
-        self._textareaElement.value = self.exportFile(textareaFileName, 'text', true);
-      });
+      self.on('__update', _syncTextarea);
     }
 
     window.addEventListener('resize', function () {
