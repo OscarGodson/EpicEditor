@@ -100,7 +100,7 @@ var editor = new EpicEditor(opts);
   </tr>
   <tr>
     <td><code>textarea</code></td>
-    <td>The ID (string) or element (object) of a textarea you would like to sync the editor's content with.</td>
+    <td>The ID (string) or element (object) of a textarea you would like to sync the editor's content with. On page load if there is content in the textarea, the editor will use that as it's content.</td>
     <td></td>
   </tr>
   <tr>
@@ -140,7 +140,7 @@ var editor = new EpicEditor(opts);
   </tr>
   <tr>
     <td><code>file.defaultContent</code></td>
-    <td>The content to show if no content exists for a file.</td>
+    <td>The content to show if no content exists for a file. NOTE: if the <code>textarea</code> option is used, the textarea's value will take precedence over <code>defaultContent</code>.</td>
     <td></td>
   </tr>
   <tr>

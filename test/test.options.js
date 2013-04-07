@@ -1,4 +1,4 @@
-/*global createContainer:false, removeContainer:false, rnd:false, getIframeDoc: false */
+/*global createContainer:false, removeContainer:false, rnd:false, getIframeDoc: false, $:false */
 
 describe('EpicEditor([options])', function () {
   var editor
@@ -228,7 +228,7 @@ describe('EpicEditor([options])', function () {
     });
   });
   describe('options.textarea', function () {
-    var textareaElement
+    var textareaElement, eeTestStorage;
     beforeEach(function () {
       textareaElement = document.createElement('textarea');
       textareaElement.id = 'temp-textarea';
@@ -237,7 +237,7 @@ describe('EpicEditor([options])', function () {
       opts.textarea = 'temp-textarea';
 
       // Add content before the editor loads
-      var eeTestStorage = JSON.parse(localStorage['epiceditor']);
+      eeTestStorage = JSON.parse(localStorage['epiceditor'] || "{}");
       eeTestStorage[id] = { content: id };
       localStorage['epiceditor'] = JSON.stringify(eeTestStorage);
     });
@@ -246,34 +246,34 @@ describe('EpicEditor([options])', function () {
     });
     it('puts the content of the editor inside of the textarea when first loaded', function () {
       var editor = new EpicEditor(opts).load();
-      expect(document.getElementById('temp-textarea').value).to.be(id);
+      expect(textareaElement.value).to.be(id);
     });
     it('accepts a string of an ID to find the textarea to sync', function () {
       var editor = new EpicEditor(opts).load();
-      expect(document.getElementById('temp-textarea').value).to.be(id);
+      expect(textareaElement.value).to.be(id);
     });
     it('accepts a DOM object to find the textarea to sync', function () {
-      opts.textarea = document.getElementById('temp-textarea');
+      opts.textarea = textareaElement;
       var editor = new EpicEditor(opts).load();
-      expect(document.getElementById('temp-textarea').value).to.be(id);
+      expect(textareaElement.value).to.be(id);
     });
     it('should sync the content of the editor when the editor is updated', function (done) {
       var editor = new EpicEditor(opts).load();
-      expect(document.getElementById('temp-textarea').value).to.be(id);
+      expect(textareaElement.value).to.be(id);
 
       editor.getElement('editor').body.innerHTML = 'Manually added';
       setTimeout(function () {
-        expect(document.getElementById('temp-textarea').value).to.be('Manually added');
+        expect(textareaElement.value).to.be('Manually added');
         done();
       }, 100)
     });
     it('should sync the content of the editor when content is imported', function (done) {
       var editor = new EpicEditor(opts).load();
-      expect(document.getElementById('temp-textarea').value).to.be(id);
+      expect(textareaElement.value).to.be(id);
 
       editor.importFile(null, 'Imported');
       setTimeout(function () {
-        expect(document.getElementById('temp-textarea').value).to.be('Imported');
+        expect(textareaElement.value).to.be('Imported');
         done();
       }, 100)
     });
@@ -282,32 +282,72 @@ describe('EpicEditor([options])', function () {
       var editor = new EpicEditor(opts).load();
       editor.getElement('editor').body.innerHTML = 'Should update';
       setTimeout(function () {
-        expect(document.getElementById('temp-textarea').value).to.be('Should update');
+        expect(textareaElement.value).to.be('Should update');
         done();
       }, 100);
     });
     it('should STOP syncing the content of the editor when the editor is unloaded', function () {
       var editor = new EpicEditor(opts).load();
-      expect(document.getElementById('temp-textarea').value).to.be(id);
+      expect(textareaElement.value).to.be(id);
 
       editor.unload();
-      expect(document.getElementById('temp-textarea').value).to.be('');
+      expect(textareaElement.value).to.be('');
     });
     it('should start resyncing the content of the editor when the editor is reloaded', function (done) {
       var editor = new EpicEditor(opts).load();
-      expect(document.getElementById('temp-textarea').value).to.be(id);
+      expect(textareaElement.value).to.be(id);
 
       editor.unload();
-      expect(document.getElementById('temp-textarea').value).to.be('');
+      expect(textareaElement.value).to.be('');
 
       editor.load();
-      expect(document.getElementById('temp-textarea').value).to.be(id);
+      expect(textareaElement.value).to.be(id);
 
       editor.getElement('editor').body.innerHTML = 'Should update';
       setTimeout(function () {
-        expect(document.getElementById('temp-textarea').value).to.be('Should update');
+        expect(textareaElement.value).to.be('Should update');
         done();
       }, 100);
+    });
+    it('should put the content of the textarea as the content of the editor', function () {
+      textareaElement.value = 'Use this';
+      var editor = new EpicEditor(opts).load();
+      expect(textareaElement.value).to.be('Use this');
+      expect(editor.exportFile()).to.be('Use this');
+    });
+    it('should replace the defaultContent option if there is content in the textarea', function () {
+      textareaElement.value = 'Me me';
+      opts.file.defaultContent = 'Not me';
+      var editor = new EpicEditor(opts).load();
+      expect(textareaElement.value).to.be('Me me');
+      expect(editor.exportFile()).to.be('Me me');
+    });
+    it('should NOT replace the defaultContent option if there is NO content in the textarea', function () {
+      // Make it look like a fresh run with no content beforehand
+      localStorage.clear();
+      textareaElement.value = '';
+      opts.file.defaultContent = 'Default content';
+      var editor = new EpicEditor(opts).load();
+      expect(textareaElement.value).to.be('Default content');
+      expect(editor.exportFile()).to.be('Default content');
+    });
+    it('should NOT sync the textarea\'s changes AFTER the editor has been loaded', function (done) {
+      function checkEditorContent() {
+        expect(editor.exportFile()).to.be('Use this');
+      }
+      textareaElement.value = 'Use this';
+      var editor = new EpicEditor(opts).load();
+      expect(textareaElement.value).to.be('Use this');
+      expect(editor.exportFile()).to.be('Use this');
+      textareaElement.value = 'NEW';
+      // Try to trigger events that could trigger an editor update
+      $(textareaElement).trigger('change', checkEditorContent)
+                        .trigger('keypress', checkEditorContent);
+      // Final attempt to trigger an update by simply waiting
+      setTimeout(function () {
+        checkEditorContent();
+        done();
+      }, 150);
     });
   });
 });

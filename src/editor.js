@@ -464,7 +464,6 @@
       , keypressTimer
       , mousePos = { y: -1, x: -1 }
       , _elementStates
-      , _syncTextarea
       , _isInEdit
       , nativeFs = false
       , nativeFsWebkit = false
@@ -474,7 +473,6 @@
       , isMod = false
       , isCtrl = false
       , eventableIframes
-      , textareaFileName
       , i; // i is reused for loops
 
     if (self.settings.useNativeFullscreen) {
@@ -605,6 +603,7 @@
 
     utilBtns = self.iframe.getElementById('epiceditor-utilbar');
 
+    // TODO: Move into fullscreen setup function (_setupFullscreen)
     _elementStates = {}
     self._goFullscreen = function (el) {
 
@@ -799,6 +798,7 @@
       }, false);
     }
 
+    // TODO: Move utilBar stuff into a utilBar setup function (_setupUtilBar)
     utilBar = self.iframe.getElementById('epiceditor-utilbar');
 
     // Hide it at first until they move their mouse
@@ -902,6 +902,7 @@
     }
 
     // Save the document every 100ms by default
+    // TODO: Move into autosave setup function (_setupAutoSave)
     if (self.settings.file.autoSave) {
       self._saveIntervalTimer = window.setInterval(function () {
         if (!self._canSave) {
@@ -914,53 +915,7 @@
     // Update a textarea automatically if a textarea is given so you don't need
     // AJAX to submit a form and instead fall back to normal form behavior
     if (self.settings.textarea) {
-
-      // Even if autoSave is false, we want to make sure to keep the textarea synced
-      // with the editor's content. One bad thing about this tho is that we're
-      // creating two timers now in some configurations. We keep the textarea synced
-      // by saving and opening the textarea content from the draft file storage.
-      self._textareaSaveTimer = window.setInterval(function () {
-        if (!self._canSave) {
-          return;
-        }
-        self.save(true);
-      }, 100);
-
-      _syncTextarea = function () {
-        self._textareaElement.value = self.exportFile(textareaFileName, 'text', true);
-      }
-
-      textareaFileName = self.settings.file.name;
-      
-      if (typeof self.settings.textarea == 'string') {
-        self._textareaElement = document.getElementById(self.settings.textarea);
-      }
-      else if (typeof self.settings.textarea == 'object') {
-        self._textareaElement = self.settings.textarea;
-      }
-
-      // On page load, if there's content in the textarea that means one of two
-      // different things:
-      //
-      // 1. The editor didn't load and the user was writing in the textarea and
-      // now he refreshed the page or the JS loaded and the textarea now has 
-      // content. If this is the case the user probably expects his content is
-      // moved into the editor and not lose what he typed.
-      //
-      // 2. The developer put content in the textarea from some server side
-      // code. In this case, the textarea will take precedence.
-      //
-      // If the developer wants drafts to be recoverable they should check if
-      // the local file in localStorage's modified date is newer than the server.
-      if (self._textareaElement.value !== '') {
-        self.importFile(textareaFileName, self._textareaElement.value);
-      }
-
-      // Update the textarea on load and pull from drafts
-      _syncTextarea();
-
-      // Make sure to keep it updated
-      self.on('__update', _syncTextarea);
+      self._setupTextareaSync();
     }
 
     window.addEventListener('resize', function () {
@@ -1008,6 +963,62 @@
     callback.call(this);
     this.emit('load');
     return this;
+  }
+
+  EpicEditor.prototype._setupTextareaSync = function () {
+    var self = this
+      , textareaFileName = self.settings.file.name
+      , _syncTextarea;
+
+    // Even if autoSave is false, we want to make sure to keep the textarea synced
+    // with the editor's content. One bad thing about this tho is that we're
+    // creating two timers now in some configurations. We keep the textarea synced
+    // by saving and opening the textarea content from the draft file storage.
+    self._textareaSaveTimer = window.setInterval(function () {
+      if (!self._canSave) {
+        return;
+      }
+      self.save(true);
+    }, 100);
+
+    _syncTextarea = function () {
+      self._textareaElement.value = self.exportFile(textareaFileName, 'text', true);
+    }
+    
+    if (typeof self.settings.textarea == 'string') {
+      self._textareaElement = document.getElementById(self.settings.textarea);
+    }
+    else if (typeof self.settings.textarea == 'object') {
+      self._textareaElement = self.settings.textarea;
+    }
+
+    // On page load, if there's content in the textarea that means one of two
+    // different things:
+    //
+    // 1. The editor didn't load and the user was writing in the textarea and
+    // now he refreshed the page or the JS loaded and the textarea now has
+    // content. If this is the case the user probably expects his content is
+    // moved into the editor and not lose what he typed.
+    //
+    // 2. The developer put content in the textarea from some server side
+    // code. In this case, the textarea will take precedence.
+    //
+    // If the developer wants drafts to be recoverable they should check if
+    // the local file in localStorage's modified date is newer than the server.
+    if (self._textareaElement.value !== '') {
+      self.importFile(textareaFileName, self._textareaElement.value);
+      
+      // manually save draft after import so there is no delay between the
+      // import and exporting in _syncTextarea. Without this, _syncTextarea
+      // will pull the saved data from localStorage which will be <=100ms old.
+      self.save(true);
+    }
+
+    // Update the textarea on load and pull from drafts
+    _syncTextarea();
+
+    // Make sure to keep it updated
+    self.on('__update', _syncTextarea);
   }
 
   /**
