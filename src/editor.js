@@ -143,10 +143,26 @@
     return el.contentDocument || el.contentWindow.document;
   }
 
-  // Get current DOM selection object in the iframe
+  /**
+   * Get current selection object
+   * @returns {Selection} DOM Selection object will be returned
+   * @see     https://developer.mozilla.org/en-US/docs/DOM/Selection
+   * @see     https://dvcs.w3.org/hg/editing/raw-file/tip/editing.html#selections
+   */
   function _getSelection(iframe) {
     var iframeDocument = _getIframeInnards(iframe);
     return iframeDocument.getSelection();
+  }
+
+  /**
+   * Sets the caret position
+   * @param {object} iframe The iframe that is editable to set the caret position
+   * @param {object} selection A DOM selection object (get with _getSelection)
+   * @param {string|number} caretPos The position where you want the caret
+   * @returns {undefined}
+   */
+  function _setCaretPosition(iframe, selection, caretPos) {
+    selection.collapse(iframe, caretPos);
   }
 
   // Grabs the text from an element and preserves whitespace
@@ -297,6 +313,8 @@
     // Return the modified object
     return target;
   }
+
+
 
   /**
    * Initiates the EpicEditor object and sets up offline storage as well
@@ -606,6 +624,9 @@
         }
       });
     }
+
+    // Set the initial caret position (should be 0)
+    self._eeState.selection = _getSelection(self.editorIframe);
 
     utilBtns = self.iframe.getElementById('epiceditor-utilbar');
 
@@ -1128,6 +1149,9 @@
 
     _replaceClass(self.getElement('wrapper'), 'epiceditor-edit-mode', 'epiceditor-preview-mode');
 
+    // Save caret position so the position isn't lost when switching back
+    self._eeState.selection = _getSelection(self.editorIframe);
+
     // Check if no CSS theme link exists
     if (!self.previewerIframeDocument.getElementById('theme')) {
       _insertCSSLink(theme, self.previewerIframeDocument, 'theme');
@@ -1191,8 +1215,13 @@
    * @returns {object} EpicEditor will be returned
    */
   EpicEditor.prototype.edit = function () {
-    var self = this;
+    var self = this
+      , selection = self._eeState.selection;
+
     _replaceClass(self.getElement('wrapper'), 'epiceditor-preview-mode', 'epiceditor-edit-mode');
+
+    _setCaretPosition(self.editorIframe, selection, 10);
+
     self._eeState.preview = false;
     self._eeState.edit = true;
     self.editorIframe.style.display = 'block';
@@ -1329,7 +1358,6 @@
 
       this.emit('save');
     }
-
     return this;
   }
 
