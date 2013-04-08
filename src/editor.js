@@ -143,13 +143,10 @@
     return el.contentDocument || el.contentWindow.document;
   }
 
-  // Get current DOM selection object
+  // Get current DOM selection object in the iframe
   function _getSelection(iframe) {
     var iframeDocument = _getIframeInnards(iframe);
-    if (iframeDocument.defaultView != null) {
-      return iframeDocument.defaultView.getSelection();
-    }
-    return iframe.getSelection();
+    return iframeDocument.getSelection();
   }
 
   // Grabs the text from an element and preserves whitespace
