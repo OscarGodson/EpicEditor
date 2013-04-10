@@ -571,6 +571,10 @@
     // Add a relative style to the overall wrapper to keep CSS relative to the editor
     self.iframe.getElementById('epiceditor-wrapper').style.position = 'relative';
 
+    // Set the position to relative so we hide them with left: -999999px
+    self.editorIframe.style.position = 'absolute';
+    self.previewerIframe.style.position = 'absolute';
+
     // Now grab the editor and previewer for later use
     self.editor = self.editorIframeDocument.body;
     self.previewer = self.previewerIframeDocument.getElementById('epiceditor-preview');
@@ -581,7 +585,7 @@
     self.iframe.body.style.height = this.element.offsetHeight + 'px';
 
     // Should actually check what mode it's in!
-    this.previewerIframe.style.display = 'none';
+    self.previewerIframe.style.left = '-9999999px';
 
     // FIXME figure out why it needs +2 px
     if (_isIE() > -1) {
@@ -653,6 +657,8 @@
       , 'cssFloat': 'left' // FF
       , 'styleFloat': 'left' // Older IEs
       , 'display': 'block'
+      , 'position': 'static'
+      , 'left': ''
       });
 
       // the previewer
@@ -663,6 +669,8 @@
       , 'cssFloat': 'right' // FF
       , 'styleFloat': 'right' // Older IEs
       , 'display': 'block'
+      , 'position': 'static'
+      , 'left': ''
       });
 
       // Setup the containing element CSS for fullscreen
@@ -1149,8 +1157,8 @@
 
     // Hide the editor and display the previewer
     if (!self.is('fullscreen')) {
-      self.editorIframe.style.display = 'none';
-      self.previewerIframe.style.display = 'block';
+      self.editorIframe.style.left = '-9999999px';
+      self.previewerIframe.style.left = '';
       self._eeState.preview = true;
       self._eeState.edit = false;
       self.previewerIframe.focus();
@@ -1189,8 +1197,8 @@
     _replaceClass(self.getElement('wrapper'), 'epiceditor-preview-mode', 'epiceditor-edit-mode');
     self._eeState.preview = false;
     self._eeState.edit = true;
-    self.editorIframe.style.display = 'block';
-    self.previewerIframe.style.display = 'none';
+    self.editorIframe.style.left = '';
+    self.previewerIframe.style.left = '-9999999px';
     self.editorIframe.focus();
     self.emit('edit');
     return this;
