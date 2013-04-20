@@ -217,6 +217,16 @@
   }
 
   /**
+   * Same as the isIE(), but simply returns a boolean
+   * THIS IS TERRIBLE ONLY USE IF ABSOLUTELY NEEDED
+   * @returns {Boolean} true if Safari
+   */
+  function _isFirefox() {
+    var n = window.navigator;
+    return n.userAgent.indexOf('Firefox') > -1 && n.userAgent.indexOf('Seamonkey') == -1;
+  }
+
+  /**
    * Determines if supplied value is a function
    * @param {object} object to determine type
    */
@@ -596,7 +606,7 @@
       // iframe's ready state == complete, then we can focus on the contenteditable
       self.iframe.addEventListener('readystatechange', function () {
         if (self.iframe.readyState == 'complete') {
-          self.editorIframeDocument.body.focus();
+          self.focus(true);
         }
       });
     }
@@ -695,7 +705,7 @@
 
       self.preview();
 
-      self.editorIframeDocument.body.focus();
+      self.focus();
 
       self.emit('fullscreenenter');
     };
@@ -1153,11 +1163,33 @@
       self.previewerIframe.style.display = 'block';
       self._eeState.preview = true;
       self._eeState.edit = false;
-      self.previewerIframe.focus();
+      self.focus();
     }
-    
+
     self.emit('preview');
     return self;
+  }
+
+  /**
+   * Helper to focus on the editor iframe. Will figure out which iframe to
+   * focus on based on which one is active and will handle the cross browser
+   * issues with focusing on the iframe vs the document body.
+   * @param {boolean} pageload If you want to focus on page load you need to
+   * set this as true (just for Firefox for some reason).
+   * @returns {object} EpicEditor will be returned
+   */
+  EpicEditor.prototype.focus = function (pageload) {
+    var self = this
+      , focusElement = self.is('preview') ? self.previewerIframeDocument.body
+        : self.editorIframeDocument.body;
+    // I don't know why this is required but it is for Firefox. If it's a fresh
+    // page load iframe focus you need to focus on the body, but otherwise,
+    // Firefox likes to focus on the iframes directly.
+    if (_isFirefox() && !pageload) {
+      focusElement = self.is('preview') ? self.previewerIframe : self.editorIframe;
+    }
+    focusElement.focus();
+    return this;
   }
 
   /**
@@ -1191,7 +1223,7 @@
     self._eeState.edit = true;
     self.editorIframe.style.display = 'block';
     self.previewerIframe.style.display = 'none';
-    self.editorIframe.focus();
+    self.focus();
     self.emit('edit');
     return this;
   }
