@@ -253,6 +253,7 @@ var editor = new EpicEditor(opts);</code></pre>
 <li><code>edit</code></li>
 <li><code>preview</code></li>
 <li><code>fullscreen</code></li>
+<li><code>focused</code></li>
 </ul>
 <pre><code class="lang-javascript">fullscreenBtn.onclick = function () {
   if (!editor.is(&#39;loaded&#39;)) { return; }
@@ -342,6 +343,17 @@ for (x in files) {
 </p>
 <pre><code class="lang-javascript">editBtn.onclick = function () {
   editor.edit();
+}</code></pre>
+<h3>focus()</h3>
+<p>Puts focus on the editor or previewer (whichever is visible). Works just like
+doing plain old JavaScript and input focus like <code>someInput.focus()</code>. The
+benefit of using this method however, is that it handles cross browser issues
+and also will focus on the visible view (edit or preview).
+
+</p>
+<pre><code>showEditorBtn.onclick = function () {
+  editorWrapper.style.display = &#39;block&#39;; // switch from being display:none
+  editor.focus(); // Focus and allow user to start editing right away
 }</code></pre>
 <h3>enterFullscreen()</h3>
 <p>Puts the editor into fullscreen mode.
@@ -434,6 +446,14 @@ created, removed, or updated. Below is a complete list of currently supported ev
   <tr>
     <td><code>edit</code></td>
     <td>Fires whenever the editor is opened (excluding fullscreen) via <code>edit()</code> or the edit button.</td>
+  </tr>
+  <tr>
+    <td><code>focus</code></td>
+    <td>Fires whenever the editor is focused <code>focus()</code> or other means.</td>
+  </tr>
+  <tr>
+    <td><code>blur</code></td>
+    <td>Fires whenever the editor is blurred.</td>
   </tr>
   <tr>
     <td><code>fullscreenenter</code></td>

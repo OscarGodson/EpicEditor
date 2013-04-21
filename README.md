@@ -257,6 +257,7 @@ Returns a boolean for the requested state. Useful when you need to know if the e
 * `edit`
 * `preview`
 * `fullscreen`
+* `focused`
 
 ```javascript
 fullscreenBtn.onclick = function () {
@@ -385,6 +386,21 @@ editBtn.onclick = function () {
   editor.edit();
 }
 ```
+
+### focus()
+
+Puts focus on the editor or previewer (whichever is visible). Works just like
+doing plain old JavaScript and input focus like `someInput.focus()`. The
+benefit of using this method however, is that it handles cross browser issues
+and also will focus on the visible view (edit or preview).
+
+```
+showEditorBtn.onclick = function () {
+  editorWrapper.style.display = 'block'; // switch from being display:none
+  editor.focus(); // Focus and allow user to start editing right away
+}
+```
+
 ### enterFullscreen()
 
 Puts the editor into fullscreen mode.
@@ -481,6 +497,14 @@ created, removed, or updated. Below is a complete list of currently supported ev
   <tr>
     <td><code>edit</code></td>
     <td>Fires whenever the editor is opened (excluding fullscreen) via <code>edit()</code> or the edit button.</td>
+  </tr>
+  <tr>
+    <td><code>focus</code></td>
+    <td>Fires whenever the editor is focused <code>focus()</code> or other means.</td>
+  </tr>
+  <tr>
+    <td><code>blur</code></td>
+    <td>Fires whenever the editor is blurred.</td>
   </tr>
   <tr>
     <td><code>fullscreenenter</code></td>
