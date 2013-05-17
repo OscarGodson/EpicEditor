@@ -14,7 +14,8 @@
       color: green;
     }
     .hidden {
-      display: none;
+      position: absolute !important;
+      left: -9999999px !important;
     }
     #mocha .test.fail code {
       color: #fff;
@@ -48,6 +49,7 @@
   <script src="test.save.js"></script>
   <script src="test.unload.js"></script>
   <script src="test.reflow.js"></script>
+  <script src="test.focus.js"></script>
 
   <script>
     $(function() {

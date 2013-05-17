@@ -485,6 +485,10 @@
       , eventableIframes
       , i; // i is reused for loops
 
+    // Startup is a way to check if this EpicEditor is starting up. Useful for
+    // checking and doing certain things before EpicEditor emits a load event.
+    self._eeState.startup = true;
+
     if (self.settings.useNativeFullscreen) {
       nativeFsWebkit = document.body.webkitRequestFullScreen ? true : false;
       nativeFsMoz = document.body.mozRequestFullScreen ? true : false;
@@ -606,7 +610,7 @@
       // iframe's ready state == complete, then we can focus on the contenteditable
       self.iframe.addEventListener('readystatechange', function () {
         if (self.iframe.readyState == 'complete') {
-          self.focus(true);
+          self.focus();
         }
       });
     }
@@ -969,6 +973,7 @@
     }
 
     self.iframe.close();
+    self._eeState.startup = false;
     // The callback and call are the same thing, but different ways to access them
     callback.call(this);
     this.emit('load');
@@ -994,7 +999,7 @@
     _syncTextarea = function () {
       self._textareaElement.value = self.exportFile(textareaFileName, 'text', true);
     }
-    
+
     if (typeof self.settings.textarea == 'string') {
       self._textareaElement = document.getElementById(self.settings.textarea);
     }
@@ -1017,7 +1022,7 @@
     // the local file in localStorage's modified date is newer than the server.
     if (self._textareaElement.value !== '') {
       self.importFile(textareaFileName, self._textareaElement.value);
-      
+
       // manually save draft after import so there is no delay between the
       // import and exporting in _syncTextarea. Without this, _syncTextarea
       // will pull the saved data from localStorage which will be <=100ms old.
@@ -1029,6 +1034,23 @@
 
     // Make sure to keep it updated
     self.on('__update', _syncTextarea);
+  }
+
+  /**
+   * Will NOT focus the editor if the editor is still starting up AND
+   * focusOnLoad is set to false. This allows you to place this in code that
+   * gets fired during .load() without worrying about it overriding the user's
+   * option. For example use cases see preview() and edit().
+   * @returns {undefined}
+   */
+
+  // Prevent focus when the user sets focusOnLoad to false by checking if the
+  // editor is starting up AND if focusOnLoad is true
+  EpicEditor.prototype._focusExceptOnLoad = function () {
+    var self = this;
+    if ((self._eeState.startup && self.settings.focusOnLoad) || !self._eeState.startup) {
+      self.focus();
+    }
   }
 
   /**
@@ -1163,7 +1185,7 @@
       self.previewerIframe.style.display = 'block';
       self._eeState.preview = true;
       self._eeState.edit = false;
-      self.focus();
+      self._focusExceptOnLoad();
     }
 
     self.emit('preview');
@@ -1174,20 +1196,18 @@
    * Helper to focus on the editor iframe. Will figure out which iframe to
    * focus on based on which one is active and will handle the cross browser
    * issues with focusing on the iframe vs the document body.
-   * @param {boolean} pageload If you want to focus on page load you need to
-   * set this as true (just for Firefox for some reason).
    * @returns {object} EpicEditor will be returned
    */
   EpicEditor.prototype.focus = function (pageload) {
     var self = this
-      , focusElement = self.is('preview') ? self.previewerIframeDocument.body
+      , isPreview = self.is('preview')
+      , focusElement = isPreview ? self.previewerIframeDocument.body
         : self.editorIframeDocument.body;
-    // I don't know why this is required but it is for Firefox. If it's a fresh
-    // page load iframe focus you need to focus on the body, but otherwise,
-    // Firefox likes to focus on the iframes directly.
-    if (_isFirefox() && !pageload) {
-      focusElement = self.is('preview') ? self.previewerIframe : self.editorIframe;
+
+    if (_isFirefox() && isPreview) {
+      focusElement = self.previewerIframe;
     }
+
     focusElement.focus();
     return this;
   }
@@ -1223,7 +1243,7 @@
     self._eeState.edit = true;
     self.editorIframe.style.display = 'block';
     self.previewerIframe.style.display = 'none';
-    self.focus();
+    self._focusExceptOnLoad();
     self.emit('edit');
     return this;
   }
@@ -1272,6 +1292,10 @@
       return self._eeState.edit;
     case 'fullscreen':
       return self._eeState.fullscreen;
+   // TODO: This "works", but the tests are saying otherwise. Come back to this
+   // and figure out how to fix it.
+   // case 'focused':
+   //   return document.activeElement == self.iframeElement;
     default:
       return false;
     }
