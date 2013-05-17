@@ -597,6 +597,9 @@
     // Should actually check what mode it's in!
     this.previewerIframe.style.display = 'none';
 
+    // Keep long lines from being longer than the editor
+    this.editorIframeDocument.body.style.wordWrap = 'break-word';
+
     // FIXME figure out why it needs +2 px
     if (_isIE() > -1) {
       this.previewer.style.height = parseInt(_getStyle(this.previewer, 'height'), 10) + 2;
