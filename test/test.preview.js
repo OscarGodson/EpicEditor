@@ -31,13 +31,13 @@ describe('.preview()', function () {
   });
 
   it('should not initially be in previewer mode when loaded', function () {
-    expect(editor.getElement('previewerIframe').style.left).to.be('-9999999px');
+    expect(editor.getElement('previewerIframe').style.left).to.be('-999999px');
   });
 
   it('should display the previewer when the preview method is called', function () {
     editor.preview();
     expect(editor.getElement('previewerIframe').style.left).to.be('');
-    expect(editor.getElement('editorIframe').style.left).to.be('-9999999px');
+    expect(editor.getElement('editorIframe').style.left).to.be('-999999px');
   });
 
   it('should fire the preview event when the preview method is called', function () {
@@ -48,7 +48,7 @@ describe('.preview()', function () {
   it('should hide the previewer if switched from preview back to edit', function () {
     editor.preview();
     editor.edit();
-    expect(editor.getElement('previewerIframe').style.left).to.be('-9999999px');
+    expect(editor.getElement('previewerIframe').style.left).to.be('-999999px');
     expect(editor.getElement('editorIframe').style.left).to.be('');
   });
 

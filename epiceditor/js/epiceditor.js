@@ -585,7 +585,7 @@
     self.iframe.body.style.height = this.element.offsetHeight + 'px';
 
     // Should actually check what mode it's in!
-    self.previewerIframe.style.left = '-9999999px';
+    self.previewerIframe.style.left = '-999999px';
 
     // FIXME figure out why it needs +2 px
     if (_isIE() > -1) {
@@ -1157,7 +1157,7 @@
 
     // Hide the editor and display the previewer
     if (!self.is('fullscreen')) {
-      self.editorIframe.style.left = '-9999999px';
+      self.editorIframe.style.left = '-999999px';
       self.previewerIframe.style.left = '';
       self._eeState.preview = true;
       self._eeState.edit = false;
@@ -1198,7 +1198,7 @@
     self._eeState.preview = false;
     self._eeState.edit = true;
     self.editorIframe.style.left = '';
-    self.previewerIframe.style.left = '-9999999px';
+    self.previewerIframe.style.left = '-999999px';
     self.editorIframe.focus();
     self.emit('edit');
     return this;

@@ -36,7 +36,7 @@ describe('.edit()', function () {
   it('should make the editor visible when switching from preview back to edit', function () {
     editor.preview();
     editor.edit();
-    expect(editor.getElement('previewerIframe').style.left).to.be('-9999999px');
+    expect(editor.getElement('previewerIframe').style.left).to.be('-999999px');
     expect(editor.getElement('editorIframe').style.left).to.be('');
   });
 });

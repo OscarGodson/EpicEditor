@@ -66,17 +66,17 @@ describe(".load([callback])", function () {
   });
 
   it('should initially load in editor mode', function () {
-    expect(editor.getElement('previewerIframe').style.left).to.be('-9999999px');
+    expect(editor.getElement('previewerIframe').style.left).to.be('-999999px');
     expect(editor.getElement('editorIframe').style.left).to.be('');
   });
 
   it('should open preview mode if preview mode was the last mode it was on before unloading', function () {
     editor.preview();
-    expect(editor.getElement('editorIframe').style.left).to.be('-9999999px');
+    expect(editor.getElement('editorIframe').style.left).to.be('-999999px');
     expect(editor.getElement('previewerIframe').style.left).to.be('');
     editor.unload();
     editor.load();
-    expect(editor.getElement('editorIframe').style.left).to.be('-9999999px');
+    expect(editor.getElement('editorIframe').style.left).to.be('-999999px');
     expect(editor.getElement('previewerIframe').style.left).to.be('');
   });
 });
