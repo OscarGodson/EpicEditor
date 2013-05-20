@@ -385,6 +385,21 @@ editBtn.onclick = function () {
   editor.edit();
 }
 ```
+
+### focus()
+
+Puts focus on the editor or previewer (whichever is visible). Works just like
+doing plain old JavaScript and input focus like `someInput.focus()`. The
+benefit of using this method however, is that it handles cross browser issues
+and also will focus on the visible view (edit or preview).
+
+```
+showEditorBtn.onclick = function () {
+  editorWrapper.style.display = 'block'; // switch from being hidden from the user
+  editor.focus(); // Focus and allow user to start editing right away
+}
+```
+
 ### enterFullscreen()
 
 Puts the editor into fullscreen mode.

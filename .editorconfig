@@ -1,0 +1,6 @@
+root = true
+
+; 2 spaces for indentation for all JavaScript files
+[*.js]
+indent_style = space
+indent_size = 2

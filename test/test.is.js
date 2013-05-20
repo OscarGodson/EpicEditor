@@ -1,4 +1,4 @@
-/*global createContainer:false, removeContainer:false, rnd:false */
+/*global createContainer:false, removeContainer:false, rnd:false, xit:false */
 
 describe('.is(state)', function () {
   var testEl
@@ -66,6 +66,18 @@ describe('.is(state)', function () {
     editor.enterFullscreen();
     editor.exitFullscreen();
     expect(editor.is('fullscreen')).to.be(false);
+  });
+
+  xit('should return focus:TRUE when the editor is focused', function () {
+    expect(editor.is('focused')).to.be(false);
+    editor.focus();
+    expect(editor.is('focused')).to.be(true);
+  });
+
+  xit('should return focus:FALSE when the editor is NOT focused', function () {
+    // Make sure we focus on something else to be sure the editor isn't focused
+    document.querySelector('a').focus();
+    expect(editor.is('focused')).to.be(false);
   });
 
   it('should return undefined:FALSE for undefined states', function () {

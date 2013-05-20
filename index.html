@@ -343,6 +343,17 @@ for (x in files) {
 <pre><code class="lang-javascript">editBtn.onclick = function () {
   editor.edit();
 }</code></pre>
+<h3>focus()</h3>
+<p>Puts focus on the editor or previewer (whichever is visible). Works just like
+doing plain old JavaScript and input focus like <code>someInput.focus()</code>. The
+benefit of using this method however, is that it handles cross browser issues
+and also will focus on the visible view (edit or preview).
+
+</p>
+<pre><code>showEditorBtn.onclick = function () {
+  editorWrapper.style.display = &#39;block&#39;; // switch from being hidden from the user
+  editor.focus(); // Focus and allow user to start editing right away
+}</code></pre>
 <h3>enterFullscreen()</h3>
 <p>Puts the editor into fullscreen mode.
 
