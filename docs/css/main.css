@@ -63,7 +63,7 @@ pre {
   text-shadow: none;
 }
 p {
-  margin:5px 0;
+  margin:7px 0;
 }
 li {
   margin:10px 0;
@@ -73,7 +73,6 @@ h2 a, h3 a {
 }
 a {
   text-decoration: none;
-  border-bottom: 1px solid rgba(0,0,0, 0.1);
   color: #2570a8;
 }
 a:hover {
