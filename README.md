@@ -507,7 +507,7 @@ See the [custom parsers wiki page](https://github.com/OscarGodson/EpicEditor/wik
 
 If you're having any problems with EpicEditor feel free to open a [new ticket](http://github.com/OscarGodson/EpicEditor/issues/new). Go ahead and ask us anything and we'll try to help however we can. If you need a little more help with implementing EpicEditor on your site we've teamed up with [CodersClan](http://codersclan.net) to offer support:
 
-<a href="http://codersclan.net/support/step1.php?repo_id=2"><img src="http://www.codersclan.net/graphics/getSupport_blue_big.png" width="189"></a>
+<a href="http://codersclan.net/support/step1.php?repo_id=2"><img src="http://www.codersclan.net/graphics/getSupport_blue_big.png" width="160"></a>
 
 ## Contributing
 
