@@ -378,6 +378,13 @@
     else if (typeof self.settings.container == 'object') {
       self.element = self.settings.container;
     }
+
+    if (typeof(self.settings.textarea) == 'undefined' && typeof(self.element) != 'undefined' && typeof(document.getElementsByTagName) != 'undefined') {
+      var textareas = self.element.getElementsByTagName('textarea');
+      if (textareas.length > 0) {
+        self.settings.textarea = textareas[0];
+      }
+    }
     
     // Figure out the file name. If no file name is given we'll use the ID.
     // If there's no ID either we'll use a namespaced file name that's incremented
