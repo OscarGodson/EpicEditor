@@ -235,7 +235,7 @@ describe('EpicEditor([options])', function () {
       opts.container.appendChild(textareaElement);
     });
 
-    it('defaults the textarea to the one contained withing the container element', function () {
+    it('defaults the textarea to the one contained within the container element', function () {
       opts.textarea = undefined;
       opts.container.appendChild(textareaElement);
 
