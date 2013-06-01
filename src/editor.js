@@ -622,6 +622,26 @@
       });
     }
 
+    // Because IE scrolls the whole window to hash links, we need our own
+    // method of scrolling the iframe to an ID from clicking a hash
+    self.previewerIframeDocument.addEventListener('click', function (e) {
+      var el = e.target
+        , body = self.previewerIframeDocument.body;
+      if (el.nodeName == 'A') {
+        // Make sure the link is a hash and the link is local to the iframe
+        if (el.hash && el.hostname == window.location.hostname) {
+          // Prevent the whole window from scrolling
+          e.preventDefault();
+          // Prevent opening a new window
+          el.target = '_self';
+          // Scroll to the matching element, if an element exists
+          if (body.querySelector(el.hash)) {
+            body.scrollTop = body.querySelector(el.hash).offsetTop;
+          }
+        }
+      }
+    });
+
     utilBtns = self.iframe.getElementById('epiceditor-utilbar');
 
     // TODO: Move into fullscreen setup function (_setupFullscreen)
@@ -1178,17 +1198,6 @@
 
     // Add the generated draft HTML into the previewer
     self.previewer.innerHTML = self.exportFile(null, 'html', true);
-
-    // Because we have a <base> tag so all links open in a new window we
-    // need to prevent hash links from opening in a new window
-    anchors = self.previewer.getElementsByTagName('a');
-    for (x in anchors) {
-      // If the link is a hash AND the links hostname is the same as the
-      // current window's hostname (same page) then set the target to self
-      if (anchors[x].hash && anchors[x].hostname == window.location.hostname) {
-        anchors[x].target = '_self';
-      }
-    }
 
     // Hide the editor and display the previewer
     if (!self.is('fullscreen')) {
