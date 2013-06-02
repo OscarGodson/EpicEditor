@@ -383,6 +383,7 @@
       var textareas = self.element.getElementsByTagName('textarea');
       if (textareas.length > 0) {
         self.settings.textarea = textareas[0];
+        self.settings.textarea.style.display = 'none';
       }
     }
     
@@ -536,7 +537,19 @@
     };
 
     // Write an iframe and then select it for the editor
-    self.element.innerHTML = '<iframe scrolling="no" frameborder="0" id= "' + self._instanceId + '"></iframe>';
+    var editorIframe = document.createElement('iframe');
+    if ('setAttribute' in editorIframe) {
+      editorIframe.setAttribute('scrolling', 'no');
+      editorIframe.setAttribute('frameborder', 0);
+      editorIframe.setAttribute('id', self._instanceId);
+    } else {
+      // IE 6 and 7
+      editorIframe.attributes['scrolling'] = 'no';
+      editorIframe.attributes['frameborder'] = 0;
+      editorIframe.attributes['id'] = self._instanceId;
+    }
+    
+    self.element.appendChild(editorIframe);
 
     // Because browsers add things like invisible padding and margins and stuff
     // to iframes, we need to set manually set the height so that the height
