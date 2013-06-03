@@ -537,20 +537,18 @@
     };
 
     // Write an iframe and then select it for the editor
-    var editorIframe = document.createElement('iframe');
-    editorIframe.setAttribute('scrolling', 'no');
-    editorIframe.setAttribute('frameborder', 0);
-    editorIframe.setAttribute('id', self._instanceId);
-    //self.element.innerHTML = '<iframe scrolling="no" frameborder="0" id= "' + self._instanceId + '"></iframe>';
-    self.element.appendChild(editorIframe);
+    iframeElement = document.createElement('iframe');
+    iframeElement.setAttribute('scrolling', 'no');
+    iframeElement.setAttribute('frameborder', 0);
+    iframeElement.setAttribute('id', self._instanceId);
+    
+    self.element.appendChild(iframeElement);
 
     // Because browsers add things like invisible padding and margins and stuff
     // to iframes, we need to set manually set the height so that the height
     // doesn't keep increasing (by 2px?) every time reflow() is called.
     // FIXME: Figure out how to fix this without setting this
     self.element.style.height = self.element.offsetHeight + 'px';
-
-    iframeElement = document.getElementById(self._instanceId);
     
     // Store a reference to the iframeElement itself
     self.iframeElement = iframeElement;
