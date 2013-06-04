@@ -1024,7 +1024,7 @@
       if (!self._canSave) {
         return;
       }
-      self.save(true, true);
+      self.save(true);
     }, 100);
 
     _syncTextarea = function () {
@@ -1057,7 +1057,7 @@
       // manually save draft after import so there is no delay between the
       // import and exporting in _syncTextarea. Without this, _syncTextarea
       // will pull the saved data from localStorage which will be <=100ms old.
-      self.save(true, true);
+      self.save(true);
     }
 
     // Update the textarea on load and pull from drafts
@@ -1194,7 +1194,7 @@
     }
 
     // Save a preview draft since it might not be saved to the real file yet
-    self.save(true, true);
+    self.save(true);
 
     // Add the generated draft HTML into the previewer
     self.previewer.innerHTML = self.exportFile(null, 'html', true);
@@ -1396,7 +1396,8 @@
         // Emit a private update event so it can't get accidentally removed
         self.emit('__update');
       }
-      if (_isAuto) {
+      
+      if (_isAuto || _isPreviewDraft) {
         this.emit('autosave');
       }
       else {
