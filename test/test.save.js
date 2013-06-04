@@ -4,7 +4,8 @@ describe('.save()', function () {
   var testEl
     , id
     , editor
-    , eventFired;
+    , eventFired
+    , badEventFired;
 
   beforeEach(function (done) {
     id = rnd();
@@ -19,6 +20,7 @@ describe('.save()', function () {
       });
 
     eventFired = false;
+    badEventFired = false;
     editor.load();
     done();
   });
@@ -35,12 +37,28 @@ describe('.save()', function () {
     expect(JSON.parse(localStorage['epiceditor'])[id].content).to.be('bar');
   });
 
-  it('should fire the save event', function () {
+  it('should fire the save event but not the autosave event', function () {
     editor.on('save', function () {
       eventFired = true;
     });
+    editor.on('autosave', function () {
+      badEventFired = true;
+    });
     editor.save();
     expect(eventFired).to.be(true);
+    expect(badEventFired).to.be(false);
+  });
+
+  it('should fire the autosave event but not the save event', function () {
+    editor.on('save', function () {
+      badEventFired = true;
+    });
+    editor.on('autosave', function () {
+      eventFired = true;
+    });
+    editor.save(true);
+    expect(eventFired).to.be(true);
+    expect(badEventFired).to.be(false);
   });
 
   it('should fire the update event on save when the content has changed', function () {
