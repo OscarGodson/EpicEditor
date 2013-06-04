@@ -35,6 +35,12 @@ describe(".load([callback])", function () {
     done();
   });
 
+  // blow away the stack trace. Hack for Mocha:
+  // https://github.com/visionmedia/mocha/issues/502
+  beforeEach(function(done){
+    setTimeout(done, 0);
+  });
+
   it('should create an EpicEditor instance', function () {
     expect(typeof editor).to.be('object');
   });

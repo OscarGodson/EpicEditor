@@ -14,7 +14,9 @@ describe('EpicEditor([options])', function () {
       , container: el
       , file: { autoSave: false }
       }
-    done();
+    // blow away the stack trace. Hack for Mocha:
+    // https://github.com/visionmedia/mocha/issues/502
+    setTimeout(done, 0);
   });
 
   afterEach(function (done) {
@@ -27,7 +29,7 @@ describe('EpicEditor([options])', function () {
     removeContainer(id);
     done();
   });
-  
+
   describe('options.button', function () {
     it('should have all buttons enabled by default', function () {
       editor = new EpicEditor(opts).load();
