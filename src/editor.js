@@ -1399,7 +1399,7 @@
       if (_isAuto) {
         this.emit('autosave');
       }
-      else{
+      else {
         this.emit('save');
       }
     }

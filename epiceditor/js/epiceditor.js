@@ -953,7 +953,7 @@
         if (!self._canSave) {
           return;
         }
-        self.save();
+        self.save(false, true);
       }, self.settings.file.autoSave);
     }
 
@@ -1024,7 +1024,7 @@
       if (!self._canSave) {
         return;
       }
-      self.save(true);
+      self.save(true, true);
     }, 100);
 
     _syncTextarea = function () {
@@ -1057,7 +1057,7 @@
       // manually save draft after import so there is no delay between the
       // import and exporting in _syncTextarea. Without this, _syncTextarea
       // will pull the saved data from localStorage which will be <=100ms old.
-      self.save(true);
+      self.save(true, true);
     }
 
     // Update the textarea on load and pull from drafts
@@ -1194,7 +1194,7 @@
     }
 
     // Save a preview draft since it might not be saved to the real file yet
-    self.save(true);
+    self.save(true, true);
 
     // Add the generated draft HTML into the previewer
     self.previewer.innerHTML = self.exportFile(null, 'html', true);
@@ -1340,7 +1340,7 @@
       }
       else {
         _setText(self.editor, defaultContent);
-        self.save(); // ensure a save
+        self.save(false, true); // ensure a save
         self.emit('create');
       }
       self.previewer.innerHTML = self.exportFile(null, 'html');
@@ -1353,7 +1353,7 @@
    * Saves content for offline use
    * @returns {object} EpicEditor will be returned
    */
-  EpicEditor.prototype.save = function (_isPreviewDraft) {
+  EpicEditor.prototype.save = function (_isPreviewDraft, _isAuto) {
     var self = this
       , storage
       , isUpdate = false
@@ -1396,8 +1396,12 @@
         // Emit a private update event so it can't get accidentally removed
         self.emit('__update');
       }
-
-      this.emit('save');
+      if (_isAuto) {
+        this.emit('autosave');
+      }
+      else {
+        this.emit('save');
+      }
     }
 
     return this;
@@ -1470,7 +1474,7 @@
       self.emit('create');
     }
 
-    self.save();
+    self.save(false, true);
 
     if (self.is('fullscreen')) {
       self.preview();
