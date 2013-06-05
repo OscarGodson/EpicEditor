@@ -56,9 +56,33 @@ describe('.save()', function () {
     editor.on('autosave', function () {
       eventFired = true;
     });
-    editor.save(true);
+    editor.getElement('editor').body.innerHTML = 'bar';
+    editor.save(false, true);
     expect(eventFired).to.be(true);
     expect(badEventFired).to.be(false);
+  });
+
+  it('should not fire an event', function () {
+    editor.on('save', function () {
+      badEventFired = true;
+    });
+    editor.on('autosave', function () {
+      badEventFired = true;
+    });
+    editor.save(true);
+    expect(badEventFired).to.be(false);
+  });
+
+  it('should fire the autosave event only once', function () {
+    editor.on('autosave', function () {
+      eventFired = true;
+    });
+    editor.getElement('editor').body.innerHTML = 'bar';
+    editor.save(false, true);
+    expect(eventFired).to.be(true);
+    eventFired = false;
+    editor.save(false, true);
+    expect(eventFired).to.be(false);
   });
 
   it('should fire the update event on save when the content has changed', function () {

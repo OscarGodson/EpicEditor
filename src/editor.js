@@ -1340,7 +1340,7 @@
       }
       else {
         _setText(self.editor, defaultContent);
-        self.save(false, true); // ensure a save
+        self.save(); // ensure a save
         self.emit('create');
       }
       self.previewer.innerHTML = self.exportFile(null, 'html');
@@ -1386,6 +1386,10 @@
         storage[file].modified = new Date();
         isUpdate = true;
       }
+      //don't bother autosaving if the content hasn't actually changed
+      else if (_isAuto) {
+        return;
+      }
 
       storage[file].content = content;
       this._storage[previewDraftName + self.settings.localStorageName] = JSON.stringify(storage);
@@ -1396,11 +1400,11 @@
         // Emit a private update event so it can't get accidentally removed
         self.emit('__update');
       }
-      
-      if (_isAuto || _isPreviewDraft) {
+
+      if (_isAuto) {
         this.emit('autosave');
       }
-      else {
+      else if (!_isPreviewDraft) {
         this.emit('save');
       }
     }
@@ -1475,7 +1479,7 @@
       self.emit('create');
     }
 
-    self.save(false, true);
+    self.save();
 
     if (self.is('fullscreen')) {
       self.preview();
