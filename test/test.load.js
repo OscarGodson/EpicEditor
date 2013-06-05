@@ -37,7 +37,7 @@ describe(".load([callback])", function () {
 
   // blow away the stack trace. Hack for Mocha:
   // https://github.com/visionmedia/mocha/issues/502
-  beforeEach(function(done){
+  beforeEach(function (done) {
     setTimeout(done, 0);
   });
 
@@ -113,7 +113,7 @@ describe(".load([callback])", function () {
       expect(previewer.body.scrollTop).to.be.greaterThan(0);
       previewer.body.scrollTop = 0;
 
-      anchor.href = window.location.hostname+'#test';
+      anchor.href = window.location.hostname + '#test';
       // Again, this is for IE
       anchor.hostname = originalHostname
       anchor.click();
