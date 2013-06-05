@@ -507,7 +507,11 @@ created, removed, or updated. Below is a complete list of currently supported ev
   </tr>
   <tr>
     <td><code>save</code></td>
-    <td>Fires whenever the file is saved whether by EpicEditor automatically or when <code>save()</code> is called.</td>
+    <td>Fires whenever <code>save()</code> is called manually, or implicitly by ```importFile``` or ```open```.</td>
+  </tr>
+  <tr>
+    <td><code>autosave</code></td>
+    <td>Fires whenever the autoSave interval fires, and the file contents have been updated since the last save.</td>
   </tr>
   <tr>
     <td><code>open</code></td>

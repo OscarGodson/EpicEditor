@@ -953,7 +953,7 @@
         if (!self._canSave) {
           return;
         }
-        self.save();
+        self.save(false, true);
       }, self.settings.file.autoSave);
     }
 
@@ -1353,7 +1353,7 @@
    * Saves content for offline use
    * @returns {object} EpicEditor will be returned
    */
-  EpicEditor.prototype.save = function (_isPreviewDraft) {
+  EpicEditor.prototype.save = function (_isPreviewDraft, _isAuto) {
     var self = this
       , storage
       , isUpdate = false
@@ -1386,6 +1386,10 @@
         storage[file].modified = new Date();
         isUpdate = true;
       }
+      //don't bother autosaving if the content hasn't actually changed
+      else if (_isAuto) {
+        return;
+      }
 
       storage[file].content = content;
       this._storage[previewDraftName + self.settings.localStorageName] = JSON.stringify(storage);
@@ -1397,7 +1401,12 @@
         self.emit('__update');
       }
 
-      this.emit('save');
+      if (_isAuto) {
+        this.emit('autosave');
+      }
+      else if (!_isPreviewDraft) {
+        this.emit('save');
+      }
     }
 
     return this;
