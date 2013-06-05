@@ -47,4 +47,11 @@ describe('.getFiles([name])', function () {
   it('should return the correct file when the name is specified', function () {
     expect(editor.getFiles(fooFile).content).to.be('foo');
   });
+
+  it('should not warp white space', function () {
+    var spaceString = "foo\n  foo\n        foo";
+    editor.importFile(fooFile, spaceString);
+    editor.save();
+    expect(editor.getFiles(fooFile).content).to.be(spaceString);
+  });
 });

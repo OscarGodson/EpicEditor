@@ -1479,6 +1479,14 @@
     return this;
   };
 
+  function sanitizeContent(content) {
+    // Get this, 2 spaces in a content editable actually converts to:
+    // 0020 00a0, meaning, "space no-break space". So, manually convert
+    // no-break spaces to spaces again before handing to marked.
+    // Also, WebKit converts no-break to unicode equivalent and FF HTML.
+    return content.replace(/\u00a0/g, ' ').replace(/&nbsp;/g, ' ');
+  }
+
   /**
    * Exports a file as a string in a supported format
    * @param   {string} name Name of the file you want to export (case sensitive)
@@ -1504,18 +1512,26 @@
    
     switch (kind) {
     case 'html':
-      // Get this, 2 spaces in a content editable actually converts to:
-      // 0020 00a0, meaning, "space no-break space". So, manually convert
-      // no-break spaces to spaces again before handing to marked.
-      // Also, WebKit converts no-break to unicode equivalent and FF HTML.
-      content = content.replace(/\u00a0/g, ' ').replace(/&nbsp;/g, ' ');
+      content = sanitizeContent(content);
       return self.settings.parser(content);
     case 'text':
-      content = content.replace(/\u00a0/g, ' ').replace(/&nbsp;/g, ' ');
-      return content;
+      return sanitizeContent(content);
     default:
       return content;
     }
+  }
+
+  function sanitizeFile(file) {
+    if (file === undefined) {
+      return file;
+    }
+    var content = file.content;
+    Object.defineProperty(file, "content", {
+      get: function () {
+        return sanitizeContent(content);
+      }
+    });
+    return file;
   }
 
   EpicEditor.prototype.getFiles = function (name, _isPreviewDraft) {
@@ -1525,9 +1541,14 @@
     }
     var files = JSON.parse(this._storage[previewDraftName + this.settings.localStorageName]);
     if (name) {
-      return files[name];
+      return sanitizeFile(files[name]);
     }
     else {
+      for (var file in files) {
+        if (files.hasOwnProperty(file)) {
+          sanitizeFile(files[file]);
+        }
+      }
       return files;
     }
   }
