@@ -44,7 +44,9 @@ describe('.getFiles([name])', function () {
     expect(fileCount).to.be(3);
   });
 
-  it('should return the correct file when the name is specified', function () {
-    expect(editor.getFiles(fooFile).content).to.be('foo');
+  it('should return just one file when the name is specified', function () {
+    var file = editor.getFiles(fooFile);
+    expect(file).not.to.be(undefined);
+    expect(file).to.have.property("modified");
   });
 });
