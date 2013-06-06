@@ -177,10 +177,14 @@
       content = content.replace(/</g, '&lt;');
       content = content.replace(/>/g, '&gt;');
       content = content.replace(/\n/g, '<br>');
-      // Make sure to look for TWO spaces and replace with a space and &nbsp;
+      
+      // Make sure to there aren't two spaces in a row (replace one with &nbsp;)
       // If you find and replace every space with a &nbsp; text will not wrap.
       // Hence the name (Non-Breaking-SPace).
-      content = content.replace(/\s\s/g, ' &nbsp;')
+
+      content = content.replace(/<br>\s/g, '<br>&nbsp;')
+      content = content.replace(/\s\s\s/g, '&nbsp; &nbsp;')
+      content = content.replace(/\s\s/g, '&nbsp; ')
       el.innerHTML = content;
     }
     return true;
@@ -418,7 +422,6 @@
     if (localStorage && self.settings.clientSideStorage) {
       this._storage = localStorage;
       if (this._storage[self.settings.localStorageName] && self.getFiles(self.settings.file.name) === undefined) {
-        _defaultFile = self.getFiles(self.settings.file.name);
         _defaultFile = self._defaultFileSchema();
         _defaultFile.content = self.settings.file.defaultContent;
       }
@@ -1333,9 +1336,9 @@
     name = name || self.settings.file.name;
     self.settings.file.name = name;
     if (this._storage[self.settings.localStorageName]) {
-      fileObj = self.getFiles();
-      if (fileObj[name] !== undefined) {
-        _setText(self.editor, fileObj[name].content);
+      fileObj = self.exportFile(name);
+      if (fileObj !== undefined) {
+        _setText(self.editor, fileObj);
         self.emit('read');
       }
       else {
@@ -1489,9 +1492,29 @@
   };
 
   /**
+   * Gets the local filestore
+   * @param   {string} name Name of the file in the store
+   * @returns {object|undefined} the local filestore, or a specific file in the store, if a name is given
+   */
+  EpicEditor.prototype._getFileStore = function (name, _isPreviewDraft) {
+    var previewDraftName = ''
+      , store;
+    if (_isPreviewDraft) {
+      previewDraftName = this._previewDraftLocation;
+    }
+    store = JSON.parse(this._storage[previewDraftName + this.settings.localStorageName]);
+    if (name) {
+      return store[name];
+    }
+    else {
+      return store;
+    }
+  }
+
+  /**
    * Exports a file as a string in a supported format
    * @param   {string} name Name of the file you want to export (case sensitive)
-   * @param   {string} kind Kind of file you want the content in (currently supports html and text)
+   * @param   {string} kind Kind of file you want the content in (currently supports html and text, default is the format the browser "wants")
    * @returns {string|undefined}  The content of the file in the content given or undefined if it doesn't exist
    */
   EpicEditor.prototype.exportFile = function (name, kind, _isPreviewDraft) {
@@ -1502,7 +1525,7 @@
     name = name || self.settings.file.name;
     kind = kind || 'text';
    
-    file = self.getFiles(name, _isPreviewDraft);
+    file = self._getFileStore(name, _isPreviewDraft);
 
     // If the file doesn't exist just return early with undefined
     if (file === undefined) {
@@ -1527,17 +1550,28 @@
     }
   }
 
-  EpicEditor.prototype.getFiles = function (name, _isPreviewDraft) {
-    var previewDraftName = '';
-    if (_isPreviewDraft) {
-      previewDraftName = this._previewDraftLocation;
-    }
-    var files = JSON.parse(this._storage[previewDraftName + this.settings.localStorageName]);
+  /**
+   * Gets the metadata for files
+   * @param   {string} name Name of the file whose metadata you want (case sensitive)
+   * @returns {object} An object with the names and metadata of every file, or just the metadata of one file if a name was given
+   */
+  EpicEditor.prototype.getFiles = function (name) {
+    var file
+      , data = this._getFileStore(name);
+    
     if (name) {
-      return files[name];
+      if (data !== undefined) {
+        delete data.content;
+      }
+      return data;
     }
     else {
-      return files;
+      for (file in data) {
+        if (data.hasOwnProperty(file)) {
+          delete data[file].content;
+        }
+      }
+      return data;
     }
   }
 

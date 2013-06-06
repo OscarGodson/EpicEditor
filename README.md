@@ -287,11 +287,11 @@ importFileBtn.onclick = function () {
 
 ### exportFile([_filename_],[_type_])
 
-Returns the raw content of the file by default, or if given a `type` will return the content converted into that type. If you leave both parameters `null` it will return the current document's raw content.
+Returns the raw content of the file by default (warning: this may be browser-specific), or if given a `type` will return the content converted into that type. If you leave both parameters `null` it will return the current document's raw content.
 
 ```javascript
 syncWithServerBtn.onclick = function () {
-  var theContent = editor.exportFile();
+  var theContent = editor.exportFile(null, 'text');
   saveToServerAjaxCall('/save', {data:theContent}, function () {
     console.log('Data was saved to the database.');
   });
@@ -331,7 +331,7 @@ removeFileBtn.onclick = function () {
 
 ### getFiles([_name_])
 
-If no `name` is given it returns an object containing all the file objects. If a `name` is specified it will return just that single file object.
+If no `name` is given it returns an object containing the names and metadata of all file objects. If a `name` is specified it will return just the metadata of that single file object.
 
 ```javascript
 var files = editor.getFiles();
