@@ -273,11 +273,16 @@ var editor = new EpicEditor(opts);</code></pre>
   editor.importFile(&#39;some-file&#39;,&quot;#Imported markdown\nFancy, huh?&quot;); //Imports a file when the user clicks this button
 }</code></pre>
 <h3>exportFile([<em>filename</em>],[<em>type</em>])</h3>
-<p>Returns the raw content of the file by default (warning: this may be browser-specific), or if given a <code>type</code> will return the content converted into that type. If you leave both parameters <code>null</code> it will return the current document&#39;s raw content.
+<p>Returns the plain text of the file by default, or if given a type will return the content in the specified type. If you leave both parameters null it will return the current document&#39;s content in plain text. The supported export file types are:
 
 </p>
+<ul>
+<li>text (default)</li>
+<li>html</li>
+<li>raw (warning: this is browser specific!)</li>
+</ul>
 <pre><code class="lang-javascript">syncWithServerBtn.onclick = function () {
-  var theContent = editor.exportFile(null, &#39;text&#39;);
+  var theContent = editor.exportFile();
   saveToServerAjaxCall(&#39;/save&#39;, {data:theContent}, function () {
     console.log(&#39;Data was saved to the database.&#39;);
   });
@@ -304,8 +309,8 @@ var editor = new EpicEditor(opts);</code></pre>
 <pre><code class="lang-javascript">removeFileBtn.onclick = function () {
   editor.remove(&#39;example.md&#39;);
 }</code></pre>
-<h3>getFiles([<em>name</em>])</h3>
-<p>If no <code>name</code> is given it returns an object containing the names and metadata of all file objects. If a <code>name</code> is specified it will return just the metadata of that single file object.
+<h3>getFiles([<em>name</em>], [<em>excludeContent</em>])</h3>
+<p>If no <code>name</code> is given it returns an object containing the names and metadata of all file objects. If a <code>name</code> is specified it will return just the metadata of that single file object. If <code>excludeContent</code> is not true, it also includes the contents of the file, in the default format of <code>exportFile</code>.
 
 </p>
 <pre><code class="lang-javascript">var files = editor.getFiles();
