@@ -44,9 +44,16 @@ describe('.getFiles([name])', function () {
     expect(fileCount).to.be(3);
   });
 
-  it('should return just one file when the name is specified', function () {
+  it('should return the right file when the name is specified', function () {
     var file = editor.getFiles(fooFile);
     expect(file).not.to.be(undefined);
-    expect(file).to.have.property("modified");
+    expect(file).to.have.property('modified');
+    expect(file).to.have.property('created');
+    expect(file.content).to.be('foo');
+  });
+
+  it('should exclude content when excludeContent is set', function () {
+    var file = editor.getFiles(fooFile, true);
+    expect(file).not.to.have.property('content');
   });
 });

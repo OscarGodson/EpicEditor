@@ -1512,6 +1512,19 @@
   }
 
   /**
+   * Converts the 'raw' format of a file's contents into plaintext
+   * @param   {string} content Contents of the file
+   * @returns {string} the sanitized content
+   */
+  function sanitizeRawContent(content) {
+    // Get this, 2 spaces in a content editable actually converts to:
+    // 0020 00a0, meaning, "space no-break space". So, manually convert
+    // no-break spaces to spaces again before handing to marked.
+    // Also, WebKit converts no-break to unicode equivalent and FF HTML.
+    return content.replace(/\u00a0/g, ' ').replace(/&nbsp;/g, ' ');
+  }
+
+  /**
    * Exports a file as a string in a supported format
    * @param   {string} name Name of the file you want to export (case sensitive)
    * @param   {string} kind Kind of file you want the content in (currently supports html and text, default is the format the browser "wants")
@@ -1536,39 +1549,48 @@
    
     switch (kind) {
     case 'html':
-      // Get this, 2 spaces in a content editable actually converts to:
-      // 0020 00a0, meaning, "space no-break space". So, manually convert
-      // no-break spaces to spaces again before handing to marked.
-      // Also, WebKit converts no-break to unicode equivalent and FF HTML.
-      content = content.replace(/\u00a0/g, ' ').replace(/&nbsp;/g, ' ');
+      content = sanitizeRawContent(content);
       return self.settings.parser(content);
     case 'text':
-      content = content.replace(/\u00a0/g, ' ').replace(/&nbsp;/g, ' ');
+      return sanitizeRawContent(content);
+    case 'raw':
       return content;
     default:
+      console.warn('Invalid type given; assuming "raw"');
       return content;
     }
   }
 
   /**
-   * Gets the metadata for files
-   * @param   {string} name Name of the file whose metadata you want (case sensitive)
-   * @returns {object} An object with the names and metadata of every file, or just the metadata of one file if a name was given
+   * Gets the contents and metadata for files
+   * @param   {string} name Name of the file whose data you want (case sensitive)
+   * @param   {boolean} excludeContent whether the contents of files should be excluded
+   * @returns {object} An object with the names and data of every file, or just the data of one file if a name was given
    */
-  EpicEditor.prototype.getFiles = function (name) {
+  EpicEditor.prototype.getFiles = function (name, excludeContent) {
     var file
       , data = this._getFileStore(name);
     
     if (name) {
       if (data !== undefined) {
-        delete data.content;
+        if (excludeContent) {
+          delete data.content;
+        }
+        else {
+          data.content = sanitizeRawContent(data.content);
+        }
       }
       return data;
     }
     else {
       for (file in data) {
         if (data.hasOwnProperty(file)) {
-          delete data[file].content;
+          if (excludeContent) {
+            delete data[file].content;
+          }
+          else {
+            data[file].content = sanitizeRawContent(data[file].content);
+          }
         }
       }
       return data;
