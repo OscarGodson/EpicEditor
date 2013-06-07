@@ -1556,7 +1556,6 @@
     case 'raw':
       return content;
     default:
-      console.warn('Invalid type given; assuming "raw"');
       return content;
     }
   }
