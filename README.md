@@ -335,7 +335,7 @@ removeFileBtn.onclick = function () {
 
 ### getFiles([_name_], [_excludeContent_])
 
-If no `name` is given it returns an object containing the names and metadata of all file objects. If a `name` is specified it will return just the metadata of that single file object. If `excludeContent` is not true, it also includes the contents of the file, in the default format of `exportFile`.
+If no `name` is given it returns an object containing the names and metadata of all file objects. If a `name` is specified it will return just the metadata of that single file object. If `excludeContent` is true, it will remove the content from the returned object. This is useful when you just want a list of files or get some meta data. If `excludeContent` is false (default), it'll return a `content` property per file in plain text format.
 
 ```javascript
 var files = editor.getFiles();

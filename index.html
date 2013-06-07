@@ -310,7 +310,7 @@ var editor = new EpicEditor(opts);</code></pre>
   editor.remove(&#39;example.md&#39;);
 }</code></pre>
 <h3>getFiles([<em>name</em>], [<em>excludeContent</em>])</h3>
-<p>If no <code>name</code> is given it returns an object containing the names and metadata of all file objects. If a <code>name</code> is specified it will return just the metadata of that single file object. If <code>excludeContent</code> is not true, it also includes the contents of the file, in the default format of <code>exportFile</code>.
+<p>If no <code>name</code> is given it returns an object containing the names and metadata of all file objects. If a <code>name</code> is specified it will return just the metadata of that single file object. If <code>excludeContent</code> is true, it will remove the content from the returned object. This is useful when you just want a list of files or get some meta data. If <code>excludeContent</code> is false (default), it&#39;ll return a <code>content</code> property per file in plain text format.
 
 </p>
 <pre><code class="lang-javascript">var files = editor.getFiles();
