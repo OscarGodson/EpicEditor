@@ -191,6 +191,19 @@
   }
 
   /**
+   * Converts the 'raw' format of a file's contents into plaintext
+   * @param   {string} content Contents of the file
+   * @returns {string} the sanitized content
+   */
+  function _sanitizeRawContent(content) {
+    // Get this, 2 spaces in a content editable actually converts to:
+    // 0020 00a0, meaning, "space no-break space". So, manually convert
+    // no-break spaces to spaces again before handing to marked.
+    // Also, WebKit converts no-break to unicode equivalent and FF HTML.
+    return content.replace(/\u00a0/g, ' ').replace(/&nbsp;/g, ' ');
+  }
+
+  /**
    * Will return the version number if the browser is IE. If not will return -1
    * TRY NEVER TO USE THIS AND USE FEATURE DETECTION IF POSSIBLE
    * @returns {Number} -1 if false or the version number if true
@@ -1512,19 +1525,6 @@
   }
 
   /**
-   * Converts the 'raw' format of a file's contents into plaintext
-   * @param   {string} content Contents of the file
-   * @returns {string} the sanitized content
-   */
-  function sanitizeRawContent(content) {
-    // Get this, 2 spaces in a content editable actually converts to:
-    // 0020 00a0, meaning, "space no-break space". So, manually convert
-    // no-break spaces to spaces again before handing to marked.
-    // Also, WebKit converts no-break to unicode equivalent and FF HTML.
-    return content.replace(/\u00a0/g, ' ').replace(/&nbsp;/g, ' ');
-  }
-
-  /**
    * Exports a file as a string in a supported format
    * @param   {string} name Name of the file you want to export (case sensitive)
    * @param   {string} kind Kind of file you want the content in (currently supports html and text, default is the format the browser "wants")
@@ -1549,10 +1549,10 @@
    
     switch (kind) {
     case 'html':
-      content = sanitizeRawContent(content);
+      content = _sanitizeRawContent(content);
       return self.settings.parser(content);
     case 'text':
-      return sanitizeRawContent(content);
+      return _sanitizeRawContent(content);
     case 'raw':
       return content;
     default:
@@ -1576,7 +1576,7 @@
           delete data.content;
         }
         else {
-          data.content = sanitizeRawContent(data.content);
+          data.content = _sanitizeRawContent(data.content);
         }
       }
       return data;
@@ -1588,7 +1588,7 @@
             delete data[file].content;
           }
           else {
-            data[file].content = sanitizeRawContent(data[file].content);
+            data[file].content = _sanitizeRawContent(data[file].content);
           }
         }
       }
