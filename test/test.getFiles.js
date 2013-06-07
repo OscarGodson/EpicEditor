@@ -20,7 +20,7 @@ describe('.getFiles([name])', function () {
     fooFile = 'foo' + id;
     barFile = 'bar' + id;
     editor.load();
-    editor.importFile(fooFile, 'foo');
+    editor.importFile(fooFile, 'foo     bar');
     editor.importFile(barFile, 'bar');
     done();
   });
@@ -49,7 +49,7 @@ describe('.getFiles([name])', function () {
     expect(file).not.to.be(undefined);
     expect(file).to.have.property('modified');
     expect(file).to.have.property('created');
-    expect(file.content).to.be('foo');
+    expect(file.content).to.be('foo     bar');
   });
 
   it('should exclude content when excludeContent is set', function () {

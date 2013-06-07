@@ -181,7 +181,7 @@
       // Make sure to there aren't two spaces in a row (replace one with &nbsp;)
       // If you find and replace every space with a &nbsp; text will not wrap.
       // Hence the name (Non-Breaking-SPace).
-
+      // TODO: Probably need to test this somehow...
       content = content.replace(/<br>\s/g, '<br>&nbsp;')
       content = content.replace(/\s\s\s/g, '&nbsp; &nbsp;')
       content = content.replace(/\s\s/g, '&nbsp; ')
