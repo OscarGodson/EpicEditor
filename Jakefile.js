@@ -1,5 +1,6 @@
 var fs = require('fs')
-  , VERSION = fs.readFileSync('VERSION', 'utf-8')
+  , watch = require('node-watch')
+  , VERSION = fs.readFileSync('VERSION', 'utf-8');
 
 function concat(fileList, destPath) {
   var out = fileList.map(function (filePath) {
@@ -165,7 +166,20 @@ var pkg = new jake.PackageTask('EpicEditor', 'v' + VERSION, function () {
   this.packageDir = "docs/downloads"
   this.packageFiles.include(fileList)
   this.needZip = true
-})
+});
+
+desc('Watch for changes and automatically build');
+task('watch', function () {
+  console.log('================================================\n| Files are now being watched. ctrl+c to exit. |\n================================================');
+  jake.Task.build.execute();
+  jake.Task.docs.execute();
+  watch('src/', function () {
+    jake.Task.build.execute();
+  });
+  watch('README.md', function () {
+    jake.Task.docs.execute();
+  });
+});
 
 desc('Kick out some ascii')
 task('ascii', [], function () {
