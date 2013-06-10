@@ -944,6 +944,15 @@
       if (e.keyCode == 17) { isCtrl = false }
     }
 
+    function pasteHandler(e) {
+      var content;
+      if (e.clipboardData) {
+        e.preventDefault();
+        content = e.clipboardData.getData("text/plain");
+        self.editorIframeDocument.execCommand("insertText", false, content);
+      }
+    }
+
     // Hide and show the util bar based on mouse movements
     eventableIframes = [self.previewerIframeDocument, self.editorIframeDocument];
     
@@ -959,6 +968,9 @@
       });
       eventableIframes[i].addEventListener('keydown', function (e) {
         shortcutHandler(e);
+      });
+      eventableIframes[i].addEventListener('paste', function (e) {
+        pasteHandler(e);
       });
     }
 
