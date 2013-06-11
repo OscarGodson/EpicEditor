@@ -947,8 +947,15 @@
     function pasteHandler(e) {
       var content;
       if (e.clipboardData) {
+        //FF 22, Webkit
         e.preventDefault();
         content = e.clipboardData.getData("text/plain");
+        self.editorIframeDocument.execCommand("insertText", false, content);
+      }
+      else if (window.clipboardData) {
+        //IE
+        e.preventDefault();
+        content = window.clipboardData.getData("Text");
         self.editorIframeDocument.execCommand("insertText", false, content);
       }
     }
