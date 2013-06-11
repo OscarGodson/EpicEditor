@@ -30,4 +30,23 @@ describe('.focus()', function () {
     // Use .id to compare. A direct obj to obj comparison takes Mocha a long time
     expect(document.activeElement.id).to.be(editor.getElement('wrapperIframe').id);
   });
+
+  it('focus/blur events should fire', function () {
+    document.querySelector('a').focus();
+    var eventFired = false;
+    editor.on('focus', function () {
+      eventFired = true;
+    });
+
+    editor.focus();
+    expect(eventFired).to.be(true);
+    
+    eventFired = false;
+    editor.on('blur', function () {
+      eventFired = true;
+    });
+
+    document.querySelector('a').focus();
+    expect(eventFired).to.be(true);
+  })
 });

@@ -525,6 +525,14 @@ created, removed, or updated. Below is a complete list of currently supported ev
     <td><code>reflow</code></td>
     <td>Fires whenever <code>reflow()</code> is called. Will return the new dimensions in the callback.</td>
   </tr>
+  <tr>
+    <td><code>blur</code></td>
+    <td>Fires whenever the editor becomes focused</td>
+  </tr>
+  <tr>
+    <td><code>focus</code></td>
+    <td>Fires whenever the editor loses focus</td>
+  </tr>
 </table>
 
 ## Themes
