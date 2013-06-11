@@ -1553,6 +1553,9 @@
       return self.settings.parser(content);
     case 'text':
       return _sanitizeRawContent(content);
+    case 'json':
+      file.content = _sanitizeRawContent(file.content);
+      return JSON.stringify(file);
     case 'raw':
       return content;
     default:
