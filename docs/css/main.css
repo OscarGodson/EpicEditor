@@ -205,3 +205,19 @@ p.btn-small {
 p.btn-small a {
   font-size:14px;
 }
+@media (max-width: 1050px){
+  #toc{
+   display: none;
+  }
+  #wrapper{
+    margin: 0 auto;
+    padding: 0;
+    max-width:100%;
+  }
+}
+
+@media (max-width: 1200px){
+  h1 span{
+    right: 150px;
+  }
+}
