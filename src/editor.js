@@ -947,16 +947,23 @@
     function pasteHandler(e) {
       var content;
       if (e.clipboardData) {
-        //FF 22, Webkit
+        //FF 22, Webkit, "standards"
         e.preventDefault();
         content = e.clipboardData.getData("text/plain");
         self.editorIframeDocument.execCommand("insertText", false, content);
       }
       else if (window.clipboardData) {
-        //IE
+        //IE, "nasty"
         e.preventDefault();
         content = window.clipboardData.getData("Text");
-        self.editorIframeDocument.execCommand("insertText", false, content);
+        content = content.replace(/</g, '&lt;');
+        content = content.replace(/>/g, '&gt;');
+        content = content.replace(/\n/g, '<br>');
+        content = content.replace(/\r/g, ''); //fuck you, ie!
+        content = content.replace(/<br>\s/g, '<br>&nbsp;')
+        content = content.replace(/\s\s\s/g, '&nbsp; &nbsp;')
+        content = content.replace(/\s\s/g, '&nbsp; ')
+        self.editorIframeDocument.selection.createRange().pasteHTML(content);
       }
     }
 
