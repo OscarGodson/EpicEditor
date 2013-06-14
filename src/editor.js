@@ -1044,7 +1044,11 @@
     }, 100);
 
     _syncTextarea = function () {
-      self._textareaElement.value = self.exportFile(textareaFileName, 'text', true);
+      // TODO: Figure out root cause for having to do this ||.
+      // This only happens for draft files. Probably has something to do with
+      // the fact draft files haven't been saved by the time this is called.
+      // TODO: Add test for this case.
+      self._textareaElement.value = self.exportFile(textareaFileName, 'text', true) || self.settings.file.defaultContent;
     }
 
     if (typeof self.settings.textarea == 'string') {
