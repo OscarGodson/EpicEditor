@@ -57,6 +57,7 @@ var opts = {
   localStorageName: 'epiceditor',
   useNativeFullscreen: true,
   parser: marked,
+  showButtons: "auto",
   file: {
     name: 'epiceditor',
     defaultContent: '',
@@ -132,6 +133,11 @@ var editor = new EpicEditor(opts);
     <td><code>focusOnLoad</code></td>
     <td>If <code>true</code>, editor will focus on load.</td>
     <td><code>false</code></td>
+  </tr>
+  <tr>
+    <td><code>showButtons</code></td>
+    <td>If <code>true</code> or <code>"show"</code>, any defined buttons will always be visible. If <code>false</code> or <code>"hide"</code>, any defined buttons will never be visible. If <code>"auto"</code>, buttons will usually be hidden, but shown if whenever the mouse is moved.</td>
+    <td><code>"auto"</code></td>
   </tr>
   <tr>
     <td><code>file.name</code></td>
