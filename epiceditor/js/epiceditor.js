@@ -1664,7 +1664,7 @@
     return self;
   }
 
-  EpicEditor.version = '0.2.1';
+  EpicEditor.version = '0.2.1.1';
 
   // Used to store information to be shared across editors
   EpicEditor._data = {};
