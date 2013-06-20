@@ -291,6 +291,7 @@ Returns the plain text of the file by default, or if given a type will return th
 
 * text (default)
 * html
+* json (includes metadata)
 * raw (warning: this is browser specific!)
 
 ```javascript
