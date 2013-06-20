@@ -944,6 +944,29 @@
       if (e.keyCode == 17) { isCtrl = false }
     }
 
+    function pasteHandler(e) {
+      var content;
+      if (e.clipboardData) {
+        //FF 22, Webkit, "standards"
+        e.preventDefault();
+        content = e.clipboardData.getData("text/plain");
+        self.editorIframeDocument.execCommand("insertText", false, content);
+      }
+      else if (window.clipboardData) {
+        //IE, "nasty"
+        e.preventDefault();
+        content = window.clipboardData.getData("Text");
+        content = content.replace(/</g, '&lt;');
+        content = content.replace(/>/g, '&gt;');
+        content = content.replace(/\n/g, '<br>');
+        content = content.replace(/\r/g, ''); //fuck you, ie!
+        content = content.replace(/<br>\s/g, '<br>&nbsp;')
+        content = content.replace(/\s\s\s/g, '&nbsp; &nbsp;')
+        content = content.replace(/\s\s/g, '&nbsp; ')
+        self.editorIframeDocument.selection.createRange().pasteHTML(content);
+      }
+    }
+
     // Hide and show the util bar based on mouse movements
     eventableIframes = [self.previewerIframeDocument, self.editorIframeDocument];
     
@@ -959,6 +982,9 @@
       });
       eventableIframes[i].addEventListener('keydown', function (e) {
         shortcutHandler(e);
+      });
+      eventableIframes[i].addEventListener('paste', function (e) {
+        pasteHandler(e);
       });
     }
 
