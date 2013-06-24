@@ -134,7 +134,7 @@ describe('EpicEditor([options])', function () {
     opts.file.defaultContent = 'foo';
 
     editor = new EpicEditor(opts).load();
-    expect(editor.getElement('editor').body.innerHTML).to.be('foo');
+    expect(editor.getElement('content').innerHTML).to.be('foo');
   });
 
   describe('options.string', function () {
@@ -263,7 +263,7 @@ describe('EpicEditor([options])', function () {
       var editor = new EpicEditor(opts).load();
       expect(textareaElement.value).to.be(id);
 
-      editor.getElement('editor').body.innerHTML = 'Manually added';
+      editor.getElement('content').innerHTML = 'Manually added';
       setTimeout(function () {
         expect(textareaElement.value).to.be('Manually added');
         done();
@@ -282,7 +282,7 @@ describe('EpicEditor([options])', function () {
     it('should sync the content of the editor when the editor is updated AND autoSave is OFF', function (done) {
       opts.file.autoSave = false;
       var editor = new EpicEditor(opts).load();
-      editor.getElement('editor').body.innerHTML = 'Should update';
+      editor.getElement('content').innerHTML = 'Should update';
       setTimeout(function () {
         expect(textareaElement.value).to.be('Should update');
         done();
@@ -305,7 +305,7 @@ describe('EpicEditor([options])', function () {
       editor.load();
       expect(textareaElement.value).to.be(id);
 
-      editor.getElement('editor').body.innerHTML = 'Should update';
+      editor.getElement('content').innerHTML = 'Should update';
       setTimeout(function () {
         expect(textareaElement.value).to.be('Should update');
         done();

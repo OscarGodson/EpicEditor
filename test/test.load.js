@@ -92,7 +92,7 @@ describe(".load([callback])", function () {
       previewer = editor.getElement('previewer');
       editor.importFile(id, '<a href="#test">foo</a>\n\nfoo\n\nbar\n\n<h1 id="test">Test</h1>\n\nhello\n\nworld\n\nblah\n\nblah');
       editor.element.style.height = '10px';
-      editor.reflow().preview();
+      editor.preview();
       anchor = previewer.body.querySelector('a');
       // Fucking IE bug.
       // If you change the href of an <a> it'll set the hostname to be blank.

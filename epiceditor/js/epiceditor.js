@@ -1276,7 +1276,7 @@
     var self = this
       , isPreview = self.is('preview')
       , focusElement = isPreview ? self.previewerIframeDocument.body
-        : self.editorIframeDocument.body;
+        : self.editor;
 
     if (_isFirefox() && isPreview) {
       focusElement = self.previewerIframe;
@@ -1336,6 +1336,7 @@
     , "editorIframe": this.editorIframe
     , "previewer": this.previewerIframeDocument
     , "previewerIframe": this.previewerIframe
+    , "content": this.editor
     }
 
     // Check that the given string is a possible option and verify the editor isn't unloaded
