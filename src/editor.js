@@ -542,6 +542,7 @@
     
     // The previewer is just an empty box for the generated HTML to go into
     , previewer: '<div id="epiceditor-preview"></div>'
+    , editor: '<div id="epiceditor-editor"></div>'
     };
 
     // Write an iframe and then select it for the editor
@@ -572,7 +573,7 @@
     self.editorIframeDocument = _getIframeInnards(self.editorIframe);
     self.editorIframeDocument.open();
     // Need something for... you guessed it, Firefox
-    self.editorIframeDocument.write('');
+    self.editorIframeDocument.write(_HtmlTemplates.editor);
     self.editorIframeDocument.close();
     
     // Setup the previewer iframe
@@ -606,11 +607,18 @@
     self.previewerIframe.style.position = 'absolute';
 
     // Now grab the editor and previewer for later use
-    self.editor = self.editorIframeDocument.body;
+    self.editor = self.editorIframeDocument.getElementById("epiceditor-editor");
     self.previewer = self.previewerIframeDocument.getElementById('epiceditor-preview');
    
     self.editor.contentEditable = true;
- 
+    self.editor.style.height = "100%";
+    self.editor.style.width = "100%";
+    self.editor.style.padding = "0";
+    self.editor.style.margin = "0";
+    self.editor.style.outline = "0px solid transparent";
+    self.editor.style["overflow-y"] = "scroll";
+    self.editor.style["-webkit-overflow-scrolling"] = "touch";
+
     // Firefox's <body> gets all fucked up so, to be sure, we need to hardcode it
     self.iframe.body.style.height = this.element.offsetHeight + 'px';
 
