@@ -32,7 +32,7 @@ describe('.save()', function () {
   });
 
   it('should save new content', function () {
-    editor.getElement('editor').body.innerHTML = 'bar';
+    editor.getElement('content').innerHTML = 'bar';
     editor.save();
     expect(JSON.parse(localStorage['epiceditor'])[id].content).to.be('bar');
   });
@@ -56,7 +56,7 @@ describe('.save()', function () {
     editor.on('autosave', function () {
       eventFired = true;
     });
-    editor.getElement('editor').body.innerHTML = 'bar';
+    editor.getElement('content').innerHTML = 'bar';
     editor.save(false, true);
     expect(eventFired).to.be(true);
     expect(badEventFired).to.be(false);
@@ -77,7 +77,7 @@ describe('.save()', function () {
     editor.on('autosave', function () {
       eventFired = true;
     });
-    editor.getElement('editor').body.innerHTML = 'bar';
+    editor.getElement('content').innerHTML = 'bar';
     editor.save(false, true);
     expect(eventFired).to.be(true);
     eventFired = false;
@@ -89,7 +89,7 @@ describe('.save()', function () {
     editor.on('update', function () {
       eventFired = true;
     });
-    editor.getElement('editor').body.innerHTML = 'bar';
+    editor.getElement('content').innerHTML = 'bar';
     editor.save();
     expect(eventFired).to.be(true);
   });
@@ -98,7 +98,7 @@ describe('.save()', function () {
     editor.on('update', function () {
       eventFired = true;
     });
-    editor.getElement('editor').body.innerHTML = 'foo';
+    editor.getElement('content').innerHTML = 'foo';
     editor.save();
     expect(eventFired).to.be(false);
   });
@@ -108,7 +108,7 @@ describe('.save()', function () {
     editor.on('update', function () {
       eventFired = true;
     });
-    editor.getElement('editor').body.innerHTML = 'bar';
+    editor.getElement('content').innerHTML = 'bar';
     editor.save();
     expect(currentModifiedDate).to.not.be(JSON.parse(localStorage['epiceditor'])[id].modified);
   });

@@ -42,7 +42,7 @@ describe('.getElement(element)', function () {
     // TODO: Is this good enough the original lookup is costly - it might be helpful to put id's on the body for this
     //expect(editor.getElement('editor')).to.be(getIframeDoc(innerWrapper.getElementById('epiceditor-editor-frame')));
     //expect(editor.getElement('editor').body.id).to.be('epiceditor-editor');
-    expect(editor.getElement('editor').body.contentEditable).to.be('true');
+    expect(editor.getElement('content').contentEditable).to.be('true');
   });
 
   it('should accept "editorIframe" and return the iframe containing the editor', function () {

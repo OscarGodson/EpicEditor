@@ -65,7 +65,7 @@ describe('.preview()', function () {
 
     editor.load();
 
-    editor.getElement('editor').body.innerHTML = 'XXX';
+    editor.getElement('content').innerHTML = 'XXX';
     expect(editor.getElement('previewer').body.innerHTML.match('XXX')).to.be(null);
 
     editor.preview();

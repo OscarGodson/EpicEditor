@@ -542,6 +542,7 @@
     
     // The previewer is just an empty box for the generated HTML to go into
     , previewer: '<div id="epiceditor-preview"></div>'
+    , editor: '<div id="epiceditor-editor"></div>'
     };
 
     // Write an iframe and then select it for the editor
@@ -572,7 +573,7 @@
     self.editorIframeDocument = _getIframeInnards(self.editorIframe);
     self.editorIframeDocument.open();
     // Need something for... you guessed it, Firefox
-    self.editorIframeDocument.write('');
+    self.editorIframeDocument.write(_HtmlTemplates.editor);
     self.editorIframeDocument.close();
     
     // Setup the previewer iframe
@@ -606,11 +607,17 @@
     self.previewerIframe.style.position = 'absolute';
 
     // Now grab the editor and previewer for later use
-    self.editor = self.editorIframeDocument.body;
+    self.editor = self.editorIframeDocument.getElementById("epiceditor-editor");
     self.previewer = self.previewerIframeDocument.getElementById('epiceditor-preview');
    
     self.editor.contentEditable = true;
- 
+    _applyStyles(self.editor, {
+      height: '100%'
+    , outline: '0px solid transparent'
+    , 'overflow-y': 'scroll'
+    , '-webkit-overflow-scrolling': 'touch'
+    });
+
     // Firefox's <body> gets all fucked up so, to be sure, we need to hardcode it
     self.iframe.body.style.height = this.element.offsetHeight + 'px';
 
@@ -1268,7 +1275,7 @@
     var self = this
       , isPreview = self.is('preview')
       , focusElement = isPreview ? self.previewerIframeDocument.body
-        : self.editorIframeDocument.body;
+        : self.editor;
 
     if (_isFirefox() && isPreview) {
       focusElement = self.previewerIframe;
@@ -1328,6 +1335,7 @@
     , "editorIframe": this.editorIframe
     , "previewer": this.previewerIframeDocument
     , "previewerIframe": this.previewerIframe
+    , "content": this.editor
     }
 
     // Check that the given string is a possible option and verify the editor isn't unloaded
