@@ -612,7 +612,20 @@
     self.editor.contentEditable = true;
  
     // Firefox's <body> gets all fucked up so, to be sure, we need to hardcode it
-    self.iframe.body.style.height = this.element.offsetHeight + 'px';
+    self.iframe.body.style.height = "100%";
+    
+    if (_isSafari()) {
+      /* Hack to work around mobile safari's broken iframe implementation
+       * iframes in mobile safari always grow to fit their content, which we don't want
+       * this workaround acts wonky on FF, and we only care about doing this if we're on mobile safari
+       */
+      _applyStyles(self.getElement("wrapper"), {
+        'overflow-y': 'scroll'
+      , '-webkit-overflow-scrolling': 'touch'
+      , 'width': '100%'
+      , 'height': '100%'
+      });
+    }
 
     // Should actually check what mode it's in!
     self.previewerIframe.style.left = '-999999px';
