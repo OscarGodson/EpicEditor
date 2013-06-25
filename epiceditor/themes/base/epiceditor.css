@@ -29,3 +29,10 @@ html, body, iframe, div { margin:0; padding:0; }
 .epiceditor-preview-mode #epiceditor-utilbar img.epiceditor-toggle-preview-btn {
   display: none;
 }
+
+#epiceditor-wrapper {
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+  height: 100%;
+}
