@@ -611,13 +611,12 @@
     self.previewer = self.previewerIframeDocument.getElementById('epiceditor-preview');
    
     self.editor.contentEditable = true;
-    self.editor.style.height = "100%";
-    self.editor.style.width = "100%";
-    self.editor.style.padding = "0";
-    self.editor.style.margin = "0";
-    self.editor.style.outline = "0px solid transparent";
-    self.editor.style["overflow-y"] = "scroll";
-    self.editor.style["-webkit-overflow-scrolling"] = "touch";
+    _applyStyles(self.editor, {
+      height: '100%'
+    , outline: '0px solid transparent'
+    , 'overflow-y': 'scroll'
+    , '-webkit-overflow-scrolling': 'touch'
+    });
 
     // Firefox's <body> gets all fucked up so, to be sure, we need to hardcode it
     self.iframe.body.style.height = this.element.offsetHeight + 'px';
