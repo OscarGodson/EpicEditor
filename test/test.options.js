@@ -77,6 +77,21 @@ describe('EpicEditor([options])', function () {
     });
   });
 
+  describe('options.showButtons', function () {
+    it('should always hide buttons if showButtons is hide', function () {
+      opts.showButtons = 'hide';
+      editor = new EpicEditor(opts).load();
+      var wrapper = editor.getElement('wrapper');
+      expect($(wrapper).find('[class*="btn"]').is(":visible")).to.be(false);
+    });
+    it('should always show buttons if showButtons is show', function () {
+      opts.showButtons = 'show';
+      editor = new EpicEditor(opts).load();
+      var wrapper = editor.getElement('wrapper');
+      expect($(wrapper).find('[class*="btn"]').is(":hidden")).to.be(false);
+    });
+  });
+
   it('should allow the container option to be passed as an element ID string', function () {
     opts.container = id;
 
