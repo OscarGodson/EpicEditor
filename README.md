@@ -105,7 +105,7 @@ var editor = new EpicEditor(opts);
   </tr>
   <tr>
     <td><code>basePath</code></td>
-    <td>The base path of the directory containing the <code>/themes</code>, <code>/images</code>, etc.</td>
+    <td>The base path of the directory containing the <code>/themes</code>, etc.</td>
     <td><code>epiceditor</code></td>
   </tr>
   <tr>
@@ -569,8 +569,8 @@ The HTML of a generated editor (excluding contents) looks like this:
             </html>
           </iframe>
           <div id="epiceditor-utilbar">
-            <img width="16" src="epiceditor/images/preview.png" class="epiceditor-toggle-btn">
-            <img width="16" src="epiceditor/images/fullscreen.png" class="epiceditor-fullscreen-btn">
+            <span title="Toggle Preview Mode" class="epiceditor-toggle-btn epiceditor-toggle-preview-btn"></span>
+            <span title="Enter Fullscreen" class="epiceditor-fullscreen-btn"></span>
           </div>
         </div>
       </body>
