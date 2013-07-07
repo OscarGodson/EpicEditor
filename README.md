@@ -105,7 +105,7 @@ var editor = new EpicEditor(opts);
   </tr>
   <tr>
     <td><code>basePath</code></td>
-    <td>The base path of the directory containing the <code>/themes</code>, etc.</td>
+    <td>The base path of the directory containing the <code>/themes</code>.</td>
     <td><code>epiceditor</code></td>
   </tr>
   <tr>
