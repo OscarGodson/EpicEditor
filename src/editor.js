@@ -541,7 +541,8 @@
                 '</div>'
     
     // The previewer is just an empty box for the generated HTML to go into
-    , previewer: '<div id="epiceditor-preview"></div>'
+    , previewer: '<!doctype HTML><div id="epiceditor-preview"></div>'
+    , editor: '<!doctype HTML>'
     };
 
     // Write an iframe and then select it for the editor
@@ -572,7 +573,7 @@
     self.editorIframeDocument = _getIframeInnards(self.editorIframe);
     self.editorIframeDocument.open();
     // Need something for... you guessed it, Firefox
-    self.editorIframeDocument.write('');
+    self.editorIframeDocument.write(_HtmlTemplates.editor);
     self.editorIframeDocument.close();
     
     // Setup the previewer iframe
