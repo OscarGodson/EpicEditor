@@ -356,8 +356,13 @@
           }
         , parser: typeof marked == 'function' ? marked : null
         , button: { fullscreen: true, preview: true }
+        , autogrow: false
         }
-      , defaultStorage;
+      , defaultStorage
+      , autogrowDefaults = { minHeight: 80
+        , maxHeight: false
+        , scroll: true
+        };
 
     self.settings = _mergeObjs(true, defaults, opts);
     
@@ -370,6 +375,16 @@
       self.settings.parser = function (str) {
         return str;
       }
+    }
+
+    if (self.settings.autogrow) {
+      if (self.settings.autogrow === true) {
+        self.settings.autogrow = autogrowDefaults;
+      }
+      else {
+        self.settings.autogrow = _mergeObjs(true, autogrowDefaults, self.settings.autogrow);
+      }
+      self._oldHeight = -1;
     }
 
     // If you put an absolute link as the path of any of the themes ignore the basePath
@@ -499,7 +514,8 @@
       , isMod = false
       , isCtrl = false
       , eventableIframes
-      , i; // i is reused for loops
+      , i // i is reused for loops
+      , boundAutogrow;
 
     // Startup is a way to check if this EpicEditor is starting up. Useful for
     // checking and doing certain things before EpicEditor emits a load event.
@@ -1048,6 +1064,18 @@
 
     self.iframe.close();
     self._eeState.startup = false;
+
+    if (self.settings.autogrow) {
+      boundAutogrow = function () {
+        self._autogrow();
+      }
+
+      self.on("update", boundAutogrow);
+      self.on("edit", boundAutogrow);
+      self.on("preview", boundAutogrow);
+      boundAutogrow();
+    }
+
     // The callback and call are the same thing, but different ways to access them
     callback.call(this);
     this.emit('load');
@@ -1692,6 +1720,58 @@
     // Otherwise a handler and event exist, so take care of it
     this.events[ev].splice(this.events[ev].indexOf(handler), 1);
     return self;
+  }
+
+  /**
+   * Handles autogrowing the editor
+   */
+  EpicEditor.prototype._autogrow = function () {
+    var editorHeight
+      , newHeight
+      , minHeight
+      , maxHeight;
+
+    //autogrow in fullscreen in nonsensical
+    if (!this.is("fullscreen")) {
+      if (this.is("edit")) {
+        editorHeight = this.getElement('editor').documentElement.scrollHeight;
+      }
+      else {
+        editorHeight = this.getElement('previewer').documentElement.scrollHeight;
+      }
+
+      newHeight = editorHeight;
+
+      //handle minimum
+      minHeight = this.settings.autogrow.minHeight;
+      if (typeof minHeight === "function") {
+        minHeight = minHeight(this);
+      }
+
+      if (minHeight && newHeight < minHeight) {
+        newHeight = minHeight;
+      }
+
+      //handle maximum
+      maxHeight = this.settings.autogrow.maxHeight;
+      if (typeof maxHeight === "function") {
+        maxHeight = maxHeight(this);
+      }
+
+      if (maxHeight && newHeight > maxHeight) {
+        newHeight = maxHeight;
+      }
+
+      //actual resize
+      if (newHeight != this.oldHeight) {
+        this.getElement("container").style.height = newHeight + "px";
+        this.reflow();
+        if (this.settings.autogrow.scroll) {
+          window.scrollBy(0, newHeight - this.oldHeight);
+        }
+        this.oldHeight = newHeight;
+      }
+    }
   }
 
   EpicEditor.version = '@VERSION';
