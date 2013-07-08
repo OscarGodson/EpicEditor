@@ -1729,15 +1729,30 @@
     var editorHeight
       , newHeight
       , minHeight
-      , maxHeight;
+      , maxHeight
+      , el
+      , style
+      , _pxToInt;
 
     //autogrow in fullscreen in nonsensical
     if (!this.is("fullscreen")) {
       if (this.is("edit")) {
-        editorHeight = this.getElement('editor').documentElement.scrollHeight;
+        el = this.getElement('editor');
       }
       else {
-        editorHeight = this.getElement('previewer').documentElement.scrollHeight;
+        el = this.getElement('previewer');
+      }
+
+      if (_isIE()) {
+        _pxToInt = function (val) {
+          return parseInt(val.substring(0, val.length - 2), 10);
+        }
+        style = window.getComputedStyle(el.documentElement, null);
+        editorHeight = el.body.scrollHeight + _pxToInt(style.getPropertyValue("padding-top")) + _pxToInt(style.getPropertyValue("padding-bottom")) +
+                                              _pxToInt(style.getPropertyValue("margin-top")) + _pxToInt(style.getPropertyValue("margin-bottom")) + 28;
+      }
+      else {
+        editorHeight = el.documentElement.scrollHeight;
       }
 
       newHeight = editorHeight;
