@@ -1083,8 +1083,12 @@
       self.getElement('editor').documentElement.addEventListener('cut', boundAutogrow);
       
       self.on('update', boundAutogrow);
-      self.on('edit', boundAutogrow);
-      self.on('preview', boundAutogrow);
+      self.on('edit', function () {
+        setTimeout(boundAutogrow, 50)
+      });
+      self.on('preview', function () {
+        setTimeout(boundAutogrow, 50)
+      });
 
       //for browsers that have rendering delays
       setTimeout(boundAutogrow, 50);
