@@ -1738,7 +1738,7 @@
       , el
       , style;
 
-    //autogrow in fullscreen in nonsensical
+    //autogrow in fullscreen is nonsensical
     if (!this.is('fullscreen')) {
       if (this.is('edit')) {
         el = this.getElement('editor').documentElement;
