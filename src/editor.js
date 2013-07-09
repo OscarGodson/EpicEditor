@@ -1066,18 +1066,23 @@
     self._eeState.startup = false;
 
     if (self.settings.autogrow) {
+      //prevent ugly temprorary scroll bars
+      self.getElement('editor').documentElement.style.overflow = 'hidden';
+      self.getElement('previewer').documentElement.style.overflow = 'hidden';
+
       boundAutogrow = function () {
         self._autogrow();
       }
 
       if (_isIE() > -1) {
         //this is a temporary shim until the IE whitespace bug is fixed (Ticket #264)
-        self.getElement("editor").documentElement.addEventListener("keydown", boundAutogrow);
-        self.getElement("editor").documentElement.addEventListener("keyup", boundAutogrow);
+        self.getElement('editor').documentElement.addEventListener('keydown', boundAutogrow);
+        self.getElement('editor').documentElement.addEventListener('keyup', boundAutogrow);
       }
-      self.on("update", boundAutogrow);
-      self.on("edit", boundAutogrow);
-      self.on("preview", boundAutogrow);
+
+      self.on('update', boundAutogrow);
+      self.on('edit', boundAutogrow);
+      self.on('preview', boundAutogrow);
       boundAutogrow();
     }
 
@@ -1563,6 +1568,13 @@
 
     if (self.is('fullscreen')) {
       self.preview();
+    }
+
+    //firefox has trouble with importing and working out the size right away
+    if (self.settings.autogrow) {
+      setTimeout(function () {
+        self._autogrow();
+      }, 100);
     }
 
     return this;

@@ -352,4 +352,73 @@ describe('EpicEditor([options])', function () {
       }, 150);
     });
   });
+  describe('options.autogrow', function () {
+    var loggedSize
+      , editor
+      , smallText = "hey"
+      , mediumText = "hey\n\n\n\n\n\n\nthere\n\n\n\n\n\n\nman"
+      , longText = "\n\n\n\n\n\n\n\n\nhello\n\n\n\n\n\n\n\n\n\n\n\n\nhey\n\n\n\n\n\n\n\n\n\nwhat\n\n\n\n\n\n\n\n\n\n\n\n\nwoah";
+
+    function getSize() {
+      return editor.getElement('wrapperIframe').offsetHeight;
+    }
+
+    function logSize() {
+      loggedSize = getSize();
+    }
+
+    it('should not autogrow', function () {
+      opts.autogrow = false;
+      opts.file.defaultContent = mediumText;
+      editor = new EpicEditor(opts).load();
+      logSize();
+
+      editor.importFile("temp", smallText);
+      expect(getSize()).to.be(loggedSize);
+
+      editor.importFile("temp", longText);
+      expect(getSize()).to.be(loggedSize);
+    });
+
+    it('should autogrow', function () {
+      opts.autogrow = true;
+      opts.file.defaultContent = mediumText;
+
+      editor = new EpicEditor(opts).load();
+      logSize();
+
+      editor.importFile("temp", smallText);
+      expect(getSize()).to.be.lessThan(loggedSize);
+
+      editor.importFile("temp", longText);
+      expect(getSize()).to.be.greaterThan(loggedSize);
+    });
+
+    it('should not exceed limits', function () {
+      opts.autogrow = {
+        minHeight: 100
+      , maxHeight: 150
+      }
+      opts.file.defaultContent = mediumText;
+
+      editor = new EpicEditor(opts).load();
+
+      editor.importFile("temp", smallText);
+      expect(getSize()).to.be(opts.autogrow.minHeight);
+
+      editor.importFile("temp", longText);
+      expect(getSize()).to.be(opts.autogrow.maxHeight);
+    });
+
+    it('should scroll', function () {
+      var oldScroll = window.pageYOffset;
+      opts.autogrow = true;
+      opts.file.defaultContent = mediumText;
+
+      editor = new EpicEditor(opts).load();
+
+      editor.importFile("temp", smallText);
+      expect(window.pageYOffset).to.be.lessThan(oldScroll);
+    });
+  });
 });
