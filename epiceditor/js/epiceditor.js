@@ -101,7 +101,7 @@
   function _outerHeight(el) {
     var b = parseInt(_getStyle(el, 'border-top-width'), 10) + parseInt(_getStyle(el, 'border-bottom-width'), 10)
       , p = parseInt(_getStyle(el, 'padding-top'), 10) + parseInt(_getStyle(el, 'padding-bottom'), 10)
-      , w = el.offsetHeight
+      , w = parseInt(_getStyle(el, 'height'), 10)
       , t;
     // For IE in case no border is set and it defaults to "medium"
     if (isNaN(b)) { b = 0; }
@@ -1070,6 +1070,11 @@
         self._autogrow();
       }
 
+      if (_isIE() > -1) {
+        //this is a temporary shim until the IE whitespace bug is fixed (Ticket #264)
+        self.getElement("editor").documentElement.addEventListener("keydown", boundAutogrow);
+        self.getElement("editor").documentElement.addEventListener("keyup", boundAutogrow);
+      }
       self.on("update", boundAutogrow);
       self.on("edit", boundAutogrow);
       self.on("preview", boundAutogrow);
@@ -1731,35 +1736,23 @@
       , minHeight
       , maxHeight
       , el
-      , style
-      , _pxToInt;
+      , style;
 
     //autogrow in fullscreen in nonsensical
-    if (!this.is("fullscreen")) {
-      if (this.is("edit")) {
-        el = this.getElement('editor');
+    if (!this.is('fullscreen')) {
+      if (this.is('edit')) {
+        el = this.getElement('editor').documentElement;
       }
       else {
-        el = this.getElement('previewer');
+        el = this.getElement('previewer').documentElement;
       }
 
-      if (_isIE()) {
-        _pxToInt = function (val) {
-          return parseInt(val.substring(0, val.length - 2), 10);
-        }
-        style = window.getComputedStyle(el.documentElement, null);
-        editorHeight = el.body.scrollHeight + _pxToInt(style.getPropertyValue("padding-top")) + _pxToInt(style.getPropertyValue("padding-bottom")) +
-                                              _pxToInt(style.getPropertyValue("margin-top")) + _pxToInt(style.getPropertyValue("margin-bottom")) + 28;
-      }
-      else {
-        editorHeight = el.documentElement.scrollHeight;
-      }
-
+      editorHeight = _outerHeight(el);
       newHeight = editorHeight;
 
       //handle minimum
       minHeight = this.settings.autogrow.minHeight;
-      if (typeof minHeight === "function") {
+      if (typeof minHeight === 'function') {
         minHeight = minHeight(this);
       }
 
@@ -1769,7 +1762,7 @@
 
       //handle maximum
       maxHeight = this.settings.autogrow.maxHeight;
-      if (typeof maxHeight === "function") {
+      if (typeof maxHeight === 'function') {
         maxHeight = maxHeight(this);
       }
 
@@ -1779,7 +1772,7 @@
 
       //actual resize
       if (newHeight != this.oldHeight) {
-        this.getElement("container").style.height = newHeight + "px";
+        this.getElement('container').style.height = newHeight + 'px';
         this.reflow();
         if (this.settings.autogrow.scroll) {
           window.scrollBy(0, newHeight - this.oldHeight);
