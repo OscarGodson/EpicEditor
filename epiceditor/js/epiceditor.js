@@ -1071,18 +1071,24 @@
       self.getElement('previewer').documentElement.style.overflow = 'hidden';
 
       boundAutogrow = function () {
-        self._autogrow();
+        setTimeout(function () {
+          self._autogrow();
+        }, 1);
       }
 
-      if (_isIE() > -1) {
-        //this is a temporary shim until the IE whitespace bug is fixed (Ticket #264)
-        self.getElement('editor').documentElement.addEventListener('keydown', boundAutogrow);
-        self.getElement('editor').documentElement.addEventListener('keyup', boundAutogrow);
-      }
-
+      //for if autosave is disabled or very slow
+      self.getElement('editor').documentElement.addEventListener('keydown', boundAutogrow);
+      self.getElement('editor').documentElement.addEventListener('keyup', boundAutogrow);
+      self.getElement('editor').documentElement.addEventListener('paste', boundAutogrow);
+      self.getElement('editor').documentElement.addEventListener('copy', boundAutogrow);
+      self.getElement('editor').documentElement.addEventListener('cut', boundAutogrow);
+      
       self.on('update', boundAutogrow);
       self.on('edit', boundAutogrow);
       self.on('preview', boundAutogrow);
+
+      //for browsers that have rendering delays
+      setTimeout(boundAutogrow, 50);
       boundAutogrow();
     }
 
@@ -1574,7 +1580,7 @@
     if (self.settings.autogrow) {
       setTimeout(function () {
         self._autogrow();
-      }, 100);
+      }, 50);
     }
 
     return this;
