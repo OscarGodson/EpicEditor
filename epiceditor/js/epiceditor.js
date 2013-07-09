@@ -1082,7 +1082,7 @@
       self.getElement('editor').documentElement.addEventListener('paste', boundAutogrow);
       self.getElement('editor').documentElement.addEventListener('cut', boundAutogrow);
       
-      self.on('update', boundAutogrow);
+      self.on('__update', boundAutogrow);
       self.on('edit', function () {
         setTimeout(boundAutogrow, 50)
       });
