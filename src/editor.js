@@ -1080,7 +1080,6 @@
       self.getElement('editor').documentElement.addEventListener('keydown', boundAutogrow);
       self.getElement('editor').documentElement.addEventListener('keyup', boundAutogrow);
       self.getElement('editor').documentElement.addEventListener('paste', boundAutogrow);
-      self.getElement('editor').documentElement.addEventListener('copy', boundAutogrow);
       self.getElement('editor').documentElement.addEventListener('cut', boundAutogrow);
       
       self.on('update', boundAutogrow);
