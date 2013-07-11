@@ -1074,13 +1074,12 @@
         setTimeout(function () {
           self._autogrow();
         }, 1);
-      }
+      };
 
       //for if autosave is disabled or very slow
-      self.getElement('editor').documentElement.addEventListener('keydown', boundAutogrow);
-      self.getElement('editor').documentElement.addEventListener('keyup', boundAutogrow);
-      self.getElement('editor').documentElement.addEventListener('paste', boundAutogrow);
-      self.getElement('editor').documentElement.addEventListener('cut', boundAutogrow);
+      ['keydown', 'keyup', 'paste', 'cut'].forEach(function (ev) {
+        self.getElement('editor').addEventListener(ev, boundAutogrow);
+      });
       
       self.on('__update', boundAutogrow);
       self.on('edit', function () {
