@@ -680,6 +680,10 @@
     // TODO: Move into fullscreen setup function (_setupFullscreen)
     _elementStates = {}
     self._goFullscreen = function (el) {
+      if (self.settings.autogrow) {
+        self.getElement('editor').documentElement.style.overflow = "auto";
+        self.getElement('previewer').documentElement.style.overflow = "auto";
+      }
 
       if (self.is('fullscreen')) {
         self._exitFullscreen(el);
@@ -779,6 +783,11 @@
     };
 
     self._exitFullscreen = function (el) {
+      if (self.settings.autogrow) {
+        self.getElement('editor').documentElement.style.overflow = 'hidden';
+        self.getElement('previewer').documentElement.style.overflow = 'hidden';
+      }
+
       _saveStyleState(self.element, 'apply', _elementStates.element);
       _saveStyleState(self.iframeElement, 'apply', _elementStates.iframeElement);
       _saveStyleState(self.editorIframe, 'apply', _elementStates.editorIframe);
@@ -1760,6 +1769,7 @@
 
     //autogrow in fullscreen is nonsensical
     if (!this.is('fullscreen')) {
+      console.log('autogrow');
       if (this.is('edit')) {
         el = this.getElement('editor').documentElement;
       }
