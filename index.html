@@ -62,7 +62,6 @@
   localStorageName: &#39;epiceditor&#39;,
   useNativeFullscreen: true,
   parser: marked,
-  showButtons: &quot;auto&quot;,
   file: {
     name: &#39;epiceditor&#39;,
     defaultContent: &#39;&#39;,
@@ -75,7 +74,8 @@
   },
   button: {
     preview: true,
-    fullscreen: true
+    fullscreen: true,
+    bar: &quot;auto&quot;
   },
   focusOnLoad: false,
   shortcut: {
@@ -138,11 +138,6 @@ var editor = new EpicEditor(opts);</code></pre>
     <td><code>false</code></td>
   </tr>
   <tr>
-    <td><code>showButtons</code></td>
-    <td>If <code>true</code> or <code>&quot;show&quot;</code>, any defined buttons will always be visible. If <code>false</code> or <code>&quot;hide&quot;</code>, any defined buttons will never be visible. If <code>&quot;auto&quot;</code>, buttons will usually be hidden, but shown if whenever the mouse is moved.</td>
-    <td><code>&quot;auto&quot;</code></td>
-  </tr>
-  <tr>
     <td><code>file.name</code></td>
     <td>If no file exists with this name a new one will be made, otherwise the existing will be opened.</td>
     <td>container ID</td>
@@ -186,6 +181,11 @@ var editor = new EpicEditor(opts);</code></pre>
     <td><code>button.fullscreen</code></td>
     <td>If set to <code>false</code> will remove the fullscreen button.</td>
     <td><code>true</code></td>
+  </tr>
+  <tr>
+    <td><code>button.bar</code></td>
+    <td>If <code>true</code> or <code>&quot;show&quot;</code>, any defined buttons will always be visible. If <code>false</code> or <code>&quot;hide&quot;</code>, any defined buttons will never be visible. If <code>&quot;auto&quot;</code>, buttons will usually be hidden, but shown if whenever the mouse is moved.</td>
+    <td><code>&quot;auto&quot;</code></td>
   </tr>
   <tr>
     <td><code>shortcut.modifier</code></td>

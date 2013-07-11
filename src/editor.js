@@ -355,8 +355,10 @@
           , toggleFullscreen: 'Enter Fullscreen'
           }
         , parser: typeof marked == 'function' ? marked : null
-        , button: { fullscreen: true, preview: true }
-        , showButtons: "auto"
+        , button: { fullscreen: true
+          , preview: true
+          , bar: "auto"
+          }
         }
       , defaultStorage;
 
@@ -418,12 +420,12 @@
       }
     }
 
-    if (self.settings.showButtons === "show") {
-      self.settings.showButtons = true;
+    if (self.settings.button.bar === "show") {
+      self.settings.button.bar = true;
     }
 
-    if (self.settings.showButtons === "hide") {
-      self.settings.showButtons = false;
+    if (self.settings.button.bar === "hide") {
+      self.settings.button.bar = false;
     }
 
     // Protect the id and overwrite if passed in as an option
@@ -872,7 +874,7 @@
     utilBar = self.iframe.getElementById('epiceditor-utilbar');
 
     // Hide it at first until they move their mouse
-    if (self.settings.showButtons !== true) {
+    if (self.settings.button.bar !== true) {
       utilBar.style.display = 'none';
     }
 
@@ -883,7 +885,7 @@
     });
 
     function utilBarHandler(e) {
-      if (self.settings.showButtons !== "auto") {
+      if (self.settings.button.bar !== "auto") {
         return;
       }
       // Here we check if the mouse has moves more than 5px in any direction before triggering the mousemove code
