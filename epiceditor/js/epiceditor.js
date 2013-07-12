@@ -101,7 +101,7 @@
   function _outerHeight(el) {
     var b = parseInt(_getStyle(el, 'border-top-width'), 10) + parseInt(_getStyle(el, 'border-bottom-width'), 10)
       , p = parseInt(_getStyle(el, 'padding-top'), 10) + parseInt(_getStyle(el, 'padding-bottom'), 10)
-      , w = el.offsetHeight
+      , w = parseInt(_getStyle(el, 'height'), 10)
       , t;
     // For IE in case no border is set and it defaults to "medium"
     if (isNaN(b)) { b = 0; }
@@ -356,8 +356,13 @@
           }
         , parser: typeof marked == 'function' ? marked : null
         , button: { fullscreen: true, preview: true }
+        , autogrow: false
         }
-      , defaultStorage;
+      , defaultStorage
+      , autogrowDefaults = { minHeight: 80
+        , maxHeight: false
+        , scroll: true
+        };
 
     self.settings = _mergeObjs(true, defaults, opts);
     
@@ -370,6 +375,16 @@
       self.settings.parser = function (str) {
         return str;
       }
+    }
+
+    if (self.settings.autogrow) {
+      if (self.settings.autogrow === true) {
+        self.settings.autogrow = autogrowDefaults;
+      }
+      else {
+        self.settings.autogrow = _mergeObjs(true, autogrowDefaults, self.settings.autogrow);
+      }
+      self._oldHeight = -1;
     }
 
     // If you put an absolute link as the path of any of the themes ignore the basePath
@@ -499,7 +514,8 @@
       , isMod = false
       , isCtrl = false
       , eventableIframes
-      , i; // i is reused for loops
+      , i // i is reused for loops
+      , boundAutogrow;
 
     // Startup is a way to check if this EpicEditor is starting up. Useful for
     // checking and doing certain things before EpicEditor emits a load event.
@@ -542,6 +558,7 @@
     
     // The previewer is just an empty box for the generated HTML to go into
     , previewer: '<div id="epiceditor-preview"></div>'
+    , editor: '<!doctype HTML>'
     };
 
     // Write an iframe and then select it for the editor
@@ -572,7 +589,7 @@
     self.editorIframeDocument = _getIframeInnards(self.editorIframe);
     self.editorIframeDocument.open();
     // Need something for... you guessed it, Firefox
-    self.editorIframeDocument.write('');
+    self.editorIframeDocument.write(_HtmlTemplates.editor);
     self.editorIframeDocument.close();
     
     // Setup the previewer iframe
@@ -663,6 +680,10 @@
     // TODO: Move into fullscreen setup function (_setupFullscreen)
     _elementStates = {}
     self._goFullscreen = function (el) {
+      if (self.settings.autogrow) {
+        self.getElement('editor').documentElement.style.overflow = "auto";
+        self.getElement('previewer').documentElement.style.overflow = "auto";
+      }
 
       if (self.is('fullscreen')) {
         self._exitFullscreen(el);
@@ -762,6 +783,11 @@
     };
 
     self._exitFullscreen = function (el) {
+      if (self.settings.autogrow) {
+        self.getElement('editor').documentElement.style.overflow = 'hidden';
+        self.getElement('previewer').documentElement.style.overflow = 'hidden';
+      }
+
       _saveStyleState(self.element, 'apply', _elementStates.element);
       _saveStyleState(self.iframeElement, 'apply', _elementStates.iframeElement);
       _saveStyleState(self.editorIframe, 'apply', _elementStates.editorIframe);
@@ -1047,6 +1073,36 @@
 
     self.iframe.close();
     self._eeState.startup = false;
+
+    if (self.settings.autogrow) {
+      //prevent ugly temprorary scroll bars
+      self.getElement('editor').documentElement.style.overflow = 'hidden';
+      self.getElement('previewer').documentElement.style.overflow = 'hidden';
+
+      boundAutogrow = function () {
+        setTimeout(function () {
+          self._autogrow();
+        }, 1);
+      };
+
+      //for if autosave is disabled or very slow
+      ['keydown', 'keyup', 'paste', 'cut'].forEach(function (ev) {
+        self.getElement('editor').addEventListener(ev, boundAutogrow);
+      });
+      
+      self.on('__update', boundAutogrow);
+      self.on('edit', function () {
+        setTimeout(boundAutogrow, 50)
+      });
+      self.on('preview', function () {
+        setTimeout(boundAutogrow, 50)
+      });
+
+      //for browsers that have rendering delays
+      setTimeout(boundAutogrow, 50);
+      boundAutogrow();
+    }
+
     // The callback and call are the same thing, but different ways to access them
     callback.call(this);
     this.emit('load');
@@ -1531,6 +1587,13 @@
       self.preview();
     }
 
+    //firefox has trouble with importing and working out the size right away
+    if (self.settings.autogrow) {
+      setTimeout(function () {
+        self._autogrow();
+      }, 50);
+    }
+
     return this;
   };
 
@@ -1691,6 +1754,62 @@
     // Otherwise a handler and event exist, so take care of it
     this.events[ev].splice(this.events[ev].indexOf(handler), 1);
     return self;
+  }
+
+  /**
+   * Handles autogrowing the editor
+   */
+  EpicEditor.prototype._autogrow = function () {
+    var editorHeight
+      , newHeight
+      , minHeight
+      , maxHeight
+      , el
+      , style;
+
+    //autogrow in fullscreen is nonsensical
+    if (!this.is('fullscreen')) {
+      console.log('autogrow');
+      if (this.is('edit')) {
+        el = this.getElement('editor').documentElement;
+      }
+      else {
+        el = this.getElement('previewer').documentElement;
+      }
+
+      editorHeight = _outerHeight(el);
+      newHeight = editorHeight;
+
+      //handle minimum
+      minHeight = this.settings.autogrow.minHeight;
+      if (typeof minHeight === 'function') {
+        minHeight = minHeight(this);
+      }
+
+      if (minHeight && newHeight < minHeight) {
+        newHeight = minHeight;
+      }
+
+      //handle maximum
+      maxHeight = this.settings.autogrow.maxHeight;
+      if (typeof maxHeight === 'function') {
+        maxHeight = maxHeight(this);
+      }
+
+      if (maxHeight && newHeight > maxHeight) {
+        newHeight = maxHeight;
+      }
+
+      //actual resize
+      if (newHeight != this.oldHeight) {
+        this.getElement('container').style.height = newHeight + 'px';
+        this.reflow();
+        if (this.settings.autogrow.scroll) {
+          window.scrollBy(0, newHeight - this.oldHeight);
+        }
+        this.oldHeight = newHeight;
+      }
+    }
   }
 
   EpicEditor.version = '0.2.1';

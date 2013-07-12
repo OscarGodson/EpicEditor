@@ -81,7 +81,8 @@ var opts = {
     togglePreview: 'Toggle Preview Mode',
     toggleEdit: 'Toggle Edit Mode',
     toggleFullscreen: 'Enter Fullscreen'
-  }
+  },
+  autogrow: false
 }
 var editor = new EpicEditor(opts);
 ```
@@ -207,6 +208,26 @@ var editor = new EpicEditor(opts);
     <td><code>string.toggleFullscreen</code></td>
     <td>The tooltip text that appears when hovering the fullscreen icon.</td>
     <td><code>Enter Fullscreen</code></td>
+  </tr>
+  <tr>
+    <td><code>autogrow</code></td>
+    <td>Whether to autogrow EpicEditor to fit its contents. If autogrow is desired one can either specify <code>true</code>, meaning to use default autogrow settings, or an object to define custom settings</td>
+    <td><code>false</code></td>
+  </tr>
+  <tr>
+    <td><code>autogrow.minHeight</code></td>
+    <td>The minimum height (in pixels) that the editor should ever shrink to. This may also take a function that returns the desired minHeight if this is not a constant, or a falsey value if no minimum is desired</td>
+    <td><code>80</code></td>
+  </tr>
+  <tr>
+    <td><code>autogrow.maxHeight</code></td>
+    <td>The maximum height (in pixels) that the editor should ever grow to. This may also take a function that returns the desired maxHeight if this is not a constant, or a falsey value if no maximum is desired</td>
+    <td><code>false</code></td>
+  </tr>
+  <tr>
+    <td><code>autogrow.scroll</code></td>
+    <td>Whether the page should scroll to keep the caret in the same vertical place while autogrowing (recommended for mobile in particular)</td>
+    <td><code>true</code></td>
   </tr>
 </table>
 
@@ -524,7 +545,7 @@ created, removed, or updated. Below is a complete list of currently supported ev
   </tr>
   <tr>
     <td><code>reflow</code></td>
-    <td>Fires whenever <code>reflow()</code> is called. Will return the new dimensions in the callback.</td>
+    <td>Fires whenever <code>reflow()</code> is called. Will return the new dimensions in the callback. Will also fire every time there is a resize from autogrow.</td>
   </tr>
 </table>
 
