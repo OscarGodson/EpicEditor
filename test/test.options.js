@@ -79,13 +79,13 @@ describe('EpicEditor([options])', function () {
       opts.button = {bar: 'hide'};
       editor = new EpicEditor(opts).load();
       var wrapper = editor.getElement('wrapper');
-      expect($(wrapper).find('[class*="btn"]').is(":visible")).to.be(false);
+      expect($(wrapper).find('#epiceditor-utilbar').is(":visible")).to.be(false);
     });
     it('should always show buttons if bar is show', function () {
       opts.button = {bar: 'show'};
       editor = new EpicEditor(opts).load();
       var wrapper = editor.getElement('wrapper');
-      expect($(wrapper).find('[class*="btn"]').is(":hidden")).to.be(false);
+      expect($(wrapper).find('#epiceditor-utilbar').is(":hidden")).to.be(false);
     });
   });
 
