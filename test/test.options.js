@@ -75,6 +75,18 @@ describe('EpicEditor([options])', function () {
       expect(wrapper.getElementsByClassName('epiceditor-toggle-edit-btn').length)
         .to.equal(1);
     });
+    it('should always hide buttons if bar is hide', function () {
+      opts.button = {bar: 'hide'};
+      editor = new EpicEditor(opts).load();
+      var wrapper = editor.getElement('wrapper');
+      expect($(wrapper).find('#epiceditor-utilbar').is(":visible")).to.be(false);
+    });
+    it('should always show buttons if bar is show', function () {
+      opts.button = {bar: 'show'};
+      editor = new EpicEditor(opts).load();
+      var wrapper = editor.getElement('wrapper');
+      expect($(wrapper).find('#epiceditor-utilbar').is(":hidden")).to.be(false);
+    });
   });
 
   it('should allow the container option to be passed as an element ID string', function () {
