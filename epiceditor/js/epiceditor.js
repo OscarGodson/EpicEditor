@@ -355,8 +355,11 @@
           , toggleFullscreen: 'Enter Fullscreen'
           }
         , parser: typeof marked == 'function' ? marked : null
-        , button: { fullscreen: true, preview: true }
         , autogrow: false
+        , button: { fullscreen: true
+          , preview: true
+          , bar: "auto"
+          }
         }
       , defaultStorage
       , autogrowDefaults = { minHeight: 80
@@ -430,6 +433,14 @@
           self.settings.file.name = '__epiceditor-untitled-' + EpicEditor._data.unnamedEditors.length;
         }
       }
+    }
+
+    if (self.settings.button.bar === "show") {
+      self.settings.button.bar = true;
+    }
+
+    if (self.settings.button.bar === "hide") {
+      self.settings.button.bar = false;
     }
 
     // Protect the id and overwrite if passed in as an option
@@ -883,7 +894,9 @@
     utilBar = self.iframe.getElementById('epiceditor-utilbar');
 
     // Hide it at first until they move their mouse
-    utilBar.style.display = 'none';
+    if (self.settings.button.bar !== true) {
+      utilBar.style.display = 'none';
+    }
 
     utilBar.addEventListener('mouseover', function () {
       if (utilBarTimer) {
@@ -892,6 +905,9 @@
     });
 
     function utilBarHandler(e) {
+      if (self.settings.button.bar !== "auto") {
+        return;
+      }
       // Here we check if the mouse has moves more than 5px in any direction before triggering the mousemove code
       // we do this for 2 reasons:
       // 1. On Mac OS X lion when you scroll and it does the iOS like "jump" when it hits the top/bottom of the page itll fire off
