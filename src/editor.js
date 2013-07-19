@@ -680,10 +680,7 @@
     // TODO: Move into fullscreen setup function (_setupFullscreen)
     _elementStates = {}
     self._goFullscreen = function (el) {
-      if (self.settings.autogrow) {
-        self.getElement('editor').documentElement.style.overflow = "auto";
-        self.getElement('previewer').documentElement.style.overflow = "auto";
-      }
+      this._fixScrollbars('auto');
 
       if (self.is('fullscreen')) {
         self._exitFullscreen(el);
@@ -783,10 +780,7 @@
     };
 
     self._exitFullscreen = function (el) {
-      if (self.settings.autogrow) {
-        self.getElement('editor').documentElement.style.overflow = 'hidden';
-        self.getElement('previewer').documentElement.style.overflow = 'hidden';
-      }
+      this._fixScrollbars();
 
       _saveStyleState(self.element, 'apply', _elementStates.element);
       _saveStyleState(self.iframeElement, 'apply', _elementStates.iframeElement);
@@ -1075,9 +1069,7 @@
     self._eeState.startup = false;
 
     if (self.settings.autogrow) {
-      //prevent ugly temprorary scroll bars
-      self.getElement('editor').documentElement.style.overflow = 'hidden';
-      self.getElement('previewer').documentElement.style.overflow = 'hidden';
+      self._fixScrollbars();
 
       boundAutogrow = function () {
         setTimeout(function () {
@@ -1765,11 +1757,11 @@
       , minHeight
       , maxHeight
       , el
-      , style;
+      , style
+      , maxedOut = false;
 
     //autogrow in fullscreen is nonsensical
     if (!this.is('fullscreen')) {
-      console.log('autogrow');
       if (this.is('edit')) {
         el = this.getElement('editor').documentElement;
       }
@@ -1798,6 +1790,13 @@
 
       if (maxHeight && newHeight > maxHeight) {
         newHeight = maxHeight;
+        maxedOut = true;
+      }
+
+      if (maxedOut) {
+        this._fixScrollbars('auto');
+      } else {
+        this._fixScrollbars('hidden');
       }
 
       //actual resize
@@ -1810,6 +1809,23 @@
         this.oldHeight = newHeight;
       }
     }
+  }
+
+  /**
+   * Shows or hides scrollbars based on the autogrow setting
+   * @param {string} forceSetting a value to force the overflow to
+   */
+  EpicEditor.prototype._fixScrollbars = function (forceSetting) {
+    var setting;
+    if (this.settings.autogrow) {
+      setting = 'hidden';
+    }
+    else {
+      setting = 'auto';
+    }
+    setting = forceSetting || setting;
+    this.getElement('editor').documentElement.style.overflow = setting;
+    this.getElement('previewer').documentElement.style.overflow = setting;
   }
 
   EpicEditor.version = '@VERSION';
