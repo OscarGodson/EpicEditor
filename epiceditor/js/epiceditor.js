@@ -165,28 +165,22 @@
   }
 
   function _setText(el, content) {
-    // If you want to know why we check for typeof string, see comment
-    // in the _getText function
-    if (typeof document.body.innerText == 'string') {
-      content = content.replace(/ /g, '\u00a0');
-      el.innerText = content;
-    }
-    else {
-      // Don't convert lt/gt characters as HTML when viewing the editor window
-      // TODO: Write a test to catch regressions for this
-      content = content.replace(/</g, '&lt;');
-      content = content.replace(/>/g, '&gt;');
-      content = content.replace(/\n/g, '<br>');
-      
-      // Make sure to there aren't two spaces in a row (replace one with &nbsp;)
-      // If you find and replace every space with a &nbsp; text will not wrap.
-      // Hence the name (Non-Breaking-SPace).
-      // TODO: Probably need to test this somehow...
-      content = content.replace(/<br>\s/g, '<br>&nbsp;')
-      content = content.replace(/\s\s\s/g, '&nbsp; &nbsp;')
-      content = content.replace(/\s\s/g, '&nbsp; ')
-      el.innerHTML = content;
-    }
+    // Don't convert lt/gt characters as HTML when viewing the editor window
+    // TODO: Write a test to catch regressions for this
+    content = content.replace(/</g, '&lt;');
+    content = content.replace(/>/g, '&gt;');
+    content = content.replace(/\n/g, '<br>');
+    
+    // Make sure to there aren't two spaces in a row (replace one with &nbsp;)
+    // If you find and replace every space with a &nbsp; text will not wrap.
+    // Hence the name (Non-Breaking-SPace).
+    // TODO: Probably need to test this somehow...
+    content = content.replace(/<br>\s/g, '<br>&nbsp;')
+    content = content.replace(/\s\s\s/g, '&nbsp; &nbsp;')
+    content = content.replace(/\s\s/g, '&nbsp; ')
+    content = content.replace(/^ /, '&nbsp;')
+
+    el.innerHTML = content;
     return true;
   }
 
