@@ -33,7 +33,9 @@ $(function () {
       { container: 'example-1'
       , file: { defaultContent: "#EpicEditor\nThis is some default content. Go ahead, _change me_. " }
       , focusOnLoad: true
-      , autogrow: true
+      , autogrow: {
+          minHeight: 350
+        }
       }
     , editor = new EpicEditor(opts).load()
     , example = new EpicEditor()
