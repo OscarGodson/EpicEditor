@@ -69,7 +69,8 @@ var opts = {
   },
   button: {
     preview: true,
-    fullscreen: true
+    fullscreen: true,
+    bar: "auto"
   },
   focusOnLoad: false,
   shortcut: {
@@ -81,7 +82,8 @@ var opts = {
     togglePreview: 'Toggle Preview Mode',
     toggleEdit: 'Toggle Edit Mode',
     toggleFullscreen: 'Enter Fullscreen'
-  }
+  },
+  autogrow: false
 }
 var editor = new EpicEditor(opts);
 ```
@@ -105,7 +107,7 @@ var editor = new EpicEditor(opts);
   </tr>
   <tr>
     <td><code>basePath</code></td>
-    <td>The base path of the directory containing the <code>/themes</code>, <code>/images</code>, etc.</td>
+    <td>The base path of the directory containing the <code>/themes</code>.</td>
     <td><code>epiceditor</code></td>
   </tr>
   <tr>
@@ -179,6 +181,11 @@ var editor = new EpicEditor(opts);
     <td><code>true</code></td>
   </tr>
   <tr>
+    <td><code>button.bar</code></td>
+    <td>If <code>true</code> or <code>"show"</code>, any defined buttons will always be visible. If <code>false</code> or <code>"hide"</code>, any defined buttons will never be visible. If <code>"auto"</code>, buttons will usually be hidden, but shown if whenever the mouse is moved.</td>
+    <td><code>"auto"</code></td>
+  </tr>
+  <tr>
     <td><code>shortcut.modifier</code></td>
     <td>The key to hold while holding the other shortcut keys to trigger a key combo.</td>
     <td><code>18</code> (<code>alt</code> key)</td>
@@ -207,6 +214,26 @@ var editor = new EpicEditor(opts);
     <td><code>string.toggleFullscreen</code></td>
     <td>The tooltip text that appears when hovering the fullscreen icon.</td>
     <td><code>Enter Fullscreen</code></td>
+  </tr>
+  <tr>
+    <td><code>autogrow</code></td>
+    <td>Whether to autogrow EpicEditor to fit its contents. If autogrow is desired one can either specify <code>true</code>, meaning to use default autogrow settings, or an object to define custom settings</td>
+    <td><code>false</code></td>
+  </tr>
+  <tr>
+    <td><code>autogrow.minHeight</code></td>
+    <td>The minimum height (in pixels) that the editor should ever shrink to. This may also take a function that returns the desired minHeight if this is not a constant, or a falsey value if no minimum is desired</td>
+    <td><code>80</code></td>
+  </tr>
+  <tr>
+    <td><code>autogrow.maxHeight</code></td>
+    <td>The maximum height (in pixels) that the editor should ever grow to. This may also take a function that returns the desired maxHeight if this is not a constant, or a falsey value if no maximum is desired</td>
+    <td><code>false</code></td>
+  </tr>
+  <tr>
+    <td><code>autogrow.scroll</code></td>
+    <td>Whether the page should scroll to keep the caret in the same vertical place while autogrowing (recommended for mobile in particular)</td>
+    <td><code>true</code></td>
   </tr>
 </table>
 
@@ -267,7 +294,9 @@ fullscreenBtn.onclick = function () {
 
 ### open(_filename_)
 
-Opens a file into the editor.
+Opens a client side storage file into the editor.
+
+**Note:** This does _not_ open files on your server or machine (yet). This simply looks in localStorage where EpicEditor stores drafts.
 
 ```javascript
 openFileBtn.onclick = function () {
@@ -277,7 +306,9 @@ openFileBtn.onclick = function () {
 
 ### importFile([_filename_],[_content_])
 
-Imports a string of content into a file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX. Will also run `.open()` after import automatically.
+Imports a string of content into a client side storage file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX. Will also run `.open()` after import automatically.
+
+**Note:** This does _not_ import files on your server or machine (yet). This simply looks in localStorage where EpicEditor stores drafts.
 
 ```javascript
 importFileBtn.onclick = function () {
@@ -287,10 +318,13 @@ importFileBtn.onclick = function () {
 
 ### exportFile([_filename_],[_type_])
 
-Returns the plain text of the file by default, or if given a type will return the content in the specified type. If you leave both parameters null it will return the current document's content in plain text. The supported export file types are:
+Returns the plain text of the client side storage file, or if given a `type`, will return the content in the specified type. If you leave both parameters `null` it will return the current document's content in plain text. The supported export file types are:
+
+**Note:** This does _not_ export files to your server or machine (yet). This simply looks in localStorage where EpicEditor stores drafts.
 
 * text (default)
 * html
+* json (includes metadata)
 * raw (warning: this is browser specific!)
 
 ```javascript
@@ -304,7 +338,9 @@ syncWithServerBtn.onclick = function () {
 
 ### rename(_oldName_, _newName_)
 
-Renames a file.
+Renames a client side storage file.
+
+**Note:** This does _not_ rename files on your server or machine (yet). This simply looks in localStorage where EpicEditor stores drafts.
 
 ```javascript
 renameFileBtn.onclick = function () {
@@ -315,7 +351,9 @@ renameFileBtn.onclick = function () {
 
 ### save()
 
-Manually saves a file. EpicEditor will save continuously every 100ms by default, but if you set `autoSave` in the options to `false` or to longer intervals it's useful to manually save.
+Manually saves a file to client side storage (localStorage by default). EpicEditor will save continuously every 100ms by default, but if you set `autoSave` in the options to `false` or to longer intervals it's useful to manually save.
+
+**Note:** This does _not_ save files to your server or machine (yet). This simply looks in localStorage where EpicEditor stores drafts.
 
 ```javascript
 saveFileBtn.onclick = function () {
@@ -325,7 +363,9 @@ saveFileBtn.onclick = function () {
 
 ### remove(_name_)
 
-Deletes a file.
+Deletes a client side storage file.
+
+**Note:** This does _not_ remove files from your server or machine (yet). This simply looks in localStorage where EpicEditor stores drafts.
 
 ```javascript
 removeFileBtn.onclick = function () {
@@ -335,7 +375,9 @@ removeFileBtn.onclick = function () {
 
 ### getFiles([_name_], [_excludeContent_])
 
-If no `name` is given it returns an object containing the names and metadata of all file objects. If a `name` is specified it will return just the metadata of that single file object. If `excludeContent` is true, it will remove the content from the returned object. This is useful when you just want a list of files or get some meta data. If `excludeContent` is false (default), it'll return a `content` property per file in plain text format.
+If no `name` is given it returns an object containing the names and metadata of all client side storage file objects. If a `name` is specified it will return just the metadata of that single file object. If `excludeContent` is true, it will remove the content from the returned object. This is useful when you just want a list of files or get some meta data. If `excludeContent` is false (default), it'll return a `content` property per file in plain text format.
+
+**Note:** This does _not_ get files from your server or machine (yet). This simply looks in localStorage where EpicEditor stores drafts.
 
 ```javascript
 var files = editor.getFiles();
@@ -523,7 +565,7 @@ created, removed, or updated. Below is a complete list of currently supported ev
   </tr>
   <tr>
     <td><code>reflow</code></td>
-    <td>Fires whenever <code>reflow()</code> is called. Will return the new dimensions in the callback.</td>
+    <td>Fires whenever <code>reflow()</code> is called. Will return the new dimensions in the callback. Will also fire every time there is a resize from autogrow.</td>
   </tr>
 </table>
 
@@ -568,8 +610,8 @@ The HTML of a generated editor (excluding contents) looks like this:
             </html>
           </iframe>
           <div id="epiceditor-utilbar">
-            <img width="16" src="epiceditor/images/preview.png" class="epiceditor-toggle-btn">
-            <img width="16" src="epiceditor/images/fullscreen.png" class="epiceditor-fullscreen-btn">
+            <span title="Toggle Preview Mode" class="epiceditor-toggle-btn epiceditor-toggle-preview-btn"></span>
+            <span title="Enter Fullscreen" class="epiceditor-fullscreen-btn"></span>
           </div>
         </div>
       </body>

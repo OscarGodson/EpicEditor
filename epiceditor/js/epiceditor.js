@@ -101,7 +101,7 @@
   function _outerHeight(el) {
     var b = parseInt(_getStyle(el, 'border-top-width'), 10) + parseInt(_getStyle(el, 'border-bottom-width'), 10)
       , p = parseInt(_getStyle(el, 'padding-top'), 10) + parseInt(_getStyle(el, 'padding-bottom'), 10)
-      , w = el.offsetHeight
+      , w = parseInt(_getStyle(el, 'height'), 10)
       , t;
     // For IE in case no border is set and it defaults to "medium"
     if (isNaN(b)) { b = 0; }
@@ -165,28 +165,22 @@
   }
 
   function _setText(el, content) {
-    // If you want to know why we check for typeof string, see comment
-    // in the _getText function
-    if (typeof document.body.innerText == 'string') {
-      content = content.replace(/ /g, '\u00a0');
-      el.innerText = content;
-    }
-    else {
-      // Don't convert lt/gt characters as HTML when viewing the editor window
-      // TODO: Write a test to catch regressions for this
-      content = content.replace(/</g, '&lt;');
-      content = content.replace(/>/g, '&gt;');
-      content = content.replace(/\n/g, '<br>');
-      
-      // Make sure to there aren't two spaces in a row (replace one with &nbsp;)
-      // If you find and replace every space with a &nbsp; text will not wrap.
-      // Hence the name (Non-Breaking-SPace).
-      // TODO: Probably need to test this somehow...
-      content = content.replace(/<br>\s/g, '<br>&nbsp;')
-      content = content.replace(/\s\s\s/g, '&nbsp; &nbsp;')
-      content = content.replace(/\s\s/g, '&nbsp; ')
-      el.innerHTML = content;
-    }
+    // Don't convert lt/gt characters as HTML when viewing the editor window
+    // TODO: Write a test to catch regressions for this
+    content = content.replace(/</g, '&lt;');
+    content = content.replace(/>/g, '&gt;');
+    content = content.replace(/\n/g, '<br>');
+    
+    // Make sure to there aren't two spaces in a row (replace one with &nbsp;)
+    // If you find and replace every space with a &nbsp; text will not wrap.
+    // Hence the name (Non-Breaking-SPace).
+    // TODO: Probably need to test this somehow...
+    content = content.replace(/<br>\s/g, '<br>&nbsp;')
+    content = content.replace(/\s\s\s/g, '&nbsp; &nbsp;')
+    content = content.replace(/\s\s/g, '&nbsp; ')
+    content = content.replace(/^ /, '&nbsp;')
+
+    el.innerHTML = content;
     return true;
   }
 
@@ -355,9 +349,17 @@
           , toggleFullscreen: 'Enter Fullscreen'
           }
         , parser: typeof marked == 'function' ? marked : null
-        , button: { fullscreen: true, preview: true }
+        , autogrow: false
+        , button: { fullscreen: true
+          , preview: true
+          , bar: "auto"
+          }
         }
-      , defaultStorage;
+      , defaultStorage
+      , autogrowDefaults = { minHeight: 80
+        , maxHeight: false
+        , scroll: true
+        };
 
     self.settings = _mergeObjs(true, defaults, opts);
     
@@ -370,6 +372,16 @@
       self.settings.parser = function (str) {
         return str;
       }
+    }
+
+    if (self.settings.autogrow) {
+      if (self.settings.autogrow === true) {
+        self.settings.autogrow = autogrowDefaults;
+      }
+      else {
+        self.settings.autogrow = _mergeObjs(true, autogrowDefaults, self.settings.autogrow);
+      }
+      self._oldHeight = -1;
     }
 
     // If you put an absolute link as the path of any of the themes ignore the basePath
@@ -415,6 +427,14 @@
           self.settings.file.name = '__epiceditor-untitled-' + EpicEditor._data.unnamedEditors.length;
         }
       }
+    }
+
+    if (self.settings.button.bar === "show") {
+      self.settings.button.bar = true;
+    }
+
+    if (self.settings.button.bar === "hide") {
+      self.settings.button.bar = false;
     }
 
     // Protect the id and overwrite if passed in as an option
@@ -499,7 +519,8 @@
       , isMod = false
       , isCtrl = false
       , eventableIframes
-      , i; // i is reused for loops
+      , i // i is reused for loops
+      , boundAutogrow;
 
     // Startup is a way to check if this EpicEditor is starting up. Useful for
     // checking and doing certain things before EpicEditor emits a load event.
@@ -534,14 +555,15 @@
                   '<iframe frameborder="0" id="epiceditor-editor-frame"></iframe>' +
                   '<iframe frameborder="0" id="epiceditor-previewer-frame"></iframe>' +
                   '<div id="epiceditor-utilbar">' +
-                    (self._previewEnabled ? '<img width="30" src="' + this.settings.basePath + '/images/preview.png" title="' + this.settings.string.togglePreview + '" class="epiceditor-toggle-btn epiceditor-toggle-preview-btn"> ' : '') +
-                    (self._editEnabled ? '<img width="30" src="' + this.settings.basePath + '/images/edit.png" title="' + this.settings.string.toggleEdit + '" class="epiceditor-toggle-btn epiceditor-toggle-edit-btn"> ' : '') +
-                    (self._fullscreenEnabled ? '<img width="30" src="' + this.settings.basePath + '/images/fullscreen.png" title="' + this.settings.string.toggleFullscreen + '" class="epiceditor-fullscreen-btn">' : '') +
+                    (self._previewEnabled ? '<button title="' + this.settings.string.togglePreview + '" class="epiceditor-toggle-btn epiceditor-toggle-preview-btn"></button> ' : '') +
+                    (self._editEnabled ? '<button title="' + this.settings.string.toggleEdit + '" class="epiceditor-toggle-btn epiceditor-toggle-edit-btn"></button> ' : '') +
+                    (self._fullscreenEnabled ? '<button title="' + this.settings.string.toggleFullscreen + '" class="epiceditor-fullscreen-btn"></button>' : '') +
                   '</div>' +
                 '</div>'
     
     // The previewer is just an empty box for the generated HTML to go into
     , previewer: '<div id="epiceditor-preview"></div>'
+    , editor: '<!doctype HTML>'
     };
 
     // Write an iframe and then select it for the editor
@@ -572,7 +594,7 @@
     self.editorIframeDocument = _getIframeInnards(self.editorIframe);
     self.editorIframeDocument.open();
     // Need something for... you guessed it, Firefox
-    self.editorIframeDocument.write('');
+    self.editorIframeDocument.write(_HtmlTemplates.editor);
     self.editorIframeDocument.close();
     
     // Setup the previewer iframe
@@ -663,6 +685,7 @@
     // TODO: Move into fullscreen setup function (_setupFullscreen)
     _elementStates = {}
     self._goFullscreen = function (el) {
+      this._fixScrollbars('auto');
 
       if (self.is('fullscreen')) {
         self._exitFullscreen(el);
@@ -762,6 +785,8 @@
     };
 
     self._exitFullscreen = function (el) {
+      this._fixScrollbars();
+
       _saveStyleState(self.element, 'apply', _elementStates.element);
       _saveStyleState(self.iframeElement, 'apply', _elementStates.iframeElement);
       _saveStyleState(self.editorIframe, 'apply', _elementStates.editorIframe);
@@ -863,7 +888,9 @@
     utilBar = self.iframe.getElementById('epiceditor-utilbar');
 
     // Hide it at first until they move their mouse
-    utilBar.style.display = 'none';
+    if (self.settings.button.bar !== true) {
+      utilBar.style.display = 'none';
+    }
 
     utilBar.addEventListener('mouseover', function () {
       if (utilBarTimer) {
@@ -872,6 +899,9 @@
     });
 
     function utilBarHandler(e) {
+      if (self.settings.button.bar !== "auto") {
+        return;
+      }
       // Here we check if the mouse has moves more than 5px in any direction before triggering the mousemove code
       // we do this for 2 reasons:
       // 1. On Mac OS X lion when you scroll and it does the iOS like "jump" when it hits the top/bottom of the page itll fire off
@@ -944,6 +974,29 @@
       if (e.keyCode == 17) { isCtrl = false }
     }
 
+    function pasteHandler(e) {
+      var content;
+      if (e.clipboardData) {
+        //FF 22, Webkit, "standards"
+        e.preventDefault();
+        content = e.clipboardData.getData("text/plain");
+        self.editorIframeDocument.execCommand("insertText", false, content);
+      }
+      else if (window.clipboardData) {
+        //IE, "nasty"
+        e.preventDefault();
+        content = window.clipboardData.getData("Text");
+        content = content.replace(/</g, '&lt;');
+        content = content.replace(/>/g, '&gt;');
+        content = content.replace(/\n/g, '<br>');
+        content = content.replace(/\r/g, ''); //fuck you, ie!
+        content = content.replace(/<br>\s/g, '<br>&nbsp;')
+        content = content.replace(/\s\s\s/g, '&nbsp; &nbsp;')
+        content = content.replace(/\s\s/g, '&nbsp; ')
+        self.editorIframeDocument.selection.createRange().pasteHTML(content);
+      }
+    }
+
     // Hide and show the util bar based on mouse movements
     eventableIframes = [self.previewerIframeDocument, self.editorIframeDocument];
     
@@ -959,6 +1012,9 @@
       });
       eventableIframes[i].addEventListener('keydown', function (e) {
         shortcutHandler(e);
+      });
+      eventableIframes[i].addEventListener('paste', function (e) {
+        pasteHandler(e);
       });
     }
 
@@ -1021,6 +1077,34 @@
 
     self.iframe.close();
     self._eeState.startup = false;
+
+    if (self.settings.autogrow) {
+      self._fixScrollbars();
+
+      boundAutogrow = function () {
+        setTimeout(function () {
+          self._autogrow();
+        }, 1);
+      };
+
+      //for if autosave is disabled or very slow
+      ['keydown', 'keyup', 'paste', 'cut'].forEach(function (ev) {
+        self.getElement('editor').addEventListener(ev, boundAutogrow);
+      });
+      
+      self.on('__update', boundAutogrow);
+      self.on('edit', function () {
+        setTimeout(boundAutogrow, 50)
+      });
+      self.on('preview', function () {
+        setTimeout(boundAutogrow, 50)
+      });
+
+      //for browsers that have rendering delays
+      setTimeout(boundAutogrow, 50);
+      boundAutogrow();
+    }
+
     // The callback and call are the same thing, but different ways to access them
     callback.call(this);
     this.emit('load');
@@ -1505,6 +1589,13 @@
       self.preview();
     }
 
+    //firefox has trouble with importing and working out the size right away
+    if (self.settings.autogrow) {
+      setTimeout(function () {
+        self._autogrow();
+      }, 50);
+    }
+
     return this;
   };
 
@@ -1557,6 +1648,9 @@
       return self.settings.parser(content);
     case 'text':
       return _sanitizeRawContent(content);
+    case 'json':
+      file.content = _sanitizeRawContent(file.content);
+      return JSON.stringify(file);
     case 'raw':
       return content;
     default:
@@ -1664,7 +1758,87 @@
     return self;
   }
 
-  EpicEditor.version = '0.2.1.1';
+  /**
+   * Handles autogrowing the editor
+   */
+  EpicEditor.prototype._autogrow = function () {
+    var editorHeight
+      , newHeight
+      , minHeight
+      , maxHeight
+      , el
+      , style
+      , maxedOut = false;
+
+    //autogrow in fullscreen is nonsensical
+    if (!this.is('fullscreen')) {
+      if (this.is('edit')) {
+        el = this.getElement('editor').documentElement;
+      }
+      else {
+        el = this.getElement('previewer').documentElement;
+      }
+
+      editorHeight = _outerHeight(el);
+      newHeight = editorHeight;
+
+      //handle minimum
+      minHeight = this.settings.autogrow.minHeight;
+      if (typeof minHeight === 'function') {
+        minHeight = minHeight(this);
+      }
+
+      if (minHeight && newHeight < minHeight) {
+        newHeight = minHeight;
+      }
+
+      //handle maximum
+      maxHeight = this.settings.autogrow.maxHeight;
+      if (typeof maxHeight === 'function') {
+        maxHeight = maxHeight(this);
+      }
+
+      if (maxHeight && newHeight > maxHeight) {
+        newHeight = maxHeight;
+        maxedOut = true;
+      }
+
+      if (maxedOut) {
+        this._fixScrollbars('auto');
+      } else {
+        this._fixScrollbars('hidden');
+      }
+
+      //actual resize
+      if (newHeight != this.oldHeight) {
+        this.getElement('container').style.height = newHeight + 'px';
+        this.reflow();
+        if (this.settings.autogrow.scroll) {
+          window.scrollBy(0, newHeight - this.oldHeight);
+        }
+        this.oldHeight = newHeight;
+      }
+    }
+  }
+
+  /**
+   * Shows or hides scrollbars based on the autogrow setting
+   * @param {string} forceSetting a value to force the overflow to
+   */
+  EpicEditor.prototype._fixScrollbars = function (forceSetting) {
+    var setting;
+    if (this.settings.autogrow) {
+      setting = 'hidden';
+    }
+    else {
+      setting = 'auto';
+    }
+    setting = forceSetting || setting;
+    this.getElement('editor').documentElement.style.overflow = setting;
+    this.getElement('previewer').documentElement.style.overflow = setting;
+  }
+
+  EpicEditor.version = '0.2.2';
 
   // Used to store information to be shared across editors
   EpicEditor._data = {};

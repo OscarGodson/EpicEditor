@@ -75,6 +75,18 @@ describe('EpicEditor([options])', function () {
       expect(wrapper.getElementsByClassName('epiceditor-toggle-edit-btn').length)
         .to.equal(1);
     });
+    it('should always hide buttons if bar is hide', function () {
+      opts.button = {bar: 'hide'};
+      editor = new EpicEditor(opts).load();
+      var wrapper = editor.getElement('wrapper');
+      expect($(wrapper).find('#epiceditor-utilbar').is(":visible")).to.be(false);
+    });
+    it('should always show buttons if bar is show', function () {
+      opts.button = {bar: 'show'};
+      editor = new EpicEditor(opts).load();
+      var wrapper = editor.getElement('wrapper');
+      expect($(wrapper).find('#epiceditor-utilbar').is(":hidden")).to.be(false);
+    });
   });
 
   it('should allow the container option to be passed as an element ID string', function () {
@@ -350,6 +362,83 @@ describe('EpicEditor([options])', function () {
         checkEditorContent();
         done();
       }, 150);
+    });
+  });
+  describe('options.autogrow', function () {
+    var loggedSize
+      , editor
+      , smallText = "hey"
+      , mediumText = "hey\n\n\n\n\n\n\n\n\n\n\n\n\nthere\n\n\n\n\n\n\n\n\n\n\n\n\n\nman"
+      , longText = "\n\n\n\n\n\n\n\n\nhello\n\n\n\n\n\n\n\n\n\n\n\n\nhey\n\n\n\n\n\n\n\n\n\nwhat\n\n\n\n\n\n\n\n\n\n\n\n\nwoah";
+
+    function getSize() {
+      return editor.getElement('wrapperIframe').offsetHeight;
+    }
+
+    function logSize() {
+      loggedSize = getSize();
+    }
+
+    it('should not autogrow', function (done) {
+      opts.autogrow = false;
+      opts.file.defaultContent = mediumText;
+      editor = new EpicEditor(opts).load();
+      setTimeout(function () {
+        logSize();
+
+        editor.importFile("temp", smallText);
+        setTimeout(function () {
+          expect(getSize()).to.be(loggedSize);
+
+          editor.importFile("temp", longText);
+          setTimeout(function () {
+            expect(getSize()).to.be(loggedSize);
+            done();
+          }, 75);
+        }, 75);
+      }, 75);
+    });
+
+    it('should autogrow', function (done) {
+      opts.autogrow = true;
+      opts.file.defaultContent = mediumText;
+
+      editor = new EpicEditor(opts).load();
+      setTimeout(function () {
+        logSize();
+
+        editor.importFile("temp", smallText);
+        setTimeout(function () {
+          expect(getSize()).to.be.lessThan(loggedSize);
+
+          editor.importFile("temp", longText);
+          setTimeout(function () {
+            expect(getSize()).to.be.greaterThan(loggedSize);
+            done();
+          }, 75);
+        }, 75);
+      }, 75);
+    });
+
+    it('should not exceed limits', function (done) {
+      opts.autogrow = {
+        minHeight: 100
+      , maxHeight: 150
+      }
+      opts.file.defaultContent = mediumText;
+
+      editor = new EpicEditor(opts).load();
+
+      editor.importFile("temp", smallText);
+      setTimeout(function () {
+        expect(getSize()).to.be(opts.autogrow.minHeight);
+
+        editor.importFile("temp", longText);
+        setTimeout(function () {
+          expect(getSize()).to.be(opts.autogrow.maxHeight);
+          done();
+        }, 125);
+      }, 125);
     });
   });
 });

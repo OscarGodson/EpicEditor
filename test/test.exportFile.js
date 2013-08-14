@@ -30,6 +30,16 @@ describe('.exportFile([fileName], [type])', function () {
     expect(contents).to.match(/#foo\r?\n\r?\n##bar/);
   });
 
+  it('should export to json', function () {
+    var obj;
+    contents = editor.exportFile(null, 'json');
+    expect((typeof contents)).to.be('string');
+    obj = JSON.parse(contents);
+    expect(obj.content).to.match(/#foo\r?\n\r?\n##bar/);
+    expect(obj).to.have.property('created');
+    expect(obj).to.have.property('modified');
+  })
+
   it('should export the current file as HTML with a null parameter as it\'s first', function () {
     contents = editor.exportFile(null, 'html');
     expect(contents).to.be('<h1>foo</h1>\n<h2>bar</h2>\n');
