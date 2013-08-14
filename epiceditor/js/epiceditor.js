@@ -1838,7 +1838,7 @@
     this.getElement('previewer').documentElement.style.overflow = setting;
   }
 
-  EpicEditor.version = '0.2.1';
+  EpicEditor.version = '0.2.2';
 
   // Used to store information to be shared across editors
   EpicEditor._data = {};
