@@ -13,7 +13,7 @@
   function _applyAttrs(context, attrs) {
     for (var attr in attrs) {
       if (attrs.hasOwnProperty(attr)) {
-        context[attr] = attrs[attr];
+        context.setAttribute(attr, attrs[attr]);
       }
     }
   }
