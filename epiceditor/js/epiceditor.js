@@ -542,9 +542,12 @@
 
     // Write an iframe and then select it for the editor
     iframeElement = document.createElement('iframe');
-    iframeElement.setAttribute('scrolling', 'no');
-    iframeElement.setAttribute('frameborder', 0);
-    iframeElement.setAttribute('id', self._instanceId);
+    _applyAttrs(iframeElement, {
+      scrolling: 'no',
+      frameborder: 0,
+      id: self._instanceId
+    });
+    
     
     self.element.appendChild(iframeElement);
 
