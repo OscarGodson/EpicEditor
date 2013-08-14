@@ -35,9 +35,8 @@ namespace('lint', function () {
     , jshintrc = '.jshintrc'
     , editor = 'src/editor.js'
     , tests = 'test'
-    , docs = 'docs/js/main.js'
 
-  task('all', ['lint:editor', 'lint:docs', 'lint:tests', 'lint:util'], function () {
+  task('all', ['lint:editor', 'lint:tests', 'lint:util'], function () {
     complete()
   }, {async: true})
 
@@ -45,18 +44,6 @@ namespace('lint', function () {
   task('editor', [], function () {
     console.log(colorize('--> Linting editor', 'yellow'))
     var files = [ editor ]
-      , cmds = [hint + files.join(' ') + ' --config .jshintrc']
-
-    jake.exec(cmds, function () {
-      console.log(colorize('  √ ok', 'green'))
-      complete()
-    }, {stdout: true})
-  }, {async: true})
-
-  desc('Lint doc related js: docs/js/main.js')
-  task('docs', [], function () {
-    console.log(colorize('--> Linting docs', 'yellow'))
-    var files = [ docs ]
       , cmds = [hint + files.join(' ') + ' --config .jshintrc']
 
     jake.exec(cmds, function () {
@@ -129,7 +116,7 @@ namespace('build', function () {
 })
 
 desc('Build index.html from the README')
-task('docs', ['lint:docs'], function () {
+task('docs', function () {
   console.log(colorize('--> Building docs', 'yellow'))
   var destDir = ''
     , srcDir = 'docs/'
