@@ -379,11 +379,15 @@
       self.element = self.settings.container;
     }
 
-    if (typeof(self.settings.textarea) == 'undefined' && typeof(self.element) != 'undefined') {
+    if (typeof self.settings.textarea == 'undefined' && typeof self.element != 'undefined') {
       var textareas = self.element.getElementsByTagName('textarea');
       if (textareas.length > 0) {
         self.settings.textarea = textareas[0];
-        self.settings.textarea.style.display = 'none';
+        _applyAttrs(self.settings.textarea, {
+          style: {
+            display: 'none'
+          }
+        });
       }
     }
     
