@@ -294,7 +294,9 @@ fullscreenBtn.onclick = function () {
 
 ### open(_filename_)
 
-Opens a file into the editor.
+Opens a client side storage file into the editor.
+
+**Note:** This does _not_ open files on your server or machine (yet). This simply looks in localStorage where EpicEditor stores drafts.
 
 ```javascript
 openFileBtn.onclick = function () {
@@ -304,7 +306,9 @@ openFileBtn.onclick = function () {
 
 ### importFile([_filename_],[_content_])
 
-Imports a string of content into a file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX. Will also run `.open()` after import automatically.
+Imports a string of content into a client side storage file. If the file already exists, it will be overwritten. Useful if you want to inject a bunch of content via AJAX. Will also run `.open()` after import automatically.
+
+**Note:** This does _not_ import files on your server or machine (yet). This simply looks in localStorage where EpicEditor stores drafts.
 
 ```javascript
 importFileBtn.onclick = function () {
@@ -314,7 +318,9 @@ importFileBtn.onclick = function () {
 
 ### exportFile([_filename_],[_type_])
 
-Returns the plain text of the file by default, or if given a type will return the content in the specified type. If you leave both parameters null it will return the current document's content in plain text. The supported export file types are:
+Returns the plain text of the client side storage file, or if given a `type`, will return the content in the specified type. If you leave both parameters `null` it will return the current document's content in plain text. The supported export file types are:
+
+**Note:** This does _not_ export files to your server or machine (yet). This simply looks in localStorage where EpicEditor stores drafts.
 
 * text (default)
 * html
@@ -332,7 +338,9 @@ syncWithServerBtn.onclick = function () {
 
 ### rename(_oldName_, _newName_)
 
-Renames a file.
+Renames a client side storage file.
+
+**Note:** This does _not_ rename files on your server or machine (yet). This simply looks in localStorage where EpicEditor stores drafts.
 
 ```javascript
 renameFileBtn.onclick = function () {
@@ -343,7 +351,9 @@ renameFileBtn.onclick = function () {
 
 ### save()
 
-Manually saves a file. EpicEditor will save continuously every 100ms by default, but if you set `autoSave` in the options to `false` or to longer intervals it's useful to manually save.
+Manually saves a file to client side storage (localStorage by default). EpicEditor will save continuously every 100ms by default, but if you set `autoSave` in the options to `false` or to longer intervals it's useful to manually save.
+
+**Note:** This does _not_ save files to your server or machine (yet). This simply looks in localStorage where EpicEditor stores drafts.
 
 ```javascript
 saveFileBtn.onclick = function () {
@@ -353,7 +363,9 @@ saveFileBtn.onclick = function () {
 
 ### remove(_name_)
 
-Deletes a file.
+Deletes a client side storage file.
+
+**Note:** This does _not_ remove files from your server or machine (yet). This simply looks in localStorage where EpicEditor stores drafts.
 
 ```javascript
 removeFileBtn.onclick = function () {
@@ -363,7 +375,9 @@ removeFileBtn.onclick = function () {
 
 ### getFiles([_name_], [_excludeContent_])
 
-If no `name` is given it returns an object containing the names and metadata of all file objects. If a `name` is specified it will return just the metadata of that single file object. If `excludeContent` is true, it will remove the content from the returned object. This is useful when you just want a list of files or get some meta data. If `excludeContent` is false (default), it'll return a `content` property per file in plain text format.
+If no `name` is given it returns an object containing the names and metadata of all client side storage file objects. If a `name` is specified it will return just the metadata of that single file object. If `excludeContent` is true, it will remove the content from the returned object. This is useful when you just want a list of files or get some meta data. If `excludeContent` is false (default), it'll return a `content` property per file in plain text format.
+
+**Note:** This does _not_ get files from your server or machine (yet). This simply looks in localStorage where EpicEditor stores drafts.
 
 ```javascript
 var files = editor.getFiles();
