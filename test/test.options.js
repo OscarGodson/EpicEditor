@@ -20,7 +20,7 @@ describe('EpicEditor([options])', function () {
   });
 
   afterEach(function (done) {
-    if (editor.is('loaded')) {
+    if (editor && editor.is('loaded')) {
       editor.unload();
     }
     if (!el.id) {
@@ -241,20 +241,45 @@ describe('EpicEditor([options])', function () {
       });
     });
   });
-  describe('options.textarea', function () {
+  describe('Auto linking textarea', function () {
     var textareaElement;
     beforeEach(function () {
       textareaElement = document.createElement('textarea');
       textareaElement.id = 'temp-textarea';
+      textareaElement.value = 'lolpoop';
+
+      opts.textarea = undefined;
       opts.container.appendChild(textareaElement);
     });
 
-    it('defaults the textarea to the one contained within the container element', function () {
-      opts.textarea = undefined;
-      opts.container.appendChild(textareaElement);
+    it('links the textarea to the one contained within the container element', function (done) {
+      var editor = new EpicEditor(opts).load();
+      expect(editor.exportFile()).to.be(textareaElement.value);
+      editor.importFile(id, 'cake');
+      setTimeout(function () {
+        expect(textareaElement.value).to.be('cake');
+        done();
+      }, 101);
+    });
+
+    it('gets overridden by manually choosing a textarea in the options', function (done) {
+      opts.textarea = 'testtextarea';
+
+      otherTextareaElement = document.createElement('textarea');
+      otherTextareaElement.id = 'testtextarea';
+      otherTextareaElement.value = 'differentone';
+      document.body.appendChild(otherTextareaElement);
 
       var editor = new EpicEditor(opts).load();
-      expect(editor._textareaElement).to.be(textareaElement);
+
+      expect(editor.exportFile()).to.be(otherTextareaElement.value);
+      editor.importFile(id, 'cookie');
+      setTimeout(function () {
+        expect(otherTextareaElement.value).to.be('cookie');
+        expect(textareaElement.value).to.not.be('cookie');
+        document.body.removeChild(otherTextareaElement);
+        done();
+      }, 101);
     });
   });
   describe('options.textarea', function () {
