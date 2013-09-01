@@ -724,82 +724,93 @@
 
       _isInEdit = self.is('edit');
 
-      // Set the state of EE in fullscreen
-      // We set edit and preview to true also because they're visible
-      // we might want to allow fullscreen edit mode without preview (like a "zen" mode)
-      self._eeState.fullscreen = true;
-      self._eeState.edit = true;
-      self._eeState.preview = true;
 
-      // Cache calculations
-      var windowInnerWidth = window.innerWidth
-        , windowInnerHeight = window.innerHeight
-        , windowOuterWidth = window.outerWidth
-        , windowOuterHeight = window.outerHeight;
+      // Why does this need to be in a randomly "500"ms setTimeout? WebKit's
+      // implementation of fullscreen seem to trigger the webkitfullscreenchange
+      // event _after_ everything is done. Instead, it triggers _during_ the
+      // transition. This means calculations of what's half, 100%, etc are wrong
+      // so to combat this we throw down the hammer with a setTimeout and wait
+      // to trigger our calculation code.
+      // See: https://code.google.com/p/chromium/issues/detail?id=181116
+      setTimeout(function () {
+        // Set the state of EE in fullscreen
+        // We set edit and preview to true also because they're visible
+        // we might want to allow fullscreen edit mode without preview (like a "zen" mode)
+        self._eeState.fullscreen = true;
+        self._eeState.edit = true;
+        self._eeState.preview = true;
 
-      // Without this the scrollbars will get hidden when scrolled to the bottom in faux fullscreen (see #66)
-      if (!nativeFs) {
-        windowOuterHeight = window.innerHeight;
-      }
+        // Cache calculations
+        var windowInnerWidth = window.innerWidth
+          , windowInnerHeight = window.innerHeight
+          , windowOuterWidth = window.outerWidth
+          , windowOuterHeight = window.outerHeight;
 
-      // This MUST come first because the editor is 100% width so if we change the width of the iframe or wrapper
-      // the editor's width wont be the same as before
-      _elementStates.editorIframe = _saveStyleState(self.editorIframe, 'save', {
-        'width': windowOuterWidth / 2 + 'px'
-      , 'height': windowOuterHeight + 'px'
-      , 'float': 'left' // Most browsers
-      , 'cssFloat': 'left' // FF
-      , 'styleFloat': 'left' // Older IEs
-      , 'display': 'block'
-      , 'position': 'static'
-      , 'left': ''
-      });
+        // Without this the scrollbars will get hidden when scrolled to the bottom in faux fullscreen (see #66)
+        if (!nativeFs) {
+          windowOuterHeight = window.innerHeight;
+        }
 
-      // the previewer
-      _elementStates.previewerIframe = _saveStyleState(self.previewerIframe, 'save', {
-        'width': windowOuterWidth / 2 + 'px'
-      , 'height': windowOuterHeight + 'px'
-      , 'float': 'right' // Most browsers
-      , 'cssFloat': 'right' // FF
-      , 'styleFloat': 'right' // Older IEs
-      , 'display': 'block'
-      , 'position': 'static'
-      , 'left': ''
-      });
+        // This MUST come first because the editor is 100% width so if we change the width of the iframe or wrapper
+        // the editor's width wont be the same as before
+        _elementStates.editorIframe = _saveStyleState(self.editorIframe, 'save', {
+          'width': windowOuterWidth / 2 + 'px'
+        , 'height': windowOuterHeight + 'px'
+        , 'float': 'left' // Most browsers
+        , 'cssFloat': 'left' // FF
+        , 'styleFloat': 'left' // Older IEs
+        , 'display': 'block'
+        , 'position': 'static'
+        , 'left': ''
+        });
 
-      // Setup the containing element CSS for fullscreen
-      _elementStates.element = _saveStyleState(self.element, 'save', {
-        'position': 'fixed'
-      , 'top': '0'
-      , 'left': '0'
-      , 'width': '100%'
-      , 'z-index': '9999' // Most browsers
-      , 'zIndex': '9999' // Firefox
-      , 'border': 'none'
-      , 'margin': '0'
-      // Should use the base styles background!
-      , 'background': _getStyle(self.editor, 'background-color') // Try to hide the site below
-      , 'height': windowInnerHeight + 'px'
-      });
+        // the previewer
+        _elementStates.previewerIframe = _saveStyleState(self.previewerIframe, 'save', {
+          'width': windowOuterWidth / 2 + 'px'
+        , 'height': windowOuterHeight + 'px'
+        , 'float': 'right' // Most browsers
+        , 'cssFloat': 'right' // FF
+        , 'styleFloat': 'right' // Older IEs
+        , 'display': 'block'
+        , 'position': 'static'
+        , 'left': ''
+        });
 
-      // The iframe element
-      _elementStates.iframeElement = _saveStyleState(self.iframeElement, 'save', {
-        'width': windowOuterWidth + 'px'
-      , 'height': windowInnerHeight + 'px'
-      });
+        // Setup the containing element CSS for fullscreen
+        _elementStates.element = _saveStyleState(self.element, 'save', {
+          'position': 'fixed'
+        , 'top': '0'
+        , 'left': '0'
+        , 'width': '100%'
+        , 'z-index': '9999' // Most browsers
+        , 'zIndex': '9999' // Firefox
+        , 'border': 'none'
+        , 'margin': '0'
+        // Should use the base styles background!
+        , 'background': _getStyle(self.editor, 'background-color') // Try to hide the site below
+        , 'height': windowInnerHeight + 'px'
+        });
 
-      // ...Oh, and hide the buttons and prevent scrolling
-      utilBtns.style.visibility = 'hidden';
+        // The iframe element
+        _elementStates.iframeElement = _saveStyleState(self.iframeElement, 'save', {
+          'width': windowOuterWidth + 'px'
+        , 'height': windowInnerHeight + 'px'
+        });
 
-      if (!nativeFs) {
-        document.body.style.overflow = 'hidden';
-      }
+        // ...Oh, and hide the buttons and prevent scrolling
+        utilBtns.style.visibility = 'hidden';
 
-      self.preview();
+        if (!nativeFs) {
+          document.body.style.overflow = 'hidden';
+        }
 
-      self.focus();
+        self.preview();
 
-      self.emit('fullscreenenter');
+        self.focus();
+
+        self.emit('fullscreenenter');
+      }, 500);
+
     };
 
     self._exitFullscreen = function (el) {
