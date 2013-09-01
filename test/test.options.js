@@ -242,6 +242,22 @@ describe('EpicEditor([options])', function () {
     });
   });
   describe('options.textarea', function () {
+    var textareaElement;
+    beforeEach(function () {
+      textareaElement = document.createElement('textarea');
+      textareaElement.id = 'temp-textarea';
+      opts.container.appendChild(textareaElement);
+    });
+
+    it('defaults the textarea to the one contained within the container element', function () {
+      opts.textarea = undefined;
+      opts.container.appendChild(textareaElement);
+
+      var editor = new EpicEditor(opts).load();
+      expect(editor._textareaElement).to.be(textareaElement);
+    });
+  });
+  describe('options.textarea', function () {
     var textareaElement, eeTestStorage;
     beforeEach(function () {
       textareaElement = document.createElement('textarea');

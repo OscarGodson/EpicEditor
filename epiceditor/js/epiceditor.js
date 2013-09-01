@@ -13,7 +13,7 @@
   function _applyAttrs(context, attrs) {
     for (var attr in attrs) {
       if (attrs.hasOwnProperty(attr)) {
-        context[attr] = attrs[attr];
+        context.setAttribute(attr, attrs[attr]);
       }
     }
   }
@@ -407,6 +407,18 @@
     else if (typeof self.settings.container == 'object') {
       self.element = self.settings.container;
     }
+
+    if (typeof self.settings.textarea == 'undefined' && typeof self.element != 'undefined') {
+      var textareas = self.element.getElementsByTagName('textarea');
+      if (textareas.length > 0) {
+        self.settings.textarea = textareas[0];
+        _applyAttrs(self.settings.textarea, {
+          style: {
+            display: 'none'
+          }
+        });
+      }
+    }
     
     // Figure out the file name. If no file name is given we'll use the ID.
     // If there's no ID either we'll use a namespaced file name that's incremented
@@ -567,15 +579,21 @@
     };
 
     // Write an iframe and then select it for the editor
-    self.element.innerHTML = '<iframe scrolling="no" frameborder="0" id= "' + self._instanceId + '"></iframe>';
+    iframeElement = document.createElement('iframe');
+    _applyAttrs(iframeElement, {
+      scrolling: 'no',
+      frameborder: 0,
+      id: self._instanceId
+    });
+    
+    
+    self.element.appendChild(iframeElement);
 
     // Because browsers add things like invisible padding and margins and stuff
     // to iframes, we need to set manually set the height so that the height
     // doesn't keep increasing (by 2px?) every time reflow() is called.
     // FIXME: Figure out how to fix this without setting this
     self.element.style.height = self.element.offsetHeight + 'px';
-
-    iframeElement = document.getElementById(self._instanceId);
     
     // Store a reference to the iframeElement itself
     self.iframeElement = iframeElement;
