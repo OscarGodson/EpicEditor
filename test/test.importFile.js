@@ -37,14 +37,6 @@ describe('.importFile([fileName],[content])', function () {
     expect(editor.exportFile(id)).to.be('foo');
   });
 
-  it('should fire the create event when importing a new file', function () {
-    editor.on('create', function () {
-      eventFired = true;
-    });
-    editor.importFile(fooFile);
-    expect(eventFired).to.be(true);
-  });
-
   it('should fire the update event when modifying an existing file', function () {
     editor.on('update', function () {
       eventFired = true;

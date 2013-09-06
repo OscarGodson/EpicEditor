@@ -332,6 +332,16 @@ describe('EpicEditor([options])', function () {
         done();
       }, 100)
     });
+    it('should sync the content of the editor when content is imported with a different name', function (done) {
+      var editor = new EpicEditor(opts).load();
+      expect(textareaElement.value).to.be(id);
+
+      editor.importFile(id + 'blahblah', 'Imported');
+      setTimeout(function () {
+        expect(textareaElement.value).to.be('Imported');
+        done();
+      }, 100)
+    });
     it('should sync the content of the editor when the editor is updated AND autoSave is OFF', function (done) {
       opts.file.autoSave = false;
       var editor = new EpicEditor(opts).load();

@@ -37,6 +37,15 @@ describe('.save()', function () {
     expect(JSON.parse(localStorage['epiceditor'])[id].content).to.be('bar');
   });
 
+  it('should fire the create event when saving a new file', function () {
+    editor.on('create', function () {
+      eventFired = true;
+    });
+    editor.settings.file.name = id + 'LOL';
+    editor.save();
+    expect(eventFired).to.be(true);
+  });
+
   it('should fire the save event but not the autosave event', function () {
     editor.on('save', function () {
       eventFired = true;

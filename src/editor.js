@@ -1148,7 +1148,6 @@
 
   EpicEditor.prototype._setupTextareaSync = function () {
     var self = this
-      , textareaFileName = self.settings.file.name
       , _syncTextarea;
 
     // Even if autoSave is false, we want to make sure to keep the textarea synced
@@ -1167,7 +1166,10 @@
       // This only happens for draft files. Probably has something to do with
       // the fact draft files haven't been saved by the time this is called.
       // TODO: Add test for this case.
-      self._textareaElement.value = self.exportFile(textareaFileName, 'text', true) || self.settings.file.defaultContent;
+      // Get the file.name each time as it can change. DO NOT save this to a
+      // var outside of this closure or the editor will stop syncing when the
+      // file is changed with importFile or open.
+      self._textareaElement.value = self.exportFile(self.settings.file.name, 'text', true) || self.settings.file.defaultContent;
     }
 
     if (typeof self.settings.textarea == 'string') {
@@ -1191,7 +1193,7 @@
     // If the developer wants drafts to be recoverable they should check if
     // the local file in localStorage's modified date is newer than the server.
     if (self._textareaElement.value !== '') {
-      self.importFile(textareaFileName, self._textareaElement.value);
+      self.importFile(self.settings.file.name, self._textareaElement.value);
 
       // manually save draft after import so there is no delay between the
       // import and exporting in _syncTextarea. Without this, _syncTextarea
@@ -1204,6 +1206,7 @@
 
     // Make sure to keep it updated
     self.on('__update', _syncTextarea);
+    self.on('__create', _syncTextarea);
   }
 
   /**
@@ -1504,6 +1507,7 @@
     var self = this
       , storage
       , isUpdate = false
+      , isNew = false
       , file = self.settings.file.name
       , previewDraftName = ''
       , data = this._storage[previewDraftName + self.settings.localStorageName]
@@ -1525,6 +1529,7 @@
       // If the file doesn't exist we need to create it
       if (storage[file] === undefined) {
         storage[file] = self._defaultFileSchema();
+        isNew = true;
       }
 
       // If it does, we need to check if the content is different and
@@ -1541,10 +1546,17 @@
       storage[file].content = content;
       this._storage[previewDraftName + self.settings.localStorageName] = JSON.stringify(storage);
 
-      // After the content is actually changed, emit update so it emits the updated content
+      // If it's a new file, send a create event as well as a private one for
+      // use internally.
+      if (isNew) {
+        self.emit('create');
+        self.emit('__create');
+      }
+
+      // After the content is actually changed, emit update so it emits the
+      // updated content. Also send a private event for interal use.
       if (isUpdate) {
         self.emit('update');
-        // Emit a private update event so it can't get accidentally removed
         self.emit('__update');
       }
 
@@ -1606,25 +1618,16 @@
    * @returns {object} EpicEditor will be returned
    */
   EpicEditor.prototype.importFile = function (name, content, kind, meta) {
-    var self = this
-      , isNew = false;
+    var self = this;
 
     name = name || self.settings.file.name;
     content = content || '';
     kind = kind || 'md';
     meta = meta || {};
   
-    if (JSON.parse(this._storage[self.settings.localStorageName])[name] === undefined) {
-      isNew = true;
-    }
-
     // Set our current file to the new file and update the content
     self.settings.file.name = name;
     _setText(self.editor, content);
-
-    if (isNew) {
-      self.emit('create');
-    }
 
     self.save();
 
