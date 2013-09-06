@@ -1207,6 +1207,7 @@
     // Make sure to keep it updated
     self.on('__update', _syncTextarea);
     self.on('__create', _syncTextarea);
+    self.on('__save', _syncTextarea);
   }
 
   /**
@@ -1565,6 +1566,7 @@
       }
       else if (!_isPreviewDraft) {
         this.emit('save');
+        self.emit('__save');
       }
     }
 
