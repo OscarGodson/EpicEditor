@@ -412,8 +412,10 @@ and also will focus on the visible view (edit or preview).
   editorWrapper.style.display = &#39;block&#39;; // switch from being hidden from the user
   editor.focus(); // Focus and allow user to start editing right away
 }</code></pre>
-<h3>enterFullscreen()</h3>
-<p>Puts the editor into fullscreen mode.
+<h3>enterFullscreen([callback])</h3>
+<p>Puts the editor into fullscreen mode. A callback will be fired after the entering fullscreen animation completes. Some browsers
+will be nearly instant while others, mainly Chrome, take 750ms before this event is fired. If already in fullscreen, the
+callback will fire immediately.
 
 </p>
 <p><strong>Note:</strong> due to browser security restrictions, calling <code>enterFullscreen</code> programmatically
@@ -421,14 +423,20 @@ like this will not trigger native fullscreen. Native fullscreen can only be trig
 
 </p>
 <pre><code class="lang-javascript">enterFullscreenBtn.onclick = function () {
-  editor.enterFullscreen();
+  editor.enterFullscreen(function () {
+    console.log(&#39;Welcome to fullscreen mode!&#39;);
+  });
 }</code></pre>
-<h3>exitFullscreen()</h3>
-<p>Closes fullscreen mode.
+<h3>exitFullscreen([callback])</h3>
+<p>Closes fullscreen mode. A callback will be fired after the exiting fullscreen animation completes. If already not in fullscreen, the
+callback will fire immediately.
+
 
 </p>
 <pre><code class="lang-javascript">exitFullscreenBtn.onclick = function () {
-  editor.exitFullscreen();
+  editor.exitFullscreen(function () {
+    console.log(&#39;Finished closing fullscreen!&#39;);
+  });
 }</code></pre>
 <h3>reflow([type], [callback])</h3>
 <p><code>reflow()</code> allows you to &quot;reflow&quot; the editor in it&#39;s container. For example, let&#39;s say you increased

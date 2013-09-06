@@ -702,17 +702,19 @@
 
     // TODO: Move into fullscreen setup function (_setupFullscreen)
     _elementStates = {}
-    self._goFullscreen = function (el) {
+    self._goFullscreen = function (el, callback) {
+      var wait = 0;
       this._fixScrollbars('auto');
 
       if (self.is('fullscreen')) {
-        self._exitFullscreen(el);
+        self._exitFullscreen(el, callback);
         return;
       }
 
       if (nativeFs) {
         if (nativeFsWebkit) {
           el.webkitRequestFullScreen();
+          wait = 750;
         }
         else if (nativeFsMoz) {
           el.mozRequestFullScreen();
@@ -725,7 +727,7 @@
       _isInEdit = self.is('edit');
 
 
-      // Why does this need to be in a randomly "500"ms setTimeout? WebKit's
+      // Why does this need to be in a randomly "750"ms setTimeout? WebKit's
       // implementation of fullscreen seem to trigger the webkitfullscreenchange
       // event _after_ everything is done. Instead, it triggers _during_ the
       // transition. This means calculations of what's half, 100%, etc are wrong
@@ -809,11 +811,13 @@
         self.focus();
 
         self.emit('fullscreenenter');
-      }, 500);
+
+        callback.call(self);
+      }, wait);
 
     };
 
-    self._exitFullscreen = function (el) {
+    self._exitFullscreen = function (el, callback) {
       this._fixScrollbars();
 
       _saveStyleState(self.element, 'apply', _elementStates.element);
@@ -860,6 +864,8 @@
       self.reflow();
 
       self.emit('fullscreenexit');
+
+      callback.call(self);
     };
 
     // This setups up live previews by triggering preview() IF in fullscreen on keyup
@@ -1369,9 +1375,13 @@
    * Puts the editor into fullscreen mode
    * @returns {object} EpicEditor will be returned
    */
-  EpicEditor.prototype.enterFullscreen = function () {
-    if (this.is('fullscreen')) { return this; }
-    this._goFullscreen(this.iframeElement);
+  EpicEditor.prototype.enterFullscreen = function (callback) {
+    callback = callback || function () {};
+    if (this.is('fullscreen')) {
+      callback.call(this);
+      return this;
+    }
+    this._goFullscreen(this.iframeElement, callback);
     return this;
   }
 
@@ -1379,9 +1389,13 @@
    * Closes fullscreen mode if opened
    * @returns {object} EpicEditor will be returned
    */
-  EpicEditor.prototype.exitFullscreen = function () {
-    if (!this.is('fullscreen')) { return this; }
-    this._exitFullscreen(this.iframeElement);
+  EpicEditor.prototype.exitFullscreen = function (callback) {
+    callback = callback || function () {};
+    if (!this.is('fullscreen')) {
+      callback.call(this);
+      return this;
+    }
+    this._exitFullscreen(this.iframeElement, callback);
     return this;
   }
 

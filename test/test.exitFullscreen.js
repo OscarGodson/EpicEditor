@@ -7,7 +7,7 @@ describe('.exitFullscreen()', function () {
     , eventFired
     , count;
 
-  before(function (done) {
+  beforeEach(function (done) {
     id = rnd();
     count = 0;
     eventFired = false;
@@ -18,12 +18,12 @@ describe('.exitFullscreen()', function () {
       eventFired = true;
     });
     editor.load();
-    editor.enterFullscreen();
-    editor.exitFullscreen();
-    done();
+    editor.enterFullscreen(function () {
+      done();
+    });
   });
 
-  after(function (done) {
+  afterEach(function (done) {
     editor.removeListener('fullscreenexit');
     editor.unload();
     removeContainer(id);
@@ -31,18 +31,27 @@ describe('.exitFullscreen()', function () {
   });
 
   // TODO: Figure out some way to actually test if fullscreen opened
-  it('should exit fullscreen mode', function () {
-    expect(editor.is('fullscreen')).to.be(false);
+  it('should exit fullscreen mode', function (done) {
+    editor.exitFullscreen(function () {
+      expect(editor.is('fullscreen')).to.be(false);
+      done();
+    });
   });
 
-  it('should fire the fullscreenexit event', function () {
-    expect(eventFired).to.be(true);
+  it('should fire the fullscreenexit event', function (done) {
+    editor.exitFullscreen(function () {
+      expect(eventFired).to.be(true);
+      done();
+    });
   });
 
   // NOTE: This test depends on the counter and for speed we are not using a before/afterEach
-  it('should fire the fullscreenexit event only once regardless of additional exitFullscreen calls', function () {
-    editor.exitFullscreen();
-    editor.exitFullscreen();
-    expect(count).to.be(1);
+  it('should fire the fullscreenexit event only once regardless of additional exitFullscreen calls', function (done) {
+    editor.exitFullscreen(function () {
+      editor.exitFullscreen(function () {
+        expect(count).to.be(1);
+        done();
+      });
+    });
   });
 });

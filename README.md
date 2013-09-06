@@ -452,25 +452,33 @@ showEditorBtn.onclick = function () {
 }
 ```
 
-### enterFullscreen()
+### enterFullscreen([callback])
 
-Puts the editor into fullscreen mode.
+Puts the editor into fullscreen mode. A callback will be fired after the entering fullscreen animation completes. Some browsers
+will be nearly instant while others, mainly Chrome, take 750ms before this event is fired. If already in fullscreen, the
+callback will fire immediately.
 
 **Note:** due to browser security restrictions, calling `enterFullscreen` programmatically
 like this will not trigger native fullscreen. Native fullscreen can only be triggered by a user interaction like mousedown or keyup.
 
 ```javascript
 enterFullscreenBtn.onclick = function () {
-  editor.enterFullscreen();
+  editor.enterFullscreen(function () {
+    console.log('Welcome to fullscreen mode!');
+  });
 }
 ```
-### exitFullscreen()
+### exitFullscreen([callback])
 
-Closes fullscreen mode.
+Closes fullscreen mode. A callback will be fired after the exiting fullscreen animation completes. If already not in fullscreen, the
+callback will fire immediately.
+
 
 ```javascript
 exitFullscreenBtn.onclick = function () {
-  editor.exitFullscreen();
+  editor.exitFullscreen(function () {
+    console.log('Finished closing fullscreen!');
+  });
 }
 ```
 

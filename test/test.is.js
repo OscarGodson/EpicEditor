@@ -57,9 +57,11 @@ describe('.is(state)', function () {
     expect(editor.is('fullscreen')).to.be(false);
   });
 
-  it('should return fullscreen:TRUE when the editor is in fullscreen', function () {
-    editor.enterFullscreen();
-    expect(editor.is('fullscreen')).to.be(true);
+  it('should return fullscreen:TRUE when the editor is in fullscreen', function (done) {
+    editor.enterFullscreen(function () {
+      expect(editor.is('fullscreen')).to.be(true);
+      done();
+    });
   });
 
   it('should return fullscreen:FALSE when the editor goes from fullscreen to exit fullscreen', function () {

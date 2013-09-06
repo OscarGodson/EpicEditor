@@ -7,7 +7,7 @@ describe('.enterFullscreen()', function () {
     , eventFired
     , count;
 
-  before(function (done) {
+  beforeEach(function () {
     id = rnd();
     count = 0;
     eventFired = false;
@@ -18,11 +18,9 @@ describe('.enterFullscreen()', function () {
       count++;
     });
     editor.load();
-    editor.enterFullscreen();
-    done();
   });
 
-  after(function (done) {
+  afterEach(function (done) {
     editor.removeListener('fullscreenenter');
     editor.unload();
     removeContainer(id);
@@ -30,18 +28,27 @@ describe('.enterFullscreen()', function () {
   });
 
   // TODO: Figure out some way to actually test if fullscreen opened
-  it('should enter fullscreen mode', function () {
-    expect(editor.is('fullscreen')).to.be(true);
+  it('should enter fullscreen mode', function (done) {
+    editor.enterFullscreen(function () {
+      expect(editor.is('fullscreen')).to.be(true);
+      done();
+    });
   });
 
-  it('should fire the fullscreenenter event', function () {
-    expect(eventFired).to.be(true);
+  it('should fire the fullscreenenter event', function (done) {
+    editor.enterFullscreen(function () {
+      expect(eventFired).to.be(true);
+      done();
+    });
   });
 
   // NOTE: This test depends on the counter and for speed we are not using a before/afterEach
-  it('should fire the fullscreenenter event only once regardless of additional enterFullscreen calls', function () {
-    editor.enterFullscreen();
-    editor.enterFullscreen();
-    expect(count).to.be(1);
+  it('should fire the fullscreenenter event only once regardless of additional enterFullscreen calls', function (done) {
+    editor.enterFullscreen(function () {
+      editor.enterFullscreen(function () {
+        expect(count).to.be(1);
+        done();
+      });
+    });
   });
 });
