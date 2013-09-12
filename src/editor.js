@@ -412,10 +412,8 @@
       var textareas = self.element.getElementsByTagName('textarea');
       if (textareas.length > 0) {
         self.settings.textarea = textareas[0];
-        _applyAttrs(self.settings.textarea, {
-          style: {
-            display: 'none'
-          }
+        _applyStyles(self.settings.textarea, {
+          display: 'none'
         });
       }
     }
