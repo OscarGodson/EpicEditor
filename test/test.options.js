@@ -265,7 +265,7 @@ describe('EpicEditor([options])', function () {
     it('gets overridden by manually choosing a textarea in the options', function (done) {
       opts.textarea = 'testtextarea';
 
-      otherTextareaElement = document.createElement('textarea');
+      var otherTextareaElement = document.createElement('textarea');
       otherTextareaElement.id = 'testtextarea';
       otherTextareaElement.value = 'differentone';
       document.body.appendChild(otherTextareaElement);
