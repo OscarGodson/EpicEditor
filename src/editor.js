@@ -1247,7 +1247,6 @@
     callback = callback || function () {};
 
     if (self.settings.textarea) {
-      self._textareaElement.value = "";
       self.removeListener('__update');
     }
 

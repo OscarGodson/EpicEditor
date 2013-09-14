@@ -351,27 +351,33 @@ describe('EpicEditor([options])', function () {
         done();
       }, 100);
     });
-    it('should STOP syncing the content of the editor when the editor is unloaded', function () {
+    it('should STOP syncing the content of the editor when the editor is unloaded', function (done) {
       var editor = new EpicEditor(opts).load();
       expect(textareaElement.value).to.be(id);
+      editor.importFile(id, '1');
 
-      editor.unload();
-      expect(textareaElement.value).to.be('');
+      setTimeout(function () {
+        editor.unload();
+        editor.importFile(id, '2');
+        expect(textareaElement.value).to.be('1');
+        done();
+      }, 100);
     });
     it('should start resyncing the content of the editor when the editor is reloaded', function (done) {
       var editor = new EpicEditor(opts).load();
       expect(textareaElement.value).to.be(id);
+      editor.importFile(id, '1');
 
-      editor.unload();
-      expect(textareaElement.value).to.be('');
-
-      editor.load();
-      expect(textareaElement.value).to.be(id);
-
-      editor.getElement('editor').body.innerHTML = 'Should update';
       setTimeout(function () {
-        expect(textareaElement.value).to.be('Should update');
-        done();
+        editor.unload();
+        editor.importFile(id, '2');
+        expect(textareaElement.value).to.be('1');
+        editor.load();
+        editor.importFile(id, '3');
+        setTimeout(function () {
+          expect(textareaElement.value).to.be('3');
+          done();
+        }, 100);
       }, 100);
     });
     it('should put the content of the textarea as the content of the editor', function () {
