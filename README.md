@@ -636,11 +636,34 @@ The HTML of a generated editor (excluding contents) looks like this:
 
 ## Custom Parsers
 
-EpicEditor is set up to allow you to use _any_ parser that accepts and returns a string. This means you can use any flavor of Markdown, process Textile, or even create a simple HTML editor/previewer (`parser: false`). The possibilities are endless. Just make the parser available and pass its parsing function to the EpicEditor setting and you should be all set.
+EpicEditor is set up to allow you to use any parser that accepts and returns a string. This means you can use any flavor of Markdown, process Textile, or even create a simple HTML editor/previewer (`parser: false`). The possibilities are endless. Just make the parser available and pass its parsing function to the EpicEditor setting and you should be all set. You can output plain text or HTML. Here's an example of a parser that could remove "bad words" from the preview:
 
-For even more customization/optimization you can replace the default built-in processor on build. Running `jake build parser=path/to/parser.js` will override the default Marked build and replace it with your custom script.
+```js
+var editor = new EpicEditor({
+  parser: function (str) {
+    var blacklist = ['foo', 'bar', 'baz'];
+    return str.split(' ').map(function (word) {
+      // If the word exists, replace with asterisks
+      if (blacklist.indexOf(word) > -1) {
+        return '****'
+      }
+      return word;
+    }).join(' ');
+  }
+}).load();
+```
 
-See the [custom parsers wiki page](https://github.com/OscarGodson/EpicEditor/wiki/Using-A-Custom-Parser) for more.
+Here's a [Wiki to HTML](http://remysharp.com/2008/04/01/wiki-to-html-using-javascript/) parser by Remy Sharp used with EpicEditor:
+
+```js
+var editor = new EpicEditor({
+  parser: function (str) {
+    return str.wiki2html();
+  }
+}).load();
+```
+
+For even more customization and optimization you can replace the default built-in processor on build. Running `jake build parser=path/to/parser.js` will override the default Marked build and replace it with your custom script.
 
 ## Support
 
