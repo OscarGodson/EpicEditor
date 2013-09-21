@@ -701,6 +701,7 @@
     // TODO: Move into fullscreen setup function (_setupFullscreen)
     _elementStates = {}
     self._goFullscreen = function (el, callback) {
+      callback = callback || function () {};
       var wait = 0;
       this._fixScrollbars('auto');
 
@@ -816,6 +817,7 @@
     };
 
     self._exitFullscreen = function (el, callback) {
+      callback = callback || function () {};
       this._fixScrollbars();
 
       _saveStyleState(self.element, 'apply', _elementStates.element);

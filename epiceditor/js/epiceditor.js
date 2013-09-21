@@ -412,10 +412,8 @@
       var textareas = self.element.getElementsByTagName('textarea');
       if (textareas.length > 0) {
         self.settings.textarea = textareas[0];
-        _applyAttrs(self.settings.textarea, {
-          style: {
-            display: 'none'
-          }
+        _applyStyles(self.settings.textarea, {
+          display: 'none'
         });
       }
     }
@@ -703,6 +701,7 @@
     // TODO: Move into fullscreen setup function (_setupFullscreen)
     _elementStates = {}
     self._goFullscreen = function (el, callback) {
+      callback = callback || function () {};
       var wait = 0;
       this._fixScrollbars('auto');
 
@@ -818,6 +817,7 @@
     };
 
     self._exitFullscreen = function (el, callback) {
+      callback = callback || function () {};
       this._fixScrollbars();
 
       _saveStyleState(self.element, 'apply', _elementStates.element);
