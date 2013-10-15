@@ -961,6 +961,7 @@
     function shortcutHandler(e) {
       if (e.keyCode == self.settings.shortcut.modifier) { isMod = true } // check for modifier press(default is alt key), save to var
       if (e.keyCode == 17) { isCtrl = true } // check for ctrl/cmnd press, in order to catch ctrl/cmnd + s
+      if (e.keyCode == 18) { isCtrl = false }
 
       // Check for alt+p and make sure were not in fullscreen - default shortcut to switch to preview
       if (isMod === true && e.keyCode == self.settings.shortcut.preview && !self.is('fullscreen')) {
