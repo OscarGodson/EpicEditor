@@ -58,6 +58,7 @@ $(function () {
       tryItBtn.innerHTML = 'Try it!';
       $('#epiceditor').removeClass('epiceditors')
       example.unload();
+      $('#epiceditor').height('auto');
     }
   }
 
