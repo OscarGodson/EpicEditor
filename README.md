@@ -91,7 +91,7 @@ var opts = {
   },
   autogrow: false
 }
-var editor = new EpicEditor(opts);
+var editor = new EpicEditor(opts).load();
 ```
 
 ### Options
