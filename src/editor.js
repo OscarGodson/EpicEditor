@@ -1891,5 +1891,10 @@
   // Used to store information to be shared across editors
   EpicEditor._data = {};
 
+  if (typeof define === 'function' && define.amd) {
+  define(function() { return EpicEditor; });
+} else {
   window.EpicEditor = EpicEditor;
+}
+
 })(window);
