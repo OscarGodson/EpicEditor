@@ -1891,9 +1891,12 @@
   // Used to store information to be shared across editors
   EpicEditor._data = {};
 
-  window.EpicEditor = EpicEditor;
+  if (typeof window.define === 'function' && window.define.amd) {
+    window.define(function () { return EpicEditor; });
+  } else {
+    window.EpicEditor = EpicEditor;
+  }
 })(window);
-
 /**
  * marked - a markdown parser
  * Copyright (c) 2011-2013, Christopher Jeffrey. (MIT Licensed)
