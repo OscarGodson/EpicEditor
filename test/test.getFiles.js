@@ -47,6 +47,7 @@ describe('.getFiles([name])', function () {
   it('should return the right file when the name is specified', function () {
     var file = editor.getFiles(fooFile);
     expect(file).not.to.be(undefined);
+    expect(file).to.have.property('fileName');
     expect(file).to.have.property('modified');
     expect(file).to.have.property('created');
     expect(file.content).to.be('foo     bar');

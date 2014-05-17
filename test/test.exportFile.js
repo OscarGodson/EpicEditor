@@ -35,6 +35,7 @@ describe('.exportFile([fileName], [type])', function () {
     contents = editor.exportFile(null, 'json');
     expect((typeof contents)).to.be('string');
     obj = JSON.parse(contents);
+    expect(obj).to.have.property('fileName');
     expect(obj.content).to.match(/#foo\r?\n\r?\n##bar/);
     expect(obj).to.have.property('created');
     expect(obj).to.have.property('modified');

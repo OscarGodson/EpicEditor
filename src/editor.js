@@ -456,9 +456,10 @@
     // Setup local storage of files
     self._defaultFileSchema = function () {
       return {
-        content: self.settings.file.defaultContent
-      , created: new Date()
-      , modified: new Date()
+          fileName: self.settings.file.name
+        , content: self.settings.file.defaultContent
+        , created: new Date()
+        , modified: new Date()
       }
     }
 
