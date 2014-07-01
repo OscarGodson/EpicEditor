@@ -108,7 +108,7 @@ var editor = new EpicEditor(opts);
   </tr>
   <tr>
     <td><code>textarea</code></td>
-    <td>The ID (string) or element (object) of a textarea you would like to sync the editor's content with. On page load if there is content in the textarea, the editor will use that as it's content.</td>
+    <td>The ID (string) or element (object) of a textarea you would like to sync the editor's content with. On page load if there is content in the textarea, the editor will use that as its content.</td>
     <td></td>
   </tr>
   <tr>
