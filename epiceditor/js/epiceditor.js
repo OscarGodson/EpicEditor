@@ -194,7 +194,7 @@
     // 0020 00a0, meaning, "space no-break space". So, manually convert
     // no-break spaces to spaces again before handing to marked.
     // Also, WebKit converts no-break to unicode equivalent and FF HTML.
-    return content.replace(/\u00a0/g, ' ').replace(/&nbsp;/g, ' ');
+    return content.replace(/\u00a0/g, ' ').replace(/&nbsp;/g, ' ').replace(/\u0026/g, '&').replace(/&amp;/g, '&');
   }
 
   /**
