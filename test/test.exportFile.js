@@ -42,7 +42,7 @@ describe('.exportFile([fileName], [type])', function () {
 
   it('should export the current file as HTML with a null parameter as it\'s first', function () {
     contents = editor.exportFile(null, 'html');
-    expect(contents).to.be('<h1>foo</h1>\n<h2>bar</h2>\n');
+    expect(contents).to.be('<h1 id="foo">foo</h1>\n<h2 id="bar">bar</h2>\n');
   });
 
   it('should return undefined when a file doesn\'t exist', function () {
