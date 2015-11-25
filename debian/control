@@ -1,0 +1,26 @@
+Source: epiceditor
+Section: net
+Priority: optional
+Maintainer: Jeroen Massar <jeroen@massar.ch>
+Uploaders: Jeroen Massar <jeroen@massar.ch>
+Build-Depends: debhelper (>> 9),
+               git,
+               ca-certificates
+Standards-Version: 3.9.6
+Homepage: https://epiceditor.com
+Vcs-Browser: https://github.com/tridentli/EpicEditor
+Vcs-Git: git://github.com/tridentli/epiceditor.git
+
+Package: epiceditor
+Architecture: all
+Description: Embeddable JavaScript Markdown editor
+ This is a simple package to be able to install EpicEditor easily on Debian
+ .
+ EpicEditor is an embeddable JavaScript Markdown editor with split
+ fullscreen editing, live previewing, automatic draft saving, offline
+ support, and more. For developers, it offers a robust API, can be easily
+ themed, and allows you to swap out the bundled Markdown parser with anything
+ you throw at it.
+ .
+ For more details, please see: http://epiceditor.com
+
