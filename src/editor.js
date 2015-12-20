@@ -572,7 +572,7 @@
                 '</div>'
     
     // The previewer is just an empty box for the generated HTML to go into
-    , previewer: '<div id="epiceditor-preview"></div>'
+    , previewer: '<div id="epiceditor-preview" class="epiceditor-preview"></div>'
     , editor: '<!doctype HTML>'
     };
 
