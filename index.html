@@ -40,7 +40,7 @@
 <h3 id="step-2-create-your-container-element">Step 2: Create your container element</h3>
 <pre><code class="lang-html">&lt;div id=&quot;epiceditor&quot;&gt;&lt;/div&gt;
 </code></pre>
-<p>Alternately, wrap an existing textarea to load the contents into th EpicEditor instance.</p>
+<p>Alternately, wrap an existing textarea to load the contents into the EpicEditor instance.</p>
 <pre><code class="lang-html">&lt;div id=&quot;epiceditor&quot;&gt;&lt;textarea id=&quot;my-edit-area&quot;&gt;&lt;/textarea&gt;&lt;/div&gt;
 </code></pre>
 <h3 id="step-3-add-the-epiceditor-js-file">Step 3: Add the <code>epiceditor.js</code> file</h3>
@@ -519,7 +519,7 @@ The editor is the styles for the contents of editor <code>&lt;iframe&gt;</code> 
                 &lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;epiceditor/themes/preview/github.css&quot; media=&quot;screen&quot;&gt;
               &lt;/head&gt;
               &lt;body&gt;
-                &lt;div id=&quot;epiceditor-preview&quot;&gt;
+                &lt;div id=&quot;epiceditor-preview&quot; class=&quot;epiceditor-preview&quot;&gt;
                   &lt;!-- rendered html --&gt;
                 &lt;/div&gt;
               &lt;/body&gt;
@@ -534,6 +534,15 @@ The editor is the styles for the contents of editor <code>&lt;iframe&gt;</code> 
     &lt;/html&gt;
   &lt;/iframe&gt;
 &lt;/div&gt;
+</code></pre>
+<p>Unlike the &quot;chrome&quot; of <code>base</code> or <code>editor</code>, the theming of the <code>preview</code> is done by CSS class so that
+you can reuse EpicEditor&#39;s theme to make your rendered page match your previewed.</p>
+<p>First, include your chosen theme on every page:</p>
+<pre><code class="lang-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;/epiceditor/themes/preview/github.css&quot;&gt;
+</code></pre>
+<p>(you may need to adjust the path)</p>
+<p>Mark your rendered content with <code>.epiceditor-preview</code>:</p>
+<pre><code class="lang-html">&lt;div id=&quot;my-content&quot; class=&quot;epiceditor-preview&quot;&gt; ... &lt;/div&gt;
 </code></pre>
 <h2 id="custom-parsers">Custom Parsers</h2>
 <p>EpicEditor is set up to allow you to use any parser that accepts and returns a string. This means you can use any flavor of Markdown, process Textile, or even create a simple HTML editor/previewer (<code>parser: false</code>). The possibilities are endless. Just make the parser available and pass its parsing function to the EpicEditor setting and you should be all set. You can output plain text or HTML. Here&#39;s an example of a parser that could remove &quot;bad words&quot; from the preview:</p>
