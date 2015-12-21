@@ -30,7 +30,7 @@ $ git clone git@github.com:OscarGodson/EpicEditor
 <div id="epiceditor"></div>
 ```
 
-Alternately, wrap an existing textarea to load the contents into th EpicEditor instance.
+Alternately, wrap an existing textarea to load the contents into the EpicEditor instance.
 
 ```html
 <div id="epiceditor"><textarea id="my-edit-area"></textarea></div>
@@ -617,7 +617,7 @@ The HTML of a generated editor (excluding contents) looks like this:
                 <link type="text/css" rel="stylesheet" href="epiceditor/themes/preview/github.css" media="screen">
               </head>
               <body>
-                <div id="epiceditor-preview">
+                <div id="epiceditor-preview" class="epiceditor-preview">
                   <!-- rendered html -->
                 </div>
               </body>
@@ -633,6 +633,21 @@ The HTML of a generated editor (excluding contents) looks like this:
   </iframe>
 </div>
 ```
+
+Unlike the "chrome" of `base` or `editor`, the theming of the `preview` is done by CSS class so that
+you can reuse EpicEditor's theme to make your rendered page match your previewed.
+
+First, include your chosen theme on every page:
+```html
+<link rel="stylesheet" href="/epiceditor/themes/preview/github.css">
+```
+(you may need to adjust the path)
+
+Mark your rendered content with `.epiceditor-preview`:
+```html
+<div id="my-content" class="epiceditor-preview"> ... </div>
+```
+
 
 ## Custom Parsers
 
