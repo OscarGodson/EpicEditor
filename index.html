@@ -38,19 +38,10 @@
 <pre><code class="lang-bash">$ git clone git@github.com:OscarGodson/EpicEditor
 </code></pre>
 <h3 id="step-2-install">Step 2: Install</h3>
-<p>Copy <code>EpicEditor/epiceditor/</code> onto your webserver at the same depth as the page you intend to use it in.</p>
-<pre><code class="lang-bash">$ ls -l
-[user@site public_html/new_stuff/my_blog]$ ls -l
-total 8
-drwxr-xr-x  4 user www  4096 Dec 20 05:10 epiceditor
--rwxr-xr-x  5 user www  4096 Dec 20 06:23 editor.html
-[user@site public_html/new_stuff/my_blog]$ ls -l epiceditor/
-total 8
-drwxr-xr-x 2 user www 4096 Dec 20 05:10 js
-drwxr-xr-x 5 user www 4096 Dec 20 05:10 themes
+<p>Copy <code>EpicEditor/epiceditor/</code> onto your webserver, for example to <code>/static/lib/epiceditor</code>.</p>
+<pre><code class="lang-bash">$ scp -r EpicEditor/epiceditor you@webserver:public_html/static/lib/
 </code></pre>
-<p>Alternately you can install it globally, say in <code>/static/lib/epiceditor</code>, and
-set the <code>basePath</code> option to the same to point EpicEditor in the right direction.</p>
+<p>You can of course customize this step for your directory layout.</p>
 <h3 id="step-3-create-your-container-element">Step 3: Create your container element</h3>
 <pre><code class="lang-html">&lt;div id=&quot;epiceditor&quot;&gt;&lt;/div&gt;
 </code></pre>
@@ -58,15 +49,10 @@ set the <code>basePath</code> option to the same to point EpicEditor in the righ
 <pre><code class="lang-html">&lt;div id=&quot;epiceditor&quot;&gt;&lt;textarea id=&quot;my-edit-area&quot;&gt;&lt;/textarea&gt;&lt;/div&gt;
 </code></pre>
 <h3 id="step-4-add-the-epiceditor-js-file">Step 4: Add the <code>epiceditor.js</code> file</h3>
-<pre><code class="lang-html">&lt;script src=&quot;epiceditor/js/epiceditor.min.js&quot;&gt;&lt;/script&gt;
-</code></pre>
-<p>Or, if you installed globally, do</p>
 <pre><code class="lang-html">&lt;script src=&quot;/static/lib/epiceditor/js/epiceditor.min.js&quot;&gt;&lt;/script&gt;
 </code></pre>
 <h3 id="step-5-init-epiceditor">Step 5: Init EpicEditor</h3>
-<pre><code class="lang-javascript">var editor = new EpicEditor().load();
-</code></pre>
-<p>Or, if you installed globally, do</p>
+<p>EpicEditor needs to know where to find its themes, so it needs to be told its install directory at init.</p>
 <pre><code class="lang-javascript">var editor = new EpicEditor({basePath: &#39;/static/lib/epiceditor&#39;}).load();
 </code></pre>
 <h2 id="api">API</h2>

@@ -26,22 +26,13 @@ $ git clone git@github.com:OscarGodson/EpicEditor
 
 ### Step 2: Install
 
-Copy `EpicEditor/epiceditor/` onto your webserver at the same depth as the page you intend to use it in.
+Copy `EpicEditor/epiceditor/` onto your webserver, for example to `/static/lib/epiceditor`.
 
 ```bash
-$ ls -l
-[user@site public_html/new_stuff/my_blog]$ ls -l
-total 8
-drwxr-xr-x  4 user www  4096 Dec 20 05:10 epiceditor
--rwxr-xr-x  5 user www  4096 Dec 20 06:23 editor.html
-[user@site public_html/new_stuff/my_blog]$ ls -l epiceditor/
-total 8
-drwxr-xr-x 2 user www 4096 Dec 20 05:10 js
-drwxr-xr-x 5 user www 4096 Dec 20 05:10 themes
+$ scp -r EpicEditor/epiceditor you@webserver:public_html/static/lib/
 ```
 
-Alternately you can install it globally, say in `/static/lib/epiceditor`, and
-set the `basePath` option to the same to point EpicEditor in the right direction.
+You can of course customize this step for your directory layout.
 
 ### Step 3: Create your container element
 
@@ -58,21 +49,12 @@ Alternately, wrap an existing textarea to load the contents into the EpicEditor 
 ### Step 4: Add the `epiceditor.js` file
 
 ```html
-<script src="epiceditor/js/epiceditor.min.js"></script>
-```
-
-Or, if you installed globally, do
-```html
 <script src="/static/lib/epiceditor/js/epiceditor.min.js"></script>
 ```
 
 ### Step 5: Init EpicEditor
 
-```javascript
-var editor = new EpicEditor().load();
-```
-
-Or, if you installed globally, do
+EpicEditor needs to know where to find its themes, so it needs to be told its install directory at init.
 ```javascript
 var editor = new EpicEditor({basePath: '/static/lib/epiceditor'}).load();
 ```
