@@ -24,7 +24,26 @@ EpicEditor is easy to implement. Add the script and assets to your page, provide
 $ git clone git@github.com:OscarGodson/EpicEditor
 ```
 
-### Step 2: Create your container element
+### Step 2: Install
+
+Copy `EpicEditor/epiceditor/` onto your webserver at the same depth as the page you intend to use it in.
+
+```bash
+$ ls -l
+[user@site public_html/new_stuff/my_blog]$ ls -l
+total 8
+drwxr-xr-x  4 user www  4096 Dec 20 05:10 epiceditor
+-rwxr-xr-x  5 user www  4096 Dec 20 06:23 editor.html
+[user@site public_html/new_stuff/my_blog]$ ls -l epiceditor/
+total 8
+drwxr-xr-x 2 user www 4096 Dec 20 05:10 js
+drwxr-xr-x 5 user www 4096 Dec 20 05:10 themes
+```
+
+Alternately you can install it globally, say in `/static/lib/epiceditor`, and
+set the `basePath` option to the same to point EpicEditor in the right direction.
+
+### Step 3: Create your container element
 
 ```html
 <div id="epiceditor"></div>
@@ -36,16 +55,26 @@ Alternately, wrap an existing textarea to load the contents into the EpicEditor 
 <div id="epiceditor"><textarea id="my-edit-area"></textarea></div>
 ```
 
-### Step 3: Add the `epiceditor.js` file
+### Step 4: Add the `epiceditor.js` file
 
 ```html
-<script src="epiceditor.min.js"></script>
+<script src="epiceditor/js/epiceditor.min.js"></script>
 ```
 
-### Step 4: Init EpicEditor
+Or, if you installed globally, do
+```html
+<script src="/static/lib/epiceditor/js/epiceditor.min.js"></script>
+```
+
+### Step 5: Init EpicEditor
 
 ```javascript
 var editor = new EpicEditor().load();
+```
+
+Or, if you installed globally, do
+```javascript
+var editor = new EpicEditor({basePath: '/static/lib/epiceditor'}).load();
 ```
 
 ## API
