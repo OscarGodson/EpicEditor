@@ -37,17 +37,23 @@
 <p><a href="http://epiceditor.com">Download the latest release</a> or clone the repo:</p>
 <pre><code class="lang-bash">$ git clone git@github.com:OscarGodson/EpicEditor
 </code></pre>
-<h3 id="step-2-create-your-container-element">Step 2: Create your container element</h3>
+<h3 id="step-2-install">Step 2: Install</h3>
+<p>Copy <code>EpicEditor/epiceditor/</code> onto your webserver, for example to <code>/static/lib/epiceditor</code>.</p>
+<pre><code class="lang-bash">$ scp -r EpicEditor/epiceditor you@webserver:public_html/static/lib/
+</code></pre>
+<p>You can of course customize this step for your directory layout.</p>
+<h3 id="step-3-create-your-container-element">Step 3: Create your container element</h3>
 <pre><code class="lang-html">&lt;div id=&quot;epiceditor&quot;&gt;&lt;/div&gt;
 </code></pre>
 <p>Alternately, wrap an existing textarea to load the contents into the EpicEditor instance.</p>
 <pre><code class="lang-html">&lt;div id=&quot;epiceditor&quot;&gt;&lt;textarea id=&quot;my-edit-area&quot;&gt;&lt;/textarea&gt;&lt;/div&gt;
 </code></pre>
-<h3 id="step-3-add-the-epiceditor-js-file">Step 3: Add the <code>epiceditor.js</code> file</h3>
-<pre><code class="lang-html">&lt;script src=&quot;epiceditor.min.js&quot;&gt;&lt;/script&gt;
+<h3 id="step-4-add-the-epiceditor-js-file">Step 4: Add the <code>epiceditor.js</code> file</h3>
+<pre><code class="lang-html">&lt;script src=&quot;/static/lib/epiceditor/js/epiceditor.min.js&quot;&gt;&lt;/script&gt;
 </code></pre>
-<h3 id="step-4-init-epiceditor">Step 4: Init EpicEditor</h3>
-<pre><code class="lang-javascript">var editor = new EpicEditor().load();
+<h3 id="step-5-init-epiceditor">Step 5: Init EpicEditor</h3>
+<p>EpicEditor needs to know where to find its themes, so it needs to be told its install directory at init.</p>
+<pre><code class="lang-javascript">var editor = new EpicEditor({basePath: &#39;/static/lib/epiceditor&#39;}).load();
 </code></pre>
 <h2 id="api">API</h2>
 <h3 id="epiceditor-_options_-">EpicEditor([<em>options</em>])</h3>

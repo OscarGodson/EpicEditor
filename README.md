@@ -24,7 +24,17 @@ EpicEditor is easy to implement. Add the script and assets to your page, provide
 $ git clone git@github.com:OscarGodson/EpicEditor
 ```
 
-### Step 2: Create your container element
+### Step 2: Install
+
+Copy `EpicEditor/epiceditor/` onto your webserver, for example to `/static/lib/epiceditor`.
+
+```bash
+$ scp -r EpicEditor/epiceditor you@webserver:public_html/static/lib/
+```
+
+You can of course customize this step for your directory layout.
+
+### Step 3: Create your container element
 
 ```html
 <div id="epiceditor"></div>
@@ -36,16 +46,17 @@ Alternately, wrap an existing textarea to load the contents into the EpicEditor 
 <div id="epiceditor"><textarea id="my-edit-area"></textarea></div>
 ```
 
-### Step 3: Add the `epiceditor.js` file
+### Step 4: Add the `epiceditor.js` file
 
 ```html
-<script src="epiceditor.min.js"></script>
+<script src="/static/lib/epiceditor/js/epiceditor.min.js"></script>
 ```
 
-### Step 4: Init EpicEditor
+### Step 5: Init EpicEditor
 
+EpicEditor needs to know where to find its themes, so it needs to be told its install directory at init.
 ```javascript
-var editor = new EpicEditor().load();
+var editor = new EpicEditor({basePath: '/static/lib/epiceditor'}).load();
 ```
 
 ## API
