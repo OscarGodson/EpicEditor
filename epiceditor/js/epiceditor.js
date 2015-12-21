@@ -572,7 +572,7 @@
                 '</div>'
     
     // The previewer is just an empty box for the generated HTML to go into
-    , previewer: '<div id="epiceditor-preview"></div>'
+    , previewer: '<div id="epiceditor-preview" class="epiceditor-preview"></div>'
     , editor: '<!doctype HTML>'
     };
 
@@ -1897,6 +1897,7 @@
     window.EpicEditor = EpicEditor;
   }
 })(window);
+
 /**
  * marked - a markdown parser
  * Copyright (c) 2011-2014, Christopher Jeffrey. (MIT Licensed)
