@@ -16,5 +16,7 @@ document.onreadystatechange = window.handleState;
 
 ready(function () {
 	var el = document.getElementById('epiceditor-editor-body');
+	tabIndent.config.focusDelay = 200;
+	tabIndent.config.tab = '\u00A0 \u00A0 \u00A0 ';
 	tabIndent.render(el);
 });
