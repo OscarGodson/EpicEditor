@@ -655,7 +655,7 @@
     _insertCSSLink(self.settings.theme.editor, self.editorIframeDocument, 'theme');
 
     // Insert Editor Javascript
-    _insertJSScript('libs/tab-indent/js/tabIndent.js', self.editorIframeDocument, 'tab-indent');
+    _insertJSScript('libs/tabIndent/js/tabIndent.js', self.editorIframeDocument, 'tab-indent');
     _insertJSScript('src/init-tab-indent.js', self.editorIframeDocument, 'init-tab-indent');
     
     // Insert Previewer Stylesheet
