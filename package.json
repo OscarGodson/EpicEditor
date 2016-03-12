@@ -3,6 +3,7 @@
   "version": "0.2.0",
   "author": "Oscar Godson <oscargodson@gmail.com> (http://oscargodson.com)",
   "description": "An Embeddable Markdown Editor",
+  "main": "epiceditor/js/epiceditor.js",
   "devDependencies": {
     "uglify-js": "1.3.3",
     "jshint": "0.7.2",
