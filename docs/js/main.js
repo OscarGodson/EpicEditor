@@ -66,8 +66,7 @@ $(function () {
   prettyPrint()
 
   $(['OscarGodson', 'johnmdonahue', 'adam_bickford', 'sebnitu']).each(function (idx, val) {
-    var twimg = 'http://twitter.com/api/users/profile_image?screen_name=' + val
-      , twlink = 'http://twitter.com/' + val
+    var twimg = 'https://twitter.com/' + val + '/profile_image', twlink = 'https://twitter.com/' + val
       
     $('#avatars').append('<a href="' + twlink + '"><img class="avatar" src="' + twimg + '">')
   })
