@@ -40,6 +40,7 @@ describe('.save()', function () {
   it('should fire the create event when saving a new file', function () {
     editor.on('create', function (file) {
       eventFired = true;
+      expect(file.fileName).to.be.ok();
       expect(file.content).to.be('foo');
       expect(file.created).to.be.ok();
       expect(file.modified).to.be.ok();
