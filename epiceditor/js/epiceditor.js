@@ -133,6 +133,27 @@
     headID.appendChild(cssNode);
   }
 
+  /**
+   * Inserts a <script> tag specifically for JS
+   * @param  {string} path The path to the JS file
+   * @param  {object} context In what context you want to apply this to (document, iframe, etc)
+   * @param  {string} id An id for you to reference later for changing properties of the <script>
+   * @returns {undefined}
+   */
+  function _insertJSScript(path, context, id) {
+    id = id || '';
+    var headID = context.getElementsByTagName("head")[0]
+      , jsNode = context.createElement('script');
+    
+    _applyAttrs(jsNode, {
+      type: 'text/javascript'
+    , id: id
+    , src: path
+    });
+
+    headID.appendChild(jsNode);
+  }
+
   // Simply replaces a class (o), to a new class (n) on an element provided (e)
   function _replaceClass(e, o, n) {
     e.className = e.className.replace(o, n);
@@ -632,6 +653,10 @@
     
     // Insert Editor Stylesheet
     _insertCSSLink(self.settings.theme.editor, self.editorIframeDocument, 'theme');
+
+    // Insert Editor Javascript
+    _insertJSScript('libs/tabIndent/js/tabIndent.js', self.editorIframeDocument, 'tab-indent');
+    _insertJSScript('src/init-tab-indent.js', self.editorIframeDocument, 'init-tab-indent');
     
     // Insert Previewer Stylesheet
     _insertCSSLink(self.settings.theme.preview, self.previewerIframeDocument, 'theme');
@@ -648,6 +673,7 @@
     self.previewer = self.previewerIframeDocument.getElementById('epiceditor-preview');
    
     self.editor.contentEditable = true;
+		self.editor.setAttribute("id", "epiceditor-editor-body");
  
     // Firefox's <body> gets all fucked up so, to be sure, we need to hardcode it
     self.iframe.body.style.height = this.element.offsetHeight + 'px';
