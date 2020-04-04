@@ -811,7 +811,9 @@
 
         self.emit('fullscreenenter');
 
-        callback.call(self);
+        
+        if(callback)
+         callback.call(self);
       }, wait);
 
     };
@@ -864,8 +866,8 @@
       self.reflow();
 
       self.emit('fullscreenexit');
-
-      callback.call(self);
+      if(callback)
+        callback.call(self);
     };
 
     // This setups up live previews by triggering preview() IF in fullscreen on keyup
@@ -1142,7 +1144,9 @@
     }
 
     // The callback and call are the same thing, but different ways to access them
-    callback.call(this);
+    
+    if(callback)
+      callback.call(this);
     this.emit('load');
     return this;
   }
@@ -1258,7 +1262,9 @@
       window.clearInterval(self._textareaSaveTimer);
     }
 
-    callback.call(this);
+    
+    if(callback)
+      callback.call(this);
     self.emit('unload');
     return self;
   }
@@ -1312,7 +1318,8 @@
     }
 
     self.emit('reflow', eventData);
-    callback.call(this, eventData);
+    if(callback)
+      callback.call(this, eventData);
     return self;
   }
 
@@ -1382,7 +1389,8 @@
   EpicEditor.prototype.enterFullscreen = function (callback) {
     callback = callback || function () {};
     if (this.is('fullscreen')) {
-      callback.call(this);
+      if(callback)
+        callback.call(this);
       return this;
     }
     this._goFullscreen(this.iframeElement, callback);
@@ -1396,7 +1404,9 @@
   EpicEditor.prototype.exitFullscreen = function (callback) {
     callback = callback || function () {};
     if (!this.is('fullscreen')) {
-      callback.call(this);
+      
+      if(callback)
+        callback.call(this);
       return this;
     }
     this._exitFullscreen(this.iframeElement, callback);
