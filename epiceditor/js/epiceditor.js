@@ -1420,7 +1420,7 @@
   }
 
   /**
-   * Grabs a specificed HTML node. Use it as a shortcut to getting the iframe contents
+   * Grabs a specified HTML node. Use it as a shortcut to getting the iframe contents
    * @param   {String} name The name of the node (can be document, body, editor, previewer, or wrapper)
    * @returns {Object|Null}
    */
